@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Positions — HireMind AI{% endblock %}
+
+{% block content %}
+<div className="card" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 style="font-size: 1.2rem; font-weight: 800;">Job Position Management</h1>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Active job listings monitored by autonomous AI screening agents.</p>
+    </div>
+    <a href="/jobs/create" className="btn btn-primary"><i className="fa-solid fa-plus"></i> Create Job</a>
+</div>
+
+<div className="card">
+    <table className="custom-table">
+        <thead>
+            <tr>
+                <th>Job Title</th>
+                <th>Department</th>
+                <th>Location</th>
+                <th>Applicants</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td><strong>{{ job.title }}</strong></td>
+                <td>{{ job.department }}</td>
+                <td>{{ job.location }}</td>
+                <td>{{ job.candidate_count }} Candidates</td>
+                <td><span className="status-badge badge-active">{{ job.status }}</span></td>
+                <td>
+                    <a href="/jobs/{{ job.id }}" className="btn btn-secondary" style="font-size: 0.75rem;">Manage</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

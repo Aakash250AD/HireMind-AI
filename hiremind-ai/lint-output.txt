@@ -1,0 +1,198 @@
+
+> hiremind-ai@0.1.0 lint
+> eslint
+
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\apply_global_redesign.js
+  1:12  error    A `require()` style import is forbidden                                @typescript-eslint/no-require-imports
+  2:14  error    A `require()` style import is forbidden                                @typescript-eslint/no-require-imports
+  8:5   warning  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\replace_all_theme.js
+  1:12  error    A `require()` style import is forbidden                                @typescript-eslint/no-require-imports
+  2:14  error    A `require()` style import is forbidden                                @typescript-eslint/no-require-imports
+  8:5   warning  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\replace_register_theme.js
+  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  2:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\replace_theme.js
+  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  2:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\analytics\page.tsx
+  4:10  warning  'Sidebar' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\candidate-dashboard\page.tsx
+  11:3  warning  'Briefcase' is defined but never used     @typescript-eslint/no-unused-vars
+  12:3  warning  'Video' is defined but never used         @typescript-eslint/no-unused-vars
+  13:3  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  14:3  warning  'Clock' is defined but never used         @typescript-eslint/no-unused-vars
+  15:3  warning  'ShieldCheck' is defined but never used   @typescript-eslint/no-unused-vars
+  18:3  warning  'FileText' is defined but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\candidates\[id]\page.tsx
+  13:57  warning  'FileText' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\copilot\page.tsx
+  26:19  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\copilot\page.tsx:26:19
+  24 |
+  25 |     const userMsg: CopilotMessage = {
+> 26 |       id: `user-${Date.now()}`,
+     |                   ^^^^^^^^^^ Cannot call impure function
+  27 |       sender: 'user',
+  28 |       content: prompt,
+  29 |       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })  react-hooks/purity
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\dashboard\page.tsx
+  10:3   warning  'Briefcase' is defined but never used      @typescript-eslint/no-unused-vars
+  11:3   warning  'Users' is defined but never used          @typescript-eslint/no-unused-vars
+  12:3   warning  'CheckCircle2' is defined but never used   @typescript-eslint/no-unused-vars
+  13:3   warning  'Video' is defined but never used          @typescript-eslint/no-unused-vars
+  14:3   warning  'Award' is defined but never used          @typescript-eslint/no-unused-vars
+  15:3   warning  'Clock' is defined but never used          @typescript-eslint/no-unused-vars
+  16:3   warning  'PlusCircle' is defined but never used     @typescript-eslint/no-unused-vars
+  18:3   warning  'ArrowRight' is defined but never used     @typescript-eslint/no-unused-vars
+  19:3   warning  'Trophy' is defined but never used         @typescript-eslint/no-unused-vars
+  20:3   warning  'Code' is defined but never used           @typescript-eslint/no-unused-vars
+  21:3   warning  'GraduationCap' is defined but never used  @typescript-eslint/no-unused-vars
+  22:3   warning  'ChevronRight' is defined but never used   @typescript-eslint/no-unused-vars
+  23:3   warning  'ChevronLeft' is defined but never used    @typescript-eslint/no-unused-vars
+  24:3   warning  'FileText' is defined but never used       @typescript-eslint/no-unused-vars
+  29:10  warning  'jobs' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\interview\[sessionId]\page.tsx
+    4:10  warning  'useParams' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   11:3   warning  'CheckCircle2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   14:3   warning  'HelpCircle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   66:10  warning  'webcamActive' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+   67:10  warning  'isFullScreen' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+   83:11  error    Error: Cannot access variable before it is declared
+
+`finishTest` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\interview\[sessionId]\page.tsx:83:11
+  81 |         if (prev <= 1) {
+  82 |           clearInterval(timerInterval);
+> 83 |           finishTest();
+     |           ^^^^^^^^^^ `finishTest` accessed before it is declared
+  84 |           return 0;
+  85 |         }
+  86 |         return prev - 1;
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\interview\[sessionId]\page.tsx:155:3
+  153 |   };
+  154 |
+> 155 |   const finishTest = () => {
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 156 |     let calculatedScore = 0;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 157 |     TEST_QUESTIONS.forEach((q, idx) => {
+      …
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 166 |     }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 167 |   };
+      | ^^^^^ `finishTest` is declared here
+  168 |
+  169 |   const formatTime = (seconds: number) => {
+  170 |     const m = Math.floor(seconds / 60);                                                                                                                                                                                                                                                                                            react-hooks/immutability
+   93:9   error    Error: Cannot access variable before it is declared
+
+`triggerMalpractice` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\interview\[sessionId]\page.tsx:93:9
+  91 |     const handleVisibilityChange = () => {
+  92 |       if (document.hidden) {
+> 93 |         triggerMalpractice('Tab switching or window blur detected');
+     |         ^^^^^^^^^^^^^^^^^^ `triggerMalpractice` accessed before it is declared
+  94 |       }
+  95 |     };
+  96 |
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\interview\[sessionId]\page.tsx:114:3
+  112 |   }, [testStarted, testCompleted, malpracticeDetected]);
+  113 |
+> 114 |   const triggerMalpractice = (reason: string) => {
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 115 |     setMalpracticeDetected(true);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 116 |     setTestStarted(false);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 117 |     if (document.fullscreenElement) {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 118 |       document.exitFullscreen().catch(() => {});
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 119 |     }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 120 |   };
+      | ^^^^^ `triggerMalpractice` is declared here
+  121 |
+  122 |   const startTest = async () => {
+  123 |     try {  react-hooks/immutability
+  112:6   warning  React Hook useEffect has a missing dependency: 'finishTest'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 react-hooks/exhaustive-deps
+  114:31  warning  'reason' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  138:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\interviews\[id]\page.tsx
+  11:10  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\jobs\[id]\page.tsx
+  14:41  warning  'Users' is defined but never used         @typescript-eslint/no-unused-vars
+  14:48  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\jobs\create\page.tsx
+  17:26  warning  'setEmploymentType' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  19:21  warning  'setEducation' is assigned a value but never used       @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\login\page.tsx
+   6:10  warning  'Logo' is defined but never used  @typescript-eslint/no-unused-vars
+  14:3   warning  'Bot' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\app\page.tsx
+  6:10  warning  'Sparkles' is defined but never used     @typescript-eslint/no-unused-vars
+  6:57  warning  'Zap' is defined but never used          @typescript-eslint/no-unused-vars
+  6:62  warning  'BarChart3' is defined but never used    @typescript-eslint/no-unused-vars
+  6:73  warning  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\components\DashboardLayout.tsx
+  34:11  warning  'theme' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  34:18  warning  'toggleTheme' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\components\HumanInTheLoopPanel.tsx
+  5:10  warning  'ShieldAlert' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\components\ResumeUploader.tsx
+  4:23  warning  'FileText' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\components\TopNavbar.tsx
+  11:3  warning  'Video' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\services\analytics.service.ts
+  6:29  warning  'timeframeDays' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\services\auth.service.ts
+  28:64  warning  'password' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\services\candidates.service.ts
+  15:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  35:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  49:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  70:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  97:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Quinn\Desktop\HIREMIND AI\hiremind-ai\src\services\jobs.service.ts
+   14:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+   27:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+   41:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+   72:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+   92:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  108:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 73 problems (11 errors, 62 warnings)
+

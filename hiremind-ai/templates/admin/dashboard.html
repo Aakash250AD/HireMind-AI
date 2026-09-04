@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+<aside class="sidebar">
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; color: var(--primary); font-weight: 700; font-size: 1.25rem;">
+        <i data-lucide="brain-circuit"></i> HireMind AI
+    </div>
+    <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary" style="justify-content: flex-start; border: none; background: rgba(114, 47, 55, 0.2); color: var(--text-main);">
+            <i data-lucide="activity"></i> Dashboard
+        </a>
+        <a href="#" class="btn btn-secondary" style="justify-content: flex-start; border: none;">
+            <i data-lucide="bot"></i> AI Agents
+        </a>
+        <a href="#" class="btn btn-secondary" style="justify-content: flex-start; border: none;">
+            <i data-lucide="zap"></i> Automations
+        </a>
+        <a href="#" class="btn btn-secondary" style="justify-content: flex-start; border: none;">
+            <i data-lucide="git-branch"></i> Workflows
+        </a>
+    </nav>
+    <div style="margin-top: auto;">
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary" style="width: 100%; justify-content: flex-start; border: none;">
+            <i data-lucide="log-out"></i> Logout
+        </a>
+    </div>
+</aside>
+{% endblock %}
+
+{% block navbar %}
+<header class="navbar">
+    <div></div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <img src="https://ui-avatars.com/api/?name=Admin&background=722F37&color=fff" alt="Profile" style="border-radius: 50%; width: 32px; height: 32px;">
+            <span style="font-weight: 500;">System Admin</span>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-size: 1.5rem;">AI Operations Center</h1>
+    <p style="color: var(--text-muted);">Monitor your AI agents and automation workflows.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Active Agents</div>
+        <div style="font-size: 2rem; font-weight: 700; color: var(--success);">8</div>
+    </div>
+    <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Running Workflows</div>
+        <div style="font-size: 2rem; font-weight: 700;">24</div>
+    </div>
+    <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Success Rate</div>
+        <div style="font-size: 2rem; font-weight: 700; color: var(--success);">98.7%</div>
+    </div>
+    <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Candidates Processed</div>
+        <div style="font-size: 2rem; font-weight: 700;">1,284</div>
+    </div>
+</div>
+{% endblock %}

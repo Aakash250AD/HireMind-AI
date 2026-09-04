@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: var(--bg-main);
+}
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+.brand-logo {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+.brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+.demo-roles {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="card login-card">
+        <i data-lucide="brain-circuit" class="brand-logo" width="48" height="48"></i>
+        <div class="brand-name">HireMind AI</div>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Select a demo portal to enter</p>
+        
+        <form method="POST" class="demo-roles">
+            <button type="submit" name="role" value="recruiter" class="btn btn-primary">
+                <i data-lucide="briefcase"></i> Login as Recruiter
+            </button>
+            <button type="submit" name="role" value="candidate" class="btn btn-secondary">
+                <i data-lucide="user"></i> Login as Candidate
+            </button>
+            <button type="submit" name="role" value="admin" class="btn btn-secondary">
+                <i data-lucide="settings"></i> Login as Admin
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

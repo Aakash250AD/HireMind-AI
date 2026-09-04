@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+<aside class="sidebar">
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; color: var(--primary); font-weight: 700; font-size: 1.25rem;">
+        <i data-lucide="brain-circuit"></i> HireMind AI
+    </div>
+    <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <a href="{{ url_for('candidate.dashboard') }}" class="btn btn-secondary" style="justify-content: flex-start; border: none; background: rgba(114, 47, 55, 0.2); color: var(--text-main);">
+            <i data-lucide="home"></i> Home
+        </a>
+        <a href="#" class="btn btn-secondary" style="justify-content: flex-start; border: none;">
+            <i data-lucide="search"></i> Find Jobs
+        </a>
+        <a href="#" class="btn btn-secondary" style="justify-content: flex-start; border: none;">
+            <i data-lucide="file-text"></i> My Applications
+        </a>
+        <a href="#" class="btn btn-secondary" style="justify-content: flex-start; border: none;">
+            <i data-lucide="video"></i> My Interviews
+        </a>
+    </nav>
+    <div style="margin-top: auto;">
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary" style="width: 100%; justify-content: flex-start; border: none;">
+            <i data-lucide="log-out"></i> Logout
+        </a>
+    </div>
+</aside>
+{% endblock %}
+
+{% block navbar %}
+<header class="navbar">
+    <div></div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="btn btn-secondary" style="border: none; padding: 0.5rem;"><i data-lucide="bell"></i></button>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <img src="https://ui-avatars.com/api/?name=Candidate&background=722F37&color=fff" alt="Profile" style="border-radius: 50%; width: 32px; height: 32px;">
+            <span style="font-weight: 500;">Candidate</span>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-size: 1.5rem;">Hello, Candidate 👋</h1>
+    <p style="color: var(--text-muted);">Continue your job search.</p>
+</div>
+
+<div class="card" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h3 style="margin-bottom: 0.5rem;">Profile Completion: 85%</h3>
+        <div style="width: 300px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+            <div style="width: 85%; height: 100%; background: var(--primary);"></div>
+        </div>
+    </div>
+    <button class="btn btn-primary">Complete Profile</button>
+</div>
+
+<h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Recommended Jobs</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    <div class="card" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <div style="font-weight: 600; font-size: 1.125rem;">AI/ML Engineer</div>
+                <div style="color: var(--text-muted); font-size: 0.875rem;">TechCorp • Bangalore</div>
+            </div>
+            <div class="badge badge-success">94% Match</div>
+        </div>
+        
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <span class="badge" style="background: rgba(255,255,255,0.05);">0-2 years</span>
+            <span class="badge" style="background: rgba(255,255,255,0.05);">₹6–10 LPA</span>
+        </div>
+        
+        <div style="display: flex; gap: 0.5rem; margin-top: auto;">
+            <button class="btn btn-secondary" style="flex: 1;">View Job</button>
+            <button class="btn btn-primary" style="flex: 1;">Apply Now</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

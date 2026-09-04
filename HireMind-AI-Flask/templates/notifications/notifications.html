@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications — HireMind AI{% endblock %}
+
+{% block content %}
+<div className="card" style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.2rem; font-weight: 800;">Notification Telemetry Center</h1>
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time alerts triggered by AI screening, interviews, and verification workflows.</p>
+</div>
+
+<div className="card">
+    {% for notif in notifications %}
+    <div style="padding: 0.85rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <strong style="font-size: 0.9rem;">{{ notif.title }}</strong>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">{{ notif.message }}</p>
+        </div>
+        <span style="font-size: 0.7rem; color: var(--text-muted);">{{ notif.time }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

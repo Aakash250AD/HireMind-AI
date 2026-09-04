@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Create Job With AI — HireMind AI{% endblock %}
+
+{% block content %}
+<div style="max-w: 700px; margin: 0 auto;" className="card">
+    <h1 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem;">Create & Analyze Job Listing</h1>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;">AI will automatically extract required skills, keywords, and responsibilities.</p>
+
+    <form action="/jobs" method="GET">
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.3rem;">Job Title</label>
+            <input type="text" placeholder="Senior AI / Machine Learning Engineer" style="width: 100%; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem;">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.3rem;">Job Description</label>
+            <textarea rows="5" placeholder="Paste full job description here..." style="width: 100%; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem;"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="button" onclick="alert('AI Agent extracting skills...')" className="btn btn-secondary" style="flex: 1;"><i className="fa-solid fa-wand-magic-sparkles"></i> Analyze Job With AI</button>
+            <button type="submit" className="btn btn-primary" style="flex: 1;">Create Job Listing</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

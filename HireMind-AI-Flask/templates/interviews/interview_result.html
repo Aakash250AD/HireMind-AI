@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Interview Evaluation Result — HireMind AI{% endblock %}
+
+{% block content %}
+<div className="card" style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.2rem; font-weight: 800;">Interview Evaluation Telemetry</h1>
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Candidate: {{ interview.candidate_name }} • Job: {{ interview.job_title }}</p>
+</div>
+
+<div className="kpi-grid" style="margin-bottom: 1.5rem;">
+    <div className="kpi-card">
+        <div className="kpi-header">Technical Score</div>
+        <div className="kpi-val" style="color: var(--primary-blue);">{{ interview.technical_score }}%</div>
+    </div>
+    <div className="kpi-card">
+        <div className="kpi-header">Communication</div>
+        <div className="kpi-val" style="color: var(--success-green);">{{ interview.communication_score }}%</div>
+    </div>
+    <div className="kpi-card">
+        <div className="kpi-header">Problem Solving</div>
+        <div className="kpi-val" style="color: #6366F1;">{{ interview.problem_solving_score }}%</div>
+    </div>
+    <div className="kpi-card">
+        <div className="kpi-header">Role Fit Score</div>
+        <div className="kpi-val" style="color: var(--warning-amber);">{{ interview.role_fit_score }}%</div>
+    </div>
+</div>
+
+<div className="card">
+    <h2 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;">AI Recommendation</h2>
+    <p style="font-size: 0.85rem; color: var(--text-dark); background: #F8F9FA; padding: 0.75rem; border-radius: 6px;">
+        <strong>Recommendation:</strong> {{ interview.ai_summary.recommendation }}
+    </p>
+</div>
+{% endblock %}

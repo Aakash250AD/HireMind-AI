@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}AI Shortlist & Explainable Ranking — HireMind AI{% endblock %}
+
+{% block content %}
+<div className="card" style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.2rem; font-weight: 800;">AI Shortlist & Explainable Candidate Ranking</h1>
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Top ranked candidate profiles with transparent AI reasoning.</p>
+</div>
+
+{% for item in shortlist %}
+<div className="card" style="margin-bottom: 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <span style="font-size: 1.2rem; font-weight: 800; color: var(--primary-blue);">#{{ item.rank }}</span>
+            <strong style="font-size: 1.1rem; margin-left: 0.5rem;">{{ item.candidate.name }}</strong>
+            <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">({{ item.candidate.overall_score }}% Match)</span>
+        </div>
+        <a href="/candidates/{{ item.candidate.id }}" className="btn btn-primary" style="font-size: 0.75rem;">Review Evidence</a>
+    </div>
+    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #F8F9FA; border-radius: 6px; font-size: 0.8rem; color: var(--text-dark);">
+        <strong>Why Shortlisted:</strong> {{ item.reasoning }}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Low-Code Automations — HireMind AI{% endblock %}
+
+{% block content %}
+<div className="card" style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.2rem; font-weight: 800;">Low-Code Automation Workflow Center</h1>
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Visual status of external AI recruitment agents executing via n8n, Make, or custom API webhooks.</p>
+</div>
+
+<div className="kpi-grid" style="grid-template-columns: 1fr 1fr;">
+    {% for wf in workflows %}
+    <div className="card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h3 style="font-size: 1rem; font-weight: 700;">{{ wf.name }}</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">{{ wf.description }}</p>
+            </div>
+            <span className="status-badge badge-active">{{ wf.status }}</span>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);">
+            <span>Last Run: {{ wf.last_run }}</span> • <span>Duration: {{ wf.duration }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
