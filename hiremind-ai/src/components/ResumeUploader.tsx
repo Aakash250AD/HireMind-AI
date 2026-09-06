@@ -61,7 +61,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({ jobId, onScreeni
         }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        className={`border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center text-center transition-all ${
+        className={`border border-dashed rounded-xl p-10 flex flex-col items-center justify-center text-center transition-all ${
           dragOver ? 'border-primary bg-primary-tint/30' : 'border-border bg-surface-sunken/30'
         }`}
       >

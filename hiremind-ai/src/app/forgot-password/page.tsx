@@ -10,7 +10,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-6 select-none">
-      <div className="w-full max-w-md bg-white border border-border-color rounded-[var(--radius-lg)] p-8 shadow-2xl">
+      <div className="w-full max-w-md bg-white border border-border rounded-[var(--radius-lg)] p-8 shadow-2xl">
         <div className="flex flex-col items-center text-center mb-6">
           <Logo size="lg" />
           <h2 className="text-xl font-bold text-text-primary mt-4">Reset Password</h2>
@@ -50,14 +50,14 @@ export default function ForgotPasswordPage() {
                   type="email"
                   required
                   placeholder="recruiter@company.com"
-                  className="w-full pl-9 pr-4 py-2.5 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#722F37]"
+                  className="w-full pl-9 pr-4 py-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow-lg border border-dark-blue transition-colors"
+              className="w-full py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow-lg border border-border transition-colors"
             >
               Send Reset Instructions
             </button>

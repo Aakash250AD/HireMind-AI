@@ -33,7 +33,7 @@ export default function CandidatesPage() {
     <DashboardLayout role="hr">
       <div className="space-y-6 w-full max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-border-color p-6 rounded-[var(--radius-lg)] shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
           <div>
             <h1 className="text-lg font-bold text-text-primary">Ingested Candidates Pool</h1>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -42,7 +42,7 @@ export default function CandidatesPage() {
           </div>
           <Link
             href="/shortlist"
-            className="px-4 py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-md)] border border-dark-blue shadow flex items-center justify-center gap-2"
+            className="px-4 py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-md)] border border-border shadow flex items-center justify-center gap-2"
           >
             <Award className="w-4 h-4" />
             <span>View AI Shortlist</span>
@@ -50,7 +50,7 @@ export default function CandidatesPage() {
         </div>
 
         {/* Filters Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-border-color p-4 rounded-[var(--radius-md)]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-border p-4 rounded-[var(--radius-md)]">
           <div className="relative w-full sm:w-80">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
             <input
@@ -58,7 +58,7 @@ export default function CandidatesPage() {
               placeholder="Search by candidate name or skill..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#722F37]"
+              className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
             />
           </div>
 
@@ -67,7 +67,7 @@ export default function CandidatesPage() {
             <select
               value={selectedStage}
               onChange={(e) => setSelectedStage(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+              className="w-full sm:w-auto px-3 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
             >
               <option value="ALL">All Stages</option>
               <option value="Applied">Applied</option>
@@ -82,11 +82,11 @@ export default function CandidatesPage() {
         </div>
 
         {/* Candidate Table */}
-        <div className="bg-white border border-border-color rounded-[var(--radius-lg)] overflow-hidden shadow-lg">
+        <div className="bg-white border border-border rounded-[var(--radius-lg)] overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-page-bg border-b border-border-color text-text-secondary uppercase font-bold text-[10px] tracking-wider">
+                <tr className="bg-page-bg border-b border-border text-text-secondary uppercase font-bold text-[10px] tracking-wider">
                   <th className="p-4">Candidate</th>
                   <th className="p-4">Applied Position</th>
                   <th className="p-4">Match Score</th>
@@ -118,19 +118,19 @@ export default function CandidatesPage() {
                       <td className="p-4 font-bold text-zinc-200">{cand.interviewScore > 0 ? `${cand.interviewScore}%` : 'Pending'}</td>
                       <td className="p-4 font-extrabold text-indigo-400">{cand.verificationScore}%</td>
                       <td className="p-4">
-                        <span className="px-2.5 py-1 rounded bg-primary/30 border border-[#722F37] font-extrabold text-text-primary">
+                        <span className="px-2.5 py-1 rounded bg-primary/30 border border-border font-extrabold text-text-primary">
                           {cand.overallScore}%
                         </span>
                       </td>
                       <td className="p-4">
-                        <span className="px-2 py-0.5 rounded bg-page-bg border border-border-color text-text-secondary font-semibold text-[11px]">
+                        <span className="px-2 py-0.5 rounded bg-page-bg border border-border text-text-secondary font-semibold text-[11px]">
                           {cand.stage}
                         </span>
                       </td>
                       <td className="p-4 text-right">
                         <Link
                           href={`/candidates/${cand.id}`}
-                          className="px-3.5 py-1.5 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-sm)] border border-dark-blue transition-colors inline-flex items-center gap-1"
+                          className="px-3.5 py-1.5 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-sm)] border border-border transition-colors inline-flex items-center gap-1"
                         >
                           <span>Profile</span>
                           <ChevronRight className="w-3 h-3" />

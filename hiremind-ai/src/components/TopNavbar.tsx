@@ -57,7 +57,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ role = 'hr' }) => {
   const currentNav = activeRole === 'candidate' ? candidateNavigation : hrNavigation;
 
   return (
-    <header className="bg-white border-b border-border-color sticky top-0 z-40 w-full select-none shadow-xs">
+    <header className="bg-white border-b border-border sticky top-0 z-40 w-full select-none shadow-xs">
       <div className="max-w-7xl mx-auto px-6 py-2 flex items-center gap-8">
         
         {/* Left: Brand Logo & Badge & Navigation */}
@@ -69,7 +69,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ role = 'hr' }) => {
             <Logo size="sm" />
           </Link>
 
-          <span className="px-2.5 py-0.5 rounded-full bg-page-bg border border-border-color text-[11px] font-semibold text-text-secondary flex items-center gap-1.5">
+          <span className="px-2.5 py-0.5 rounded-full bg-page-bg border border-border text-[11px] font-semibold text-text-secondary flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-primary" />
             <span>{activeRole === 'candidate' ? 'Candidate Portal' : 'HR Recruiter Suite'}</span>
           </span>
@@ -87,7 +87,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ role = 'hr' }) => {
                 href={item.href}
                 className={`flex flex-col items-center justify-center px-4 py-1.5 text-xs font-semibold border-b-2 transition-all duration-150 ${
                   isActive
-                    ? 'border-[#0A66C2] text-primary'
+                    ? 'border-border text-primary'
                     : 'border-transparent text-text-secondary hover:text-text-primary'
                 }`}
               >
@@ -104,7 +104,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ role = 'hr' }) => {
           <button
             onClick={toggleTheme}
             title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Theme`}
-            className="p-1.5 rounded-md bg-page-bg border border-border-color text-text-secondary hover:text-text-primary transition-all"
+            className="p-1.5 rounded-md bg-page-bg border border-border text-text-secondary hover:text-text-primary transition-all"
           >
             {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-indigo-600" />}
           </button>
@@ -112,7 +112,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ role = 'hr' }) => {
           {activeRole === 'hr' && (
             <Link
               href="/copilot"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-page-bg border border-border-color text-xs font-semibold text-primary hover:bg-[#EAE6DF] transition-all"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-page-bg border border-border text-xs font-semibold text-primary hover:bg-[#EAE6DF] transition-all"
             >
               <Sparkles className="w-3.5 h-3.5 text-primary" />
               <span>AI Copilot</span>

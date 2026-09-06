@@ -5,14 +5,21 @@
   --color-primary-hover: #0F44A6;
   --color-primary-tint: #EAF1FE;
   
-  --color-ink: #14181F;
-  --color-ink-soft: #4B5565;
+  /* HM Brand Colors */
+  --color-hm-deep: #0D0D0D;
+  --color-hm-matte: #282828;
+  --color-hm-burgundy: #722F37;
+  --color-hm-bg: #F5F8FC;
+  
+  --color-ink: #0D0D0D; /* Updated to Deep Black */
+  --color-ink-soft: #282828; /* Updated to Matte Black */
   --color-ink-faint: #8A93A3;
   
   --color-surface: #FFFFFF;
-  --color-surface-sunken: #F5F7FA;
+  --color-surface-sunken: #F5F8FC; /* Updated to Soft Background */
   
-  --color-border: #E3E7ED;
+  --color-border: rgba(20, 24, 31, 0.12);
+  --color-border-hover: rgba(20, 24, 31, 0.18);  
   
   --color-success: #1A8754;
   --color-success-tint: #E8F6EE;
@@ -24,6 +31,29 @@
   --color-danger-tint: #FBEAEA;
   
   --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* HM Component Tokens */
+  --radius-hm-card: 16px;
+  --radius-hm-button: 8px;
+  --radius-hm-pill: 9999px;
+  
+  --shadow-hm-card: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --shadow-hm-card-hover: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-hm-button: 0 2px 8px rgba(22, 87, 204, 0.15);
+  
+  /* Tailwind Animations for HM Components */
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-spin-slow: spin 10s linear infinite;
+  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.02); }
+  }
 }
 
 @layer base {
@@ -31,12 +61,12 @@
     --primary: #1657CC;
     --primary-hover: #0F44A6;
     --primary-tint: #EAF1FE;
-    --ink: #14181F;
-    --ink-soft: #4B5565;
+    --ink: #0D0D0D;
+    --ink-soft: #282828;
     --ink-faint: #8A93A3;
     --surface: #FFFFFF;
-    --surface-sunken: #F5F7FA;
-    --border: #E3E7ED;
+    --surface-sunken: #F5F8FC;
+    --border: rgba(20, 24, 31, 0.12);
     --success: #1A8754;
     --success-tint: #E8F6EE;
     --warning: #B7791F;
@@ -75,4 +105,18 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--ink-faint);
+}
+
+/* Base HM utility classes that are easier as raw CSS */
+.hm-glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.hm-gradient-text {
+  background: linear-gradient(135deg, var(--color-hm-deep) 0%, var(--color-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

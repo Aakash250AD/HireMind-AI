@@ -27,14 +27,14 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
   };
 
   return (
-    <div className="bg-white border-2 border-[#722F37] rounded-[var(--radius-md)] p-5 shadow-2xl relative overflow-hidden">
+    <div className="bg-white border border-border rounded-[var(--radius-md)] p-5 shadow-2xl relative overflow-hidden">
       {/* Top Banner Notice */}
       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary mb-3">
         <Lock className="w-4 h-4" />
         <span>HUMAN-IN-THE-LOOP RECRUITER DECISION PANEL</span>
       </div>
 
-      <div className="bg-page-bg p-4 rounded-[var(--radius-sm)] border border-border-color mb-4">
+      <div className="bg-page-bg p-4 rounded-[var(--radius-sm)] border border-border mb-4">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[10px] uppercase font-bold text-text-secondary">AI Evaluation Recommendation</span>
@@ -63,7 +63,7 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Enter recruiter review justification or notes prior to decision..."
-          className="w-full p-3 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#722F37]"
+          className="w-full p-3 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
         />
       </div>
 
@@ -71,12 +71,12 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
         <div className="flex items-center gap-2">
           {currentStatus === 'APPROVED' && (
-            <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-3 py-1.5 rounded border border-emerald-800/60 flex items-center gap-1.5">
+            <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-3 py-1.5 rounded border border-border flex items-center gap-1.5">
               <CheckCircle className="w-4 h-4" /> APPROVED FOR HIRE
             </span>
           )}
           {currentStatus === 'REJECTED' && (
-            <span className="text-xs font-bold text-primary bg-error-bg px-3 py-1.5 rounded border border-error/60 flex items-center gap-1.5">
+            <span className="text-xs font-bold text-primary bg-error-bg px-3 py-1.5 rounded border border-border flex items-center gap-1.5">
               <XCircle className="w-4 h-4" /> REJECTED BY RECRUITER
             </span>
           )}
@@ -99,7 +99,7 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
           <button
             disabled={submitting}
             onClick={() => handleDecision('REJECTED')}
-            className="flex-1 sm:flex-none px-3.5 py-2 bg-rose-950/50 hover:bg-rose-900 text-error text-xs font-bold rounded-[var(--radius-sm)] border border-error transition-colors flex items-center justify-center gap-1.5"
+            className="flex-1 sm:flex-none px-3.5 py-2 bg-rose-950/50 hover:bg-rose-900 text-error text-xs font-bold rounded-[var(--radius-sm)] border border-border transition-colors flex items-center justify-center gap-1.5"
           >
             <XCircle className="w-3.5 h-3.5" />
             <span>REJECT</span>
@@ -107,7 +107,7 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
           <button
             disabled={submitting}
             onClick={() => handleDecision('APPROVED')}
-            className="flex-1 sm:flex-none px-4 py-2 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow border border-dark-blue transition-colors flex items-center justify-center gap-1.5"
+            className="flex-1 sm:flex-none px-4 py-2 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow border border-border transition-colors flex items-center justify-center gap-1.5"
           >
             <CheckCircle className="w-4 h-4" />
             <span>APPROVE</span>

@@ -27,7 +27,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <DashboardLayout role="hr">
+    <DashboardLayout role="candidate">
       <div className="space-y-6 w-full max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">

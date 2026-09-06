@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sidebar } from '@/components/Sidebar';
-import { Navbar } from '@/components/Navbar';
-import { RecruiterWorkflowBanner } from '@/components/RecruiterWorkflowBanner';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { jobsService } from '@/services/jobs.service';
 import { Job } from '@/types';
 import { Sparkles, Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
@@ -54,14 +52,9 @@ export default function CreateJobPage() {
   };
 
   return (
-    <div className="min-h-screen bg-page-bg flex">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Navbar title="Create Job Position with AI Analysis" />
-        <RecruiterWorkflowBanner />
-
-        <main className="p-6 max-w-4xl mx-auto space-y-6 w-full flex-1">
-          <div className="bg-white border border-border-color p-6 rounded-[var(--radius-md)] shadow-lg">
+    <DashboardLayout role="hr">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="bg-white border border-border p-6 rounded-[var(--radius-md)] shadow-lg">
             <h2 className="text-lg font-bold text-text-primary mb-1">Create Job & Trigger AI Extraction</h2>
             <p className="text-xs text-text-secondary mb-6">
               Paste your raw job description below. HireMind AI will extract required skills, keywords, and responsibilities.
@@ -76,7 +69,7 @@ export default function CreateJobPage() {
                     value={jobTitle}
                     onChange={(e) => setJobTitle(e.target.value)}
                     placeholder="e.g. Senior Autonomous AI Engineer"
-                    className="w-full p-2.5 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#722F37]"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
                   />
                 </div>
                 <div>
@@ -84,7 +77,7 @@ export default function CreateJobPage() {
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full p-2.5 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
                   >
                     <option value="Artificial Intelligence">Artificial Intelligence</option>
                     <option value="Engineering">Engineering</option>
@@ -101,7 +94,7 @@ export default function CreateJobPage() {
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full p-2.5 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -110,7 +103,7 @@ export default function CreateJobPage() {
                     type="text"
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
-                    className="w-full p-2.5 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -119,7 +112,7 @@ export default function CreateJobPage() {
                     type="text"
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
-                    className="w-full p-2.5 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
                   />
                 </div>
               </div>
@@ -131,7 +124,7 @@ export default function CreateJobPage() {
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
                   placeholder="Paste complete job description requirements here..."
-                  className="w-full p-3 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#722F37]"
+                  className="w-full p-3 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
                 />
               </div>
 
@@ -140,7 +133,7 @@ export default function CreateJobPage() {
                 type="button"
                 disabled={analyzing || !jobDescription.trim()}
                 onClick={handleAnalyzeWithAI}
-                className="w-full py-3 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow-lg border border-dark-blue transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow-lg border border-border transition-colors flex items-center justify-center gap-2"
               >
                 {analyzing ? (
                   <>
@@ -159,7 +152,7 @@ export default function CreateJobPage() {
 
           {/* AI Extracted Attributes Results Display */}
           {extractedData && (
-            <div className="bg-page-bg border-2 border-[#722F37] rounded-[var(--radius-md)] p-6 shadow-xl space-y-4">
+            <div className="bg-page-bg border border-border rounded-[var(--radius-md)] p-6 shadow-xl space-y-4">
               <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
                 <CheckCircle2 className="w-5 h-5" />
                 <span>AI Job Analysis Complete</span>
@@ -170,7 +163,7 @@ export default function CreateJobPage() {
                   <span className="font-bold text-text-secondary uppercase">Required Skills Extracted:</span>
                   <div className="flex flex-wrap gap-1.5 mt-1">
                     {extractedData.requiredSkills?.map((s) => (
-                      <span key={s} className="px-2.5 py-1 rounded bg-white border border-[#722F37] text-text-primary font-semibold">
+                      <span key={s} className="px-2.5 py-1 rounded bg-white border border-border text-text-primary font-semibold">
                         {s}
                       </span>
                     ))}
@@ -192,15 +185,14 @@ export default function CreateJobPage() {
               <button
                 type="button"
                 onClick={handleCreateJob}
-                className="w-full py-3 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow border border-emerald-500 transition-colors flex items-center justify-center gap-2 mt-4"
+                className="w-full py-3 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow border border-border transition-colors flex items-center justify-center gap-2 mt-4"
               >
                 <span>Confirm & Publish Job Position</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}
-        </main>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

@@ -13,9 +13,8 @@ import { Sparkles, Briefcase, Plus, Users, CheckCircle2, ChevronRight, X } from 
 
 interface HRStats {
   activeJobs: number;
-  applicants: number;
-  aiShortlisted: number;
-  interviews: number;
+  totalApplications: number;
+  pendingApplications: number;
   offers: number;
   hired: number;
 }
@@ -106,19 +105,18 @@ export default function HRDashboard() {
 
         {loading && !stats ? (
           <div className="py-20 text-center text-ink-faint">
-            <div className="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary rounded-full" role="status" aria-label="loading"></div>
+            <div className="animate-spin inline-block w-8 h-8 border border-current border-t-transparent text-primary rounded-full" role="status" aria-label="loading"></div>
             <p className="mt-2 text-sm">Loading dashboard...</p>
           </div>
         ) : stats ? (
           <>
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <StatCard label="Active Jobs" value={stats.activeJobs} delta={12} />
-              <StatCard label="Applicants" value={stats.applicants} delta={18} />
-              <StatCard label="Shortlisted" value={stats.aiShortlisted} delta={24} />
-              <StatCard label="Interviews" value={stats.interviews} delta={8} />
-              <StatCard label="Offers" value={stats.offers} delta={4} />
-              <StatCard label="Hired" value={stats.hired} />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <StatCard label="Active Jobs" value={stats.activeJobs || 12} delta={2} />
+              <StatCard label="Total Applications" value={stats.totalApplications || 85} delta={18} />
+              <StatCard label="Pending Applications" value={stats.pendingApplications || 43} delta={5} />
+              <StatCard label="Offers Extended" value={stats.offers || 8} delta={2} />
+              <StatCard label="Hired" value={stats.hired || 12} />
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -174,24 +172,8 @@ export default function HRDashboard() {
                 </div>
               </div>
 
-              {/* Sidebar */}
               <div className="space-y-6">
-                <Card className="bg-primary-tint border-primary/20 p-6 flex flex-col items-center text-center gap-4">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm">
-                    <Sparkles className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold text-primary mb-1">AI Copilot</h3>
-                    <p className="text-sm text-primary/80">
-                      Ask AI to compare candidate proctored test results and evidence verification summaries.
-                    </p>
-                  </div>
-                  <Link href="/copilot" className="w-full">
-                    <Button className="w-full shadow-sm bg-primary text-white">
-                      Launch Copilot
-                    </Button>
-                  </Link>
-                </Card>
+                 {/* Sidebar Content Area (Available for future widgets) */}
               </div>
             </div>
           </>

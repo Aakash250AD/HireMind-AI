@@ -41,7 +41,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-6 select-none font-sans">
-      <div className="w-full max-w-md bg-white border border-border-color rounded-[var(--radius-lg)] p-8 shadow-2xl relative">
+      <div className="w-full max-w-md bg-white border border-border rounded-[var(--radius-lg)] p-8 shadow-2xl relative">
         <Link href="/" className="absolute top-4 left-4 text-text-secondary hover:text-text-primary flex items-center gap-1 text-xs font-semibold transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back</span>
@@ -53,13 +53,13 @@ export default function RegisterPage() {
         </div>
 
         {/* Split Role Selection Tab Switcher */}
-        <div className="grid grid-cols-2 gap-2 bg-page-bg p-1.5 rounded-[var(--radius-md)] border border-border-color mb-6">
+        <div className="grid grid-cols-2 gap-2 bg-page-bg p-1.5 rounded-[var(--radius-md)] border border-border mb-6">
           <button
             type="button"
             onClick={() => setRole('hr')}
             className={`flex items-center justify-center gap-2 py-2.5 rounded-[var(--radius-sm)] text-xs font-bold transition-all ${
               role === 'hr'
-                ? 'bg-primary text-white shadow-md border border-dark-blue'
+                ? 'bg-primary text-white shadow-md border border-border'
                 : 'text-text-secondary hover:text-text-primary'
             }`}
           >
@@ -71,7 +71,7 @@ export default function RegisterPage() {
             onClick={() => setRole('candidate')}
             className={`flex items-center justify-center gap-2 py-2.5 rounded-[var(--radius-sm)] text-xs font-bold transition-all ${
               role === 'candidate'
-                ? 'bg-primary text-white shadow-md border border-dark-blue'
+                ? 'bg-primary text-white shadow-md border border-border'
                 : 'text-text-secondary hover:text-text-primary'
             }`}
           >
@@ -81,7 +81,7 @@ export default function RegisterPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-error-bg border border-error text-error text-xs font-semibold rounded-[var(--radius-sm)]">
+          <div className="mb-4 p-3 bg-error-bg border border-border text-error text-xs font-semibold rounded-[var(--radius-sm)]">
             {error}
           </div>
         )}
@@ -99,7 +99,7 @@ export default function RegisterPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Sarah Jenkins"
-                className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-[#722F37]"
+                className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -117,7 +117,7 @@ export default function RegisterPage() {
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder="TechCorp AI"
-                  className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-[#722F37]"
+                  className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
                 />
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={role === 'hr' ? 'sarah@techcorp.io' : 'candidate@example.com'}
-                className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-[#722F37]"
+                className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-[#722F37]"
+                className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function RegisterPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border-color rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-[#722F37]"
+                className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-text-primary placeholder-[#999999] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow-lg border border-dark-blue transition-colors flex items-center justify-center gap-2 mt-4"
+            className="w-full py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow-lg border border-border transition-colors flex items-center justify-center gap-2 mt-4"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -190,7 +190,7 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-border-color text-center text-xs text-text-secondary">
+        <div className="mt-6 pt-4 border-t border-border text-center text-xs text-text-secondary">
           Already have an account?{' '}
           <Link href="/login" className="text-primary font-bold hover:underline">
             Sign in

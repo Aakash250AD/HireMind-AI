@@ -16,7 +16,7 @@ export const WorkflowVisualizer: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white border border-border-color rounded-[var(--radius-md)] p-6 shadow-xl">
+    <div className="bg-white border border-border rounded-[var(--radius-md)] p-6 shadow-xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-base font-bold text-text-primary">Low-Code Backend Automation Workflow</h3>
@@ -24,7 +24,7 @@ export const WorkflowVisualizer: React.FC = () => {
             Frontend visual representation of backend webhook nodes executed on external platforms.
           </p>
         </div>
-        <span className="text-xs font-bold text-primary bg-primary/20 border border-[#722F37] px-3 py-1 rounded-full">
+        <span className="text-xs font-bold text-primary bg-primary/20 border border-border px-3 py-1 rounded-full">
           ● Workflow Engine Connected
         </span>
       </div>
@@ -37,8 +37,8 @@ export const WorkflowVisualizer: React.FC = () => {
               <div
                 className={`p-4 rounded-[var(--radius-md)] border flex flex-col items-center justify-center text-center w-40 transition-all ${
                   node.id === 'n9'
-                    ? 'bg-primary border-dark-blue shadow-lg text-white'
-                    : 'bg-page-bg border-border-color hover:border-[#722F37]'
+                    ? 'bg-primary border-border shadow-lg text-white'
+                    : 'bg-page-bg border-border hover:border-border-hover hover:shadow-sm'
                 }`}
               >
                 <span className="text-2xl mb-1">{node.icon}</span>

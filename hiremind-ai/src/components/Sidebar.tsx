@@ -35,10 +35,10 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-border-color flex flex-col justify-between h-screen sticky top-0 z-30 shrink-0 select-none">
+    <aside className="w-64 bg-white border-r border-border flex flex-col justify-between h-screen sticky top-0 z-30 shrink-0 select-none">
       <div>
         {/* Logo Section */}
-        <div className="p-5 border-b border-border-color">
+        <div className="p-5 border-b border-border">
           <Link href="/dashboard">
             <Logo size="md" />
           </Link>
@@ -48,7 +48,7 @@ export const Sidebar: React.FC = () => {
         <div className="px-4 pt-4">
           <Link
             href="/jobs/create"
-            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary hover:bg-dark-blue text-white text-sm font-semibold rounded-[var(--radius-sm)] shadow border border-dark-blue transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary hover:bg-dark-blue text-white text-sm font-semibold rounded-[var(--radius-sm)] shadow border border-border transition-colors"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Create Job with AI</span>
@@ -67,7 +67,7 @@ export const Sidebar: React.FC = () => {
                 href={item.href}
                 className={`flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-[var(--radius-sm)] transition-all ${
                   isActive
-                    ? 'bg-primary text-white shadow-md border border-dark-blue'
+                    ? 'bg-primary text-white shadow-md border border-border'
                     : 'text-text-secondary hover:bg-page-bg hover:text-text-primary'
                 }`}
               >
@@ -76,7 +76,7 @@ export const Sidebar: React.FC = () => {
                   <span>{item.name}</span>
                 </div>
                 {item.badge && (
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-zinc-900 text-primary border border-[#722F37]/40">
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-zinc-900 text-primary border border-border">
                     {item.badge}
                   </span>
                 )}
@@ -87,9 +87,9 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Recruiter Workspace Profile Card */}
-      <div className="p-4 border-t border-border-color bg-page-bg">
+      <div className="p-4 border-t border-border bg-page-bg">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center font-bold text-text-primary text-sm border border-dark-blue">
+          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center font-bold text-text-primary text-sm border border-border">
             SJ
           </div>
           <div className="flex flex-col min-w-0">

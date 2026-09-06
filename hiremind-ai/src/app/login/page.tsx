@@ -44,7 +44,7 @@ export default function SplitLoginPage() {
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-4 md:p-8 font-sans">
       
       {/* Container Split Card */}
-      <div className="w-full max-w-5xl bg-white border border-border-color rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
+      <div className="w-full max-w-5xl bg-white border border-border rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
         
         {/* Left Column: Unique Visual Hero Experience (5 Cols) */}
         <div className="lg:col-span-5 bg-gradient-to-br from-[#0A66C2] via-[#004182] to-[#0A0D14] p-8 md:p-10 text-text-primary flex flex-col justify-between relative overflow-hidden">
@@ -121,7 +121,7 @@ export default function SplitLoginPage() {
           
           <div>
             {/* Split Portal Switcher Pills */}
-            <div className="bg-page-bg p-1.5 rounded-[var(--radius-lg)] border border-border-color mb-8 grid grid-cols-2 gap-1 max-w-sm">
+            <div className="bg-page-bg p-1.5 rounded-[var(--radius-lg)] border border-border mb-8 grid grid-cols-2 gap-1 max-w-sm">
               <button
                 type="button"
                 onClick={() => { setRole('hr'); setEmail('recruiter@company.com'); }}
@@ -174,7 +174,7 @@ export default function SplitLoginPage() {
                       type="text"
                       value={company || 'HireMind AI Corp'}
                       onChange={(e) => setCompany(e.target.value)}
-                      className="w-full pl-3.5 pr-4 py-2.5 bg-page-bg border border-border-color rounded-[var(--radius-md)] text-xs font-semibold text-text-primary focus:outline-none focus:border-[#0A66C2] focus:bg-white transition-all"
+                      className="w-full pl-3.5 pr-4 py-2.5 bg-page-bg border border-border rounded-[var(--radius-md)] text-xs font-semibold text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all"
                       placeholder="e.g. Acme Enterprise"
                     />
                   </div>
@@ -192,7 +192,7 @@ export default function SplitLoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-page-bg border border-border-color rounded-[var(--radius-md)] text-xs font-semibold text-text-primary focus:outline-none focus:border-[#0A66C2] focus:bg-white transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-page-bg border border-border rounded-[var(--radius-md)] text-xs font-semibold text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all"
                     placeholder={role === 'hr' ? 'recruiter@company.com' : 'candidate@example.com'}
                   />
                 </div>
@@ -214,7 +214,7 @@ export default function SplitLoginPage() {
                     required
                     value={password || '••••••••'}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-page-bg border border-border-color rounded-[var(--radius-md)] text-xs font-semibold text-text-primary focus:outline-none focus:border-[#0A66C2] focus:bg-white transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-page-bg border border-border rounded-[var(--radius-md)] text-xs font-semibold text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all"
                     placeholder="••••••••"
                   />
                 </div>
@@ -226,7 +226,7 @@ export default function SplitLoginPage() {
                     type="checkbox"
                     checked={remember}
                     onChange={(e) => setRemember(e.target.checked)}
-                    className="w-4 h-4 rounded text-primary focus:ring-[#0A66C2] border-border-color"
+                    className="w-4 h-4 rounded text-primary focus:ring-[#0A66C2] border-border"
                   />
                   <span className="text-xs text-text-secondary font-medium">Keep me signed in</span>
                 </label>
@@ -252,7 +252,7 @@ export default function SplitLoginPage() {
           </div>
 
           {/* Footer Register Prompt */}
-          <div className="pt-6 border-t border-border-color text-center text-xs text-text-secondary">
+          <div className="pt-6 border-t border-border text-center text-xs text-text-secondary">
             <span>Don&apos;t have an account yet? </span>
             <Link href="/register" className="font-bold text-primary hover:underline">
               Create HireMind Account

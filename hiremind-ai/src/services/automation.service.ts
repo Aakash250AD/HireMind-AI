@@ -14,7 +14,7 @@ export const automationService = {
   async triggerWorkflow(workflowId: string): Promise<AutomationWorkflow> {
     try {
       // Fire the n8n webhook provided by the user
-      await fetch('https://api.agents.snsihub.ai/webhook-test/591f7239-951d-414d-a912-a8e3b9242afb', {
+      await fetch('https://api.agents.snsihub.ai/webhook-test/210ff37c-940e-4796-aa8c-991ac36631cc', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

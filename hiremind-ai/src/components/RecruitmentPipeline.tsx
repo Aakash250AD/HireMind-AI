@@ -35,13 +35,13 @@ export const RecruitmentPipeline: React.FC<RecruitmentPipelineProps> = ({
   ];
 
   return (
-    <div className="bg-white border border-border-color rounded-[var(--radius-md)] p-5 shadow-lg">
+    <div className="bg-white border border-border rounded-[var(--radius-md)] p-5 shadow-lg">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-base font-bold text-text-primary tracking-tight">Recruitment Pipeline Workflow</h3>
           <p className="text-xs text-text-secondary">Autonomous AI Screening & Verification → Recruiter Final Hiring Review</p>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-800/40">
+        <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold bg-emerald-950/40 px-3 py-1 rounded-full border border-border/40">
           <CheckCircle2 className="w-3.5 h-3.5" />
           <span>Human-in-the-Loop Active</span>
         </div>
@@ -59,10 +59,10 @@ export const RecruitmentPipeline: React.FC<RecruitmentPipelineProps> = ({
               onClick={() => onStageClick && onStageClick(stage)}
               className={`flex flex-col items-start p-3 rounded-[var(--radius-sm)] border text-left transition-all relative group ${
                 isSelected
-                  ? 'bg-primary border-dark-blue text-white shadow-md'
+                  ? 'bg-primary border-border text-white shadow-md'
                   : isHumanStage
-                  ? 'bg-page-bg border-[#722F37]/50 text-white hover:border-[#722F37]'
-                  : 'bg-page-bg border-border-color text-text-secondary hover:border-zinc-500'
+                  ? 'bg-page-bg border-border text-white hover:border-border-hover hover:shadow-sm'
+                  : 'bg-page-bg border-border text-text-secondary hover:border-zinc-500'
               }`}
             >
               <div className="flex items-center justify-between w-full mb-1">

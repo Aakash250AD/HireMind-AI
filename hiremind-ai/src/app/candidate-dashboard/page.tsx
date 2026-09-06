@@ -13,9 +13,7 @@ import { Sparkles, ArrowRight, PlayCircle } from 'lucide-react';
 
 interface CandidateStats {
   appliedJobs: number;
-  aiScreeningMatch: number;
-  aiInterviewScore: number;
-  skillVerification: string;
+  profileCompletion: number;
 }
 
 interface ApplicationStatus {
@@ -41,11 +39,11 @@ interface Job {
 
 const TRACKER_STEPS = [
   'Applied',
-  'Screened',
-  'AI Interview',
-  'Assessment',
-  'HR Review',
-  'Offer'
+  'Under Review',
+  'Interview',
+  'Shortlisted',
+  'Rejected',
+  'Hired'
 ];
 
 export default function CandidateDashboardPage() {
@@ -111,9 +109,7 @@ export default function CandidateDashboardPage() {
             {stats && (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard label="Applied Jobs" value={stats.appliedJobs} />
-                <StatCard label="AI Match Score" value={`${stats.aiScreeningMatch}%`} />
-                <StatCard label="Interview Score" value={`${stats.aiInterviewScore}/100`} />
-                <StatCard label="Skill Verification" value={stats.skillVerification} />
+                <StatCard label="Profile Completion" value={`${stats.profileCompletion || 60}%`} />
               </div>
             )}
 
@@ -154,17 +150,7 @@ export default function CandidateDashboardPage() {
                       })}
                     </div>
                     
-                    {status.currentStep === 3 && (
-                      <div className="p-4 bg-primary-tint border border-primary/20 rounded-lg flex items-center justify-between mt-4">
-                        <div className="flex items-center gap-3">
-                          <Sparkles className="w-5 h-5 text-primary" />
-                          <span className="text-sm font-semibold text-primary">Pending AI Interview</span>
-                        </div>
-                        <Link href="/interview">
-                          <Button className="shadow-sm">Start Interview</Button>
-                        </Link>
-                      </div>
-                    )}
+
                   </Card>
                 )}
 
@@ -196,19 +182,8 @@ export default function CandidateDashboardPage() {
                 </div>
               </div>
 
-              {/* Sidebar Assessments */}
               <div className="lg:col-span-4 space-y-6">
-                 <Card className="bg-surface-sunken border-border space-y-4">
-                   <h3 className="text-base font-semibold text-ink">Pending Assessments</h3>
-                   <div className="bg-white border border-border p-4 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2 text-ink">
-                        <PlayCircle className="w-4 h-4" />
-                        <span className="text-sm font-semibold">Frontend Technical Assessment</span>
-                      </div>
-                      <p className="text-xs text-ink-soft mb-4">Complete your 20-min technical screening to advance your application.</p>
-                      <Button variant="secondary" className="w-full text-xs">Begin Assessment</Button>
-                   </div>
-                 </Card>
+                 {/* Sidebar Content Area */}
               </div>
 
             </div>

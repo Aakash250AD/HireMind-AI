@@ -9,7 +9,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-page-bg text-text-primary flex flex-col font-sans selection:bg-primary selection:text-text-primary">
       {/* Navigation */}
-      <header className="border-b border-border-color bg-page-bg/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-border bg-page-bg/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
         <Logo size="md" />
         <div className="hidden md:flex items-center gap-8 text-xs font-semibold text-text-secondary">
           <a href="#how-it-works" className="hover:text-text-primary transition-colors">How It Works</a>
@@ -20,7 +20,7 @@ export default function LandingPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/login"
-            className="px-6 py-2 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-sm)] border border-dark-blue shadow-lg transition-all flex items-center gap-1.5"
+            className="px-6 py-2 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-sm)] border border-border shadow-lg transition-all flex items-center gap-1.5"
           >
             Login
           </Link>
@@ -40,17 +40,24 @@ export default function LandingPage() {
           An autonomous AI recruitment platform that sources, screens, interviews, and verifies candidates — while keeping recruiters in control of the final hiring decision.
         </p>
 
-        <div className="mt-8 flex flex-col sm:flex-row items-center gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
-            href="/dashboard"
-            className="w-full sm:w-auto px-8 py-3.5 bg-primary hover:bg-dark-blue text-white text-sm font-extrabold rounded-[var(--radius-md)] border border-dark-blue shadow-xl transition-all flex items-center justify-center gap-2"
+            href="/login"
+            className="w-full sm:w-auto px-8 py-3.5 bg-primary hover:bg-dark-blue text-white text-sm font-extrabold rounded-[var(--radius-md)] border border-border shadow-xl transition-all flex items-center justify-center gap-2"
           >
             <span>Start Hiring Now</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
+          <Link
+            href="/login"
+            className="w-full sm:w-auto px-8 py-3.5 bg-white hover:bg-page-bg text-primary text-sm font-extrabold rounded-[var(--radius-md)] border border-primary shadow-xl transition-all flex items-center justify-center gap-2"
+          >
+            <span>Find Jobs</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
           <a
             href="#how-it-works"
-            className="w-full sm:w-auto px-8 py-3.5 bg-light-blue hover:bg-[#D8E7F1] text-[#16324F] text-sm font-semibold rounded-[var(--radius-md)] border border-[#0788C9] transition-colors flex items-center justify-center"
+            className="w-full sm:w-auto px-8 py-3.5 bg-light-blue hover:bg-[#D8E7F1] text-[#16324F] text-sm font-semibold rounded-[var(--radius-md)] border border-border transition-colors flex items-center justify-center"
           >
             See How It Works
           </a>
@@ -60,15 +67,15 @@ export default function LandingPage() {
       </section>
 
       {/* Problem vs Solution */}
-      <section className="bg-white border-y border-border-color py-16 px-6">
+      <section className="bg-white border-y border-border py-16 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="bg-white p-8 rounded-[var(--radius-lg)] border border-border-color">
+          <div className="bg-white p-8 rounded-[var(--radius-lg)] border border-border">
             <h3 className="text-xl font-bold text-primary mb-3">The Recruitment Problem</h3>
             <p className="text-sm text-text-secondary leading-relaxed">
               Recruiters waste 70% of their time on manual tasks: parsing repetitive job descriptions, reading hundreds of resume PDFs, manually sending emails, and guessing candidate skill authenticity.
             </p>
           </div>
-          <div className="bg-white p-8 rounded-[var(--radius-lg)] border border-border-color">
+          <div className="bg-white p-8 rounded-[var(--radius-lg)] border border-border">
             <h3 className="text-xl font-bold text-emerald-400 mb-3">The HireMind Solution</h3>
             <p className="text-sm text-text-secondary leading-relaxed">
               HireMind AI automates sourcing, resume screening, technical interviews, and evidence-based skill verification — presenting explainable recommendations so recruiters make informed final hiring decisions.
@@ -85,7 +92,7 @@ export default function LandingPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border-color">
+          <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border">
             <ShieldCheck className="w-8 h-8 text-primary mb-4" />
             <h4 className="text-base font-bold text-text-primary">AI Skill Verification</h4>
             <p className="text-xs text-text-secondary mt-2 leading-relaxed">
@@ -93,7 +100,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border-color">
+          <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border">
             <Video className="w-8 h-8 text-primary mb-4" />
             <h4 className="text-base font-bold text-text-primary">Interactive AI Interview</h4>
             <p className="text-xs text-text-secondary mt-2 leading-relaxed">
@@ -101,7 +108,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border-color">
+          <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border">
             <Bot className="w-8 h-8 text-primary mb-4" />
             <h4 className="text-base font-bold text-text-primary">Recruiter AI Copilot</h4>
             <p className="text-xs text-text-secondary mt-2 leading-relaxed">
@@ -112,9 +119,9 @@ export default function LandingPage() {
       </section>
 
       {/* Human-in-the-Loop Core Philosophy */}
-      <section id="security" className="bg-white border-t border-border-color py-16 px-6">
+      <section id="security" className="bg-white border-t border-border py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-[#722F37] text-xs font-bold text-primary mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-border text-xs font-bold text-primary mb-4">
             <Lock className="w-3.5 h-3.5" />
             <span>Human-in-the-Loop Safeguard</span>
           </div>
@@ -128,7 +135,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-border-color bg-page-bg px-6 py-8">
+      <footer className="mt-auto border-t border-border bg-page-bg px-6 py-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-secondary">
           <Logo size="sm" />
           <p>© 2026 HireMind AI. All rights reserved. Autonomous Recruitment & Talent Verification.</p>
