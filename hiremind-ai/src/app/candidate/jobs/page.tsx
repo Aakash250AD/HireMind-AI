@@ -2,27 +2,69 @@
 
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/DashboardLayout';
-import { callWebhook } from '@/lib/apiClient';
-import { WEBHOOKS } from '@/lib/webhooks';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { StatusPill } from '@/components/ui/StatusPill';
+import { Search, MapPin, DollarSign, Briefcase } from 'lucide-react';
+import { jobsService } from '@/services/jobs.service';
+import { candidatesService } from '@/services/candidates.service';
+import { Job } from '@/types';
+import { useRouter } from 'next/navigation';
+import { TiltCard } from '@/components/animations/TiltCard';
+import { MagneticButton } from '@/components/animations/MagneticButton';
 
-interface Job {
-  id: string;
-  title: string;
-  category: string;
-  status: string;
-  description: string;
-  location: string;
-  salary: string;
-  skills: string[];
+function ApplyModal({ job, onClose, onSuccess }: { job: Job, onClose: () => void, onSuccess: () => void }) {
+  const [loading, setLoading] = useState(false);
+  const [fileName, setFileName] = useState('');
+
+  const handleApply = async () => {
+    if (!fileName.trim()) return alert('Please enter a resume file name (e.g. resume.pdf)');
+    setLoading(true);
+    try {
+      await candidatesService.uploadAndScreenResume(fileName, job.id);
+      onSuccess();
+    } catch (err) {
+      alert('Failed to apply. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
+      <Card className="w-full max-w-md space-y-6 shadow-2xl">
+        <div>
+          <h3 className="text-xl font-bold text-ink">Apply for {job.title}</h3>
+          <p className="text-sm text-ink-soft mt-1">Please attach your resume to apply.</p>
+        </div>
+        
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-ink">Resume File</label>
+          <input 
+            type="file" 
+            accept=".pdf,.doc,.docx,.jpg,.jpeg"
+            onChange={(e) => setFileName(e.target.files?.[0]?.name || '')}
+            className="w-full px-4 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-surface-sunken file:text-ink hover:file:bg-border cursor-pointer bg-page-bg"
+          />
+          <p className="text-xs text-ink-faint">Accepted formats: PDF, DOC, DOCX, JPG. For this demo, no actual file is uploaded.</p>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4 border-t border-border">
+          <Button variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>
+          <Button onClick={handleApply} isLoading={loading}>Submit Application</Button>
+        </div>
+      </Card>
+    </div>
+  );
 }
 
 export default function CandidateJobsPage() {
+  const router = useRouter();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
-  const [applyingTo, setApplyingTo] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  
+  const [applyingJob, setApplyingJob] = useState<Job | null>(null);
 
   useEffect(() => {
     loadJobs();
@@ -31,8 +73,8 @@ export default function CandidateJobsPage() {
   async function loadJobs() {
     setLoading(true);
     try {
-      const data = await callWebhook<Job[]>(WEBHOOKS.jobList);
-      setJobs(data || []);
+      const data = await jobsService.getJobs();
+      setJobs(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -40,61 +82,97 @@ export default function CandidateJobsPage() {
     }
   }
 
-  async function handleApply(jobId: string) {
-    setApplyingTo(jobId);
-    try {
-      await callWebhook(WEBHOOKS.candidateApply, { jobId });
-      alert('Application submitted successfully!');
-    } catch (err) {
-      alert('Failed to apply.');
-    } finally {
-      setApplyingTo(null);
-    }
-  }
+  const filteredJobs = jobs.filter(j => 
+    j.title.toLowerCase().includes(search.toLowerCase()) || 
+    (j.requiredSkills || []).some(s => s.toLowerCase().includes(search.toLowerCase()))
+  );
 
   return (
     <DashboardLayout role="candidate">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl font-semibold text-ink">Browse Jobs</h1>
-          <p className="text-sm text-ink-soft mt-1">Find and apply for open positions that match your skills.</p>
+      <div className="space-y-6 max-w-5xl mx-auto">
+        
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold text-ink">Find Jobs</h1>
+            <p className="text-sm text-ink-soft">Search and apply for your next great opportunity.</p>
+          </div>
         </div>
 
+        {/* Search & Filter Bar */}
+        <Card className="flex items-center gap-3 p-2">
+          <div className="flex-1 flex items-center gap-2 px-3 py-1.5 bg-surface-sunken border border-border rounded-md">
+            <Search className="w-4 h-4 text-ink-faint shrink-0" />
+            <input 
+              type="text"
+              placeholder="Search by title or skill..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="bg-transparent border-none outline-none text-sm text-ink w-full"
+            />
+          </div>
+        </Card>
+
         {loading ? (
-          <div className="py-10 text-center text-ink-faint">Loading jobs...</div>
+          <div className="py-20 text-center text-ink-faint">Loading jobs...</div>
         ) : (
           <div className="grid gap-4">
-            {jobs.length > 0 ? (
-              jobs.map(job => (
-                <Card key={job.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-primary/30 hover:shadow-sm transition-all">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-ink">{job.title}</h3>
-                      <StatusPill status={job.category} />
+            {filteredJobs.length === 0 ? (
+              <div className="py-12 text-center text-ink-faint">No jobs found matching your search.</div>
+            ) : (
+              filteredJobs.map(job => (
+                <TiltCard key={job.id} maxTilt={2}>
+                  <Card className="flex flex-col md:flex-row md:items-start justify-between gap-6 hover:shadow-md transition-shadow h-full">
+                  <div className="space-y-3 flex-1">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-ink">{job.title}</h3>
+                        <div className="flex items-center gap-4 text-xs text-ink-soft mt-1">
+                          <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5" /> {job.department}</span>
+                          <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {job.location}</span>
+                          <span className="flex items-center gap-1"><DollarSign className="w-3.5 h-3.5" /> {job.salaryRange}</span>
+                        </div>
+                      </div>
+                      <StatusPill status={job.status === 'ACTIVE' ? 'Hiring' : job.status} />
                     </div>
-                    <p className="text-sm text-ink-soft line-clamp-2 mb-3">{job.description}</p>
-                    <div className="flex items-center gap-4 text-xs text-ink-faint font-medium">
-                      <span>{job.location}</span>
-                      <span>{job.salary}</span>
+                    
+                    <p className="text-sm text-ink leading-relaxed line-clamp-2">
+                      {job.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {(job.requiredSkills || []).map(skill => (
+                        <span key={skill} className="px-2 py-0.5 bg-surface-sunken text-ink-soft border border-border text-xs rounded-full font-medium">
+                          {skill}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                  <Button 
-                    onClick={() => handleApply(job.id)} 
-                    isLoading={applyingTo === job.id}
-                    className="shrink-0"
-                  >
-                    Apply Job
-                  </Button>
-                </Card>
+                  
+                  <div className="w-full md:w-auto shrink-0 md:pl-4 md:border-l border-border flex flex-col items-center md:items-end gap-3 justify-center">
+                    <MagneticButton>
+                      <Button onClick={() => setApplyingJob(job)} className="w-full md:w-32">
+                        Apply Now
+                      </Button>
+                    </MagneticButton>
+                  </div>
+                  </Card>
+                </TiltCard>
               ))
-            ) : (
-              <Card className="py-12 text-center text-ink-soft">
-                No jobs available right now. Please check back later.
-              </Card>
             )}
           </div>
         )}
       </div>
+
+      {applyingJob && (
+        <ApplyModal 
+          job={applyingJob} 
+          onClose={() => setApplyingJob(null)} 
+          onSuccess={() => {
+            setApplyingJob(null);
+            router.push('/candidate/applications');
+          }} 
+        />
+      )}
     </DashboardLayout>
   );
 }

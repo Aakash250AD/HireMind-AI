@@ -29,9 +29,8 @@ export const Sidebar: React.FC = () => {
     { name: 'Shortlist', href: '/shortlist', icon: Award },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'AI Copilot', href: '/copilot', icon: Bot, badge: 'AI' },
-    { name: 'Automations', href: '/automations', icon: Zap },
     { name: 'Notifications', href: '/notifications', icon: Bell },
-    { name: 'Settings', href: '/settings', icon: Settings },
+    { name: 'Profile', href: '/hr/profile', icon: Settings },
   ];
 
   return (

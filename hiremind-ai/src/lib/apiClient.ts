@@ -70,7 +70,7 @@ async function simulateMockData<T>(url: string, body?: any): Promise<T> {
           status: 'ACTIVE',
           description: 'Build enterprise dashboards with Next.js.',
           location: 'Remote',
-          salary: '$140k - $180k',
+          salary: '₹14L - ₹18L',
           skills: ['React', 'TypeScript', 'Next.js'],
           applicantCount: 24,
         },
@@ -81,7 +81,7 @@ async function simulateMockData<T>(url: string, body?: any): Promise<T> {
           status: 'ACTIVE',
           description: 'Create beautiful enterprise tools.',
           location: 'New York / Hybrid',
-          salary: '$120k - $160k',
+          salary: '₹12L - ₹16L',
           skills: ['Figma', 'UI/UX', 'Design Systems'],
           applicantCount: 45,
         }

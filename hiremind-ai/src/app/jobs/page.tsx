@@ -55,7 +55,7 @@ export default function JobsPage() {
               placeholder="Search jobs by title or skill..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+              className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
             />
           </div>
 
@@ -63,7 +63,7 @@ export default function JobsPage() {
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+              className="w-full sm:w-auto px-3 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink focus:outline-none"
             >
               <option value="ALL">All Departments</option>
               <option value="Artificial Intelligence">Artificial Intelligence</option>

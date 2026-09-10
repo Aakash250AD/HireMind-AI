@@ -26,7 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ title = 'Dashboard' }) => {
           <input
             type="text"
             placeholder="Search candidates, jobs, skills..."
-            className="w-full pl-9 pr-4 py-1.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+            className="w-full pl-9 pr-4 py-1.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
           />
         </div>
 

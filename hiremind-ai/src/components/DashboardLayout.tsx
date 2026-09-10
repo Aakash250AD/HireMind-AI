@@ -20,7 +20,10 @@ import {
   BarChart3,
   MessageSquare,
   UserCircle,
-  Command
+  Command,
+  Video,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { HMAICopilot } from './ui/HMAICopilot';
@@ -54,13 +57,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
     { name: 'Post Job', href: '/jobs/create', icon: Plus },
     { name: 'Applications', href: '/candidates', icon: Users },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-    { name: 'Automations', href: '/automations', icon: BrainCircuit },
   ];
 
   const candidateSidebarItems = [
     { name: 'Dashboard', href: '/candidate-dashboard', icon: Home },
     { name: 'Browse Jobs', href: '/candidate/jobs', icon: Search },
     { name: 'My Applications', href: '/candidate/applications', icon: Briefcase },
+    { name: 'Interviews', href: '/candidate/interviews', icon: Video },
     { name: 'Profile', href: '/candidate/profile', icon: UserCircle },
   ];
 
@@ -76,9 +79,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
           {/* Logo */}
           <div className="px-6">
             <Link href={activeRole === 'candidate' ? '/candidate-dashboard' : '/dashboard'} className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-hm-deep to-hm-matte flex items-center justify-center text-white shadow-md relative group">
+              <div className="w-8 h-8 rounded-[var(--radius-sm)] bg-gradient-to-br from-hm-deep to-hm-matte flex items-center justify-center text-white shadow-md relative group">
                 <BrainCircuit className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <div className="absolute inset-0 bg-white/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-white/20 rounded-[var(--radius-sm)] blur opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-lg font-extrabold text-hm-deep tracking-tight">
@@ -109,7 +112,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`relative flex items-center gap-3 px-4 py-2.5 text-xs font-semibold rounded-lg transition-all duration-200 group overflow-hidden ${
+                  className={`relative flex items-center gap-3 px-4 py-2.5 text-xs font-semibold rounded-[var(--radius-sm)] transition-all duration-200 group overflow-hidden ${
                     isActive
                       ? 'text-primary bg-primary-tint/30'
                       : 'text-ink-soft hover:bg-white/80 hover:text-ink'
@@ -132,19 +135,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
           </nav>
         </div>
 
-        {/* Footer Area */}
-        <div className="space-y-4 px-4">
-          <div className="p-4 bg-white border border-border rounded-[var(--radius-hm-card)] shadow-sm relative overflow-hidden group">
-            <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors" />
-            <div className="flex items-center gap-2 mb-1 relative z-10">
-              <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-              <span className="text-[10px] font-bold text-ink uppercase tracking-wider">System Active</span>
-            </div>
-            <p className="text-[10px] text-ink-faint relative z-10">
-              {activeRole === 'candidate' ? 'Candidate Portal Connected' : 'SNS Agent Workbench Live'}
-            </p>
-          </div>
-        </div>
 
       </aside>
 
@@ -170,6 +160,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
 
           {/* User Controls */}
           <div className="flex items-center gap-4 pl-4">
+            <button 
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-surface-sunken text-ink-soft hover:text-ink transition-colors"
+              title="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <div className="w-px h-6 bg-border" />
             <NotificationMenu 
               isOpen={notificationMenuOpen} 
               onToggle={() => {

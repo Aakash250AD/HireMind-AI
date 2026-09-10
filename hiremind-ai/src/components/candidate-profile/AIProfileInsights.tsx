@@ -56,7 +56,7 @@ export function AIProfileInsights() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-4 border border-border shadow-sm">
+      <div className="bg-white rounded-[var(--radius-md)] p-4 border border-border shadow-sm">
         <h4 className="text-xs font-bold text-ink mb-3 flex items-center gap-1.5">
           <AlertCircle className="w-3.5 h-3.5 text-primary" /> Recommended Actions
         </h4>

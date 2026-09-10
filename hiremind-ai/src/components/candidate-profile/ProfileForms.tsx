@@ -114,7 +114,7 @@ export function ProfileForms() {
       <HMCard className="p-6" id="resume">
         <h3 className="text-lg font-bold text-ink mb-4 pb-2 border-b border-border">Resume</h3>
         
-        <div className="w-full border-2 border-dashed border-primary/30 rounded-xl p-8 flex flex-col items-center justify-center bg-primary-tint/30 hover:bg-primary-tint/50 transition-colors cursor-pointer group">
+        <div className="w-full border-2 border-dashed border-primary/30 rounded-[var(--radius-md)] p-8 flex flex-col items-center justify-center bg-primary-tint/30 hover:bg-primary-tint/50 transition-colors cursor-pointer group">
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm mb-3 group-hover:scale-110 transition-transform">
             <UploadCloud className="w-6 h-6" />
           </div>

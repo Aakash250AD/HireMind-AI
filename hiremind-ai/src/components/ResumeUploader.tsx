@@ -61,7 +61,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({ jobId, onScreeni
         }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        className={`border border-dashed rounded-xl p-10 flex flex-col items-center justify-center text-center transition-all ${
+        className={`border border-dashed rounded-[var(--radius-md)] p-10 flex flex-col items-center justify-center text-center transition-all ${
           dragOver ? 'border-primary bg-primary-tint/30' : 'border-border bg-surface-sunken/30'
         }`}
       >
@@ -72,7 +72,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({ jobId, onScreeni
             </div>
             <p className="text-base font-semibold text-ink">Drag & drop candidate resume here</p>
             <p className="text-sm text-ink-soft mt-1 mb-6">Or browse files from your computer</p>
-            <label className="px-5 py-2.5 bg-primary hover:bg-blue-700 text-white text-sm font-semibold rounded-lg cursor-pointer transition-colors shadow-sm inline-flex items-center">
+            <label className="px-5 py-2.5 bg-primary hover:bg-blue-700 text-white text-sm font-semibold rounded-[var(--radius-sm)] cursor-pointer transition-colors shadow-sm inline-flex items-center">
               Select Resume File
               <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileSelect} className="hidden" />
             </label>

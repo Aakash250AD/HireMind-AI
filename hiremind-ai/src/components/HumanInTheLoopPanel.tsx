@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Candidate } from '@/types';
 import { ShieldAlert, CheckCircle, XCircle, FileQuestion, Lock } from 'lucide-react';
+import { SwipeToDecideCard } from '@/components/animations/SwipeToDecideCard';
 
 interface HumanInTheLoopPanelProps {
   candidate: Candidate;
@@ -27,7 +28,12 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
   };
 
   return (
-    <div className="bg-white border border-border rounded-[var(--radius-md)] p-5 shadow-2xl relative overflow-hidden">
+    <SwipeToDecideCard 
+      swipeThreshold={150} 
+      onAdvance={() => handleDecision('APPROVED')} 
+      onPass={() => handleDecision('REJECTED')}
+    >
+      <div className="bg-white border border-border rounded-[var(--radius-md)] p-5 shadow-2xl relative overflow-hidden">
       {/* Top Banner Notice */}
       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary mb-3">
         <Lock className="w-4 h-4" />
@@ -114,6 +120,7 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </SwipeToDecideCard>
   );
 };

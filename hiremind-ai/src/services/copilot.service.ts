@@ -1,4 +1,4 @@
-import { simulateNetworkDelay } from './api';
+import { simulateNetworkDelay, callWebhook } from './api';
 
 export interface CopilotMessage {
   id: string;
@@ -19,6 +19,17 @@ export const SUGGESTED_COPILOT_PROMPTS = [
 
 export const copilotService = {
   async askCopilot(userPrompt: string): Promise<CopilotMessage> {
+    try {
+      const response = await callWebhook<CopilotMessage>({
+        action: 'ASK_COPILOT',
+        role: 'admin',
+        data: { prompt: userPrompt }
+      });
+      if (response) { return response; }
+    } catch (error) {
+      console.warn('Webhook ASK_COPILOT failed, falling back to mock logic', error);
+    }
+
     await simulateNetworkDelay(1200);
 
     const promptLower = userPrompt.toLowerCase();

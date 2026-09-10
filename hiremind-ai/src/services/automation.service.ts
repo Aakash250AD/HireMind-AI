@@ -1,30 +1,40 @@
 import { AutomationWorkflow, EmailCommunication } from '@/types';
 import { MOCK_AUTOMATIONS, MOCK_EMAILS } from './mockData';
-import { simulateNetworkDelay } from './api';
+import { simulateNetworkDelay, callWebhook } from './api';
 
 const automationsDb: AutomationWorkflow[] = [...MOCK_AUTOMATIONS];
 const emailsDb: EmailCommunication[] = [...MOCK_EMAILS];
 
 export const automationService = {
   async getAutomations(): Promise<AutomationWorkflow[]> {
+    try {
+      const response = await callWebhook<AutomationWorkflow[]>({
+        action: 'GET_AUTOMATIONS',
+        role: 'admin'
+      });
+      if (response) { return response; }
+    } catch (error) {
+      console.warn('Webhook GET_AUTOMATIONS failed, falling back to mock logic', error);
+    }
+
     await simulateNetworkDelay(350);
     return [...automationsDb];
   },
 
   async triggerWorkflow(workflowId: string): Promise<AutomationWorkflow> {
     try {
-      // Fire the n8n webhook provided by the user
-      await fetch('https://api.agents.snsihub.ai/webhook-test/210ff37c-940e-4796-aa8c-991ac36631cc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'trigger_workflow',
-          workflowId: workflowId,
-          timestamp: new Date().toISOString()
-        })
+      const response = await callWebhook<AutomationWorkflow>({
+        action: 'TRIGGER_WORKFLOW',
+        role: 'admin',
+        data: { workflowId }
       });
+      if (response) {
+        const index = automationsDb.findIndex((a) => a.id === workflowId);
+        if (index !== -1) automationsDb[index] = response;
+        return response;
+      }
     } catch (err) {
-      console.warn('Webhook delivery failed:', err);
+      console.warn('Webhook TRIGGER_WORKFLOW failed, falling back to mock logic:', err);
     }
 
     await simulateNetworkDelay(1200);
@@ -46,11 +56,36 @@ export const automationService = {
   },
 
   async getEmailCommunications(): Promise<EmailCommunication[]> {
+    try {
+      const response = await callWebhook<EmailCommunication[]>({
+        action: 'GET_EMAILS',
+        role: 'admin'
+      });
+      if (response) { return response; }
+    } catch (error) {
+      console.warn('Webhook GET_EMAILS failed, falling back to mock logic', error);
+    }
+
     await simulateNetworkDelay(300);
     return [...emailsDb];
   },
 
   async retryEmail(emailId: string): Promise<EmailCommunication> {
+    try {
+      const response = await callWebhook<EmailCommunication>({
+        action: 'RETRY_EMAIL',
+        role: 'admin',
+        data: { emailId }
+      });
+      if (response) {
+        const index = emailsDb.findIndex((e) => e.id === emailId);
+        if (index !== -1) emailsDb[index] = response;
+        return response;
+      }
+    } catch (error) {
+      console.warn('Webhook RETRY_EMAIL failed, falling back to mock logic', error);
+    }
+
     await simulateNetworkDelay(800);
     const index = emailsDb.findIndex((e) => e.id === emailId);
     if (index !== -1) {

@@ -15,7 +15,7 @@ export default function CreateJobPage() {
   const [employmentType, setEmploymentType] = useState<Job['employmentType']>('Full-Time');
   const [experience, setExperience] = useState('4+ years');
   const [education, setEducation] = useState("Bachelor's or Master's in CS");
-  const [salary, setSalary] = useState('$150,000 - $190,000');
+  const [salary, setSalary] = useState('₹15L - ₹19L');
   const [jobDescription, setJobDescription] = useState('');
 
   // AI Extraction state
@@ -69,7 +69,7 @@ export default function CreateJobPage() {
                     value={jobTitle}
                     onChange={(e) => setJobTitle(e.target.value)}
                     placeholder="e.g. Senior Autonomous AI Engineer"
-                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
                   />
                 </div>
                 <div>
@@ -77,7 +77,7 @@ export default function CreateJobPage() {
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink focus:outline-none"
                   >
                     <option value="Artificial Intelligence">Artificial Intelligence</option>
                     <option value="Engineering">Engineering</option>
@@ -94,7 +94,7 @@ export default function CreateJobPage() {
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink focus:outline-none"
                   />
                 </div>
                 <div>
@@ -103,7 +103,7 @@ export default function CreateJobPage() {
                     type="text"
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
-                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink focus:outline-none"
                   />
                 </div>
                 <div>
@@ -112,7 +112,7 @@ export default function CreateJobPage() {
                     type="text"
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
-                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+                    className="w-full p-2.5 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink focus:outline-none"
                   />
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function CreateJobPage() {
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
                   placeholder="Paste complete job description requirements here..."
-                  className="w-full p-3 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+                  className="w-full p-3 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
                 />
               </div>
 

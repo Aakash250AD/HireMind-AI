@@ -13,7 +13,7 @@ export function ProfilePreviewModal({ isOpen, onClose }: ProfilePreviewModalProp
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-hm-deep/80 backdrop-blur-sm animate-in fade-in duration-200">
       
-      <div className="w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="w-full max-w-4xl max-h-[90vh] bg-white rounded-[var(--radius-lg)] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         
         {/* Modal Header */}
         <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-surface-sunken shrink-0">
@@ -29,7 +29,7 @@ export function ProfilePreviewModal({ isOpen, onClose }: ProfilePreviewModalProp
         {/* Modal Content Scroll Area */}
         <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar bg-hm-bg">
           
-          <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
+          <div className="bg-white rounded-[var(--radius-lg)] border border-border overflow-hidden shadow-sm">
             {/* Header / Banner */}
             <div className="h-32 bg-gradient-to-r from-hm-deep to-primary relative" />
             
@@ -66,7 +66,7 @@ export function ProfilePreviewModal({ isOpen, onClose }: ProfilePreviewModalProp
               <div className="mt-8 border-t border-border pt-8">
                 <h3 className="text-sm font-bold text-ink mb-4 uppercase tracking-wider">Experience</h3>
                 <div className="flex gap-4">
-                  <div className="mt-1 w-10 h-10 rounded-lg bg-surface-sunken flex items-center justify-center shrink-0">
+                  <div className="mt-1 w-10 h-10 rounded-[var(--radius-sm)] bg-surface-sunken flex items-center justify-center shrink-0">
                     <Building className="w-5 h-5 text-ink-soft" />
                   </div>
                   <div>

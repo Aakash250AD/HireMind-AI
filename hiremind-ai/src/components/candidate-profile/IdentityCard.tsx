@@ -35,7 +35,7 @@ export function IdentityCard({ completionPercentage }: IdentityCardProps) {
       <p className="text-sm font-medium text-ink-faint mb-6">AI/ML Candidate</p>
 
       {/* Progress Indicator */}
-      <div className="w-full bg-surface-sunken rounded-xl p-4 mb-6 border border-border/50 relative overflow-hidden">
+      <div className="w-full bg-surface-sunken rounded-[var(--radius-md)] p-4 mb-6 border border-border/50 relative overflow-hidden">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-bold text-ink-soft uppercase tracking-wider">Profile Completion</span>
           <span className="text-sm font-extrabold text-primary">{completionPercentage}%</span>

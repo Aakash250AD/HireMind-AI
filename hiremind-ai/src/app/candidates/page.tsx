@@ -23,8 +23,8 @@ export default function CandidatesPage() {
   }, []);
 
   const filteredCandidates = candidates.filter((c) => {
-    const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          c.skills.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesSearch = c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (c.skills || []).some(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStage = selectedStage === 'ALL' || c.stage === selectedStage;
     return matchesSearch && matchesStage;
   });
@@ -58,7 +58,7 @@ export default function CandidatesPage() {
               placeholder="Search by candidate name or skill..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+              className="w-full pl-9 pr-4 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
             />
           </div>
 
@@ -67,7 +67,7 @@ export default function CandidatesPage() {
             <select
               value={selectedStage}
               onChange={(e) => setSelectedStage(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-white focus:outline-none"
+              className="w-full sm:w-auto px-3 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink focus:outline-none"
             >
               <option value="ALL">All Stages</option>
               <option value="Applied">Applied</option>

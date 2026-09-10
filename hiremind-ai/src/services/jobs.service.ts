@@ -47,7 +47,7 @@ export const jobsService = {
         department: 'AI & Automation Solutions',
         experienceYears: '4+ years',
         education: "Master's or Bachelor's in CS / Data Science",
-        salaryRange: '$155,000 - $205,000',
+        salaryRange: '₹15.5L - ₹20.5L',
         description: rawDescription,
         requiredSkills: ['Python', 'PyTorch', 'FastAPI', 'LLMs', 'Vector Databases', 'Docker'],
         preferredSkills: ['LangChain', 'PostgreSQL', 'Redis', 'Kubernetes', 'CI/CD Pipelines'],

@@ -19,8 +19,10 @@ import {
   LogOut, 
   Settings, 
   FileText,
-  LucideIcon 
+  LucideIcon,
+  Bell
 } from 'lucide-react';
+import { UserProfileMenu } from './ui/UserProfileMenu';
 
 interface TopNavbarProps {
   role?: 'hr' | 'candidate';
@@ -35,6 +37,7 @@ interface NavItem {
 export const TopNavbar: React.FC<TopNavbarProps> = ({ role = 'hr' }) => {
   const pathname = usePathname();
   const { theme, toggleTheme, clearCacheAndLogout } = useTheme();
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = React.useState(false);
 
   const isCandidateRoute = pathname.startsWith('/candidate-dashboard') || pathname.startsWith('/interview');
   const activeRole: 'hr' | 'candidate' = role || (isCandidateRoute ? 'candidate' : 'hr');
@@ -120,13 +123,19 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ role = 'hr' }) => {
           )}
 
           <button
-            onClick={clearCacheAndLogout}
-            title="Logout"
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition-all"
+            title="Notifications"
+            className="relative p-1.5 rounded-full bg-page-bg border border-border text-text-secondary hover:text-text-primary transition-all"
           >
-            <LogOut className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Logout</span>
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 border border-white rounded-full"></span>
           </button>
+
+          <UserProfileMenu 
+            role={activeRole} 
+            isOpen={isProfileMenuOpen} 
+            onToggle={() => setIsProfileMenuOpen(!isProfileMenuOpen)} 
+            onClose={() => setIsProfileMenuOpen(false)} 
+          />
 
           <Link
             href="/jobs"

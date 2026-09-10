@@ -3,9 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Sidebar } from '@/components/Sidebar';
-import { Navbar } from '@/components/Navbar';
-import { RecruiterWorkflowBanner } from '@/components/RecruiterWorkflowBanner';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { HumanInTheLoopPanel } from '@/components/HumanInTheLoopPanel';
 import { candidatesService } from '@/services/candidates.service';
 import { Candidate } from '@/types';
@@ -26,20 +24,21 @@ export default function CandidateProfilePage() {
 
   if (!candidate) {
     return (
-      <div className="min-h-screen bg-page-bg flex items-center justify-center text-xs text-text-secondary">
-        Loading Candidate Profile...
-      </div>
+      <DashboardLayout role="hr">
+        <div className="flex items-center justify-center py-20 text-xs text-text-secondary">
+          Loading Candidate Profile...
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-page-bg flex">
-      <Sidebar />
+    <DashboardLayout role="hr">
       <div className="flex-1 flex flex-col min-w-0">
-        <Navbar title={`Candidate Profile: ${candidate.name}`} />
-        <RecruiterWorkflowBanner />
-
-        <main className="p-6 space-y-6 flex-1 max-w-6xl mx-auto w-full">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-ink">Candidate Profile: {candidate.name}</h1>
+        </div>
+        <main className="space-y-6 flex-1 w-full mt-6">
           {/* Top Profile Header */}
           <div className="bg-white border border-border p-6 rounded-[var(--radius-md)] shadow-lg">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -102,11 +101,15 @@ export default function CandidateProfilePage() {
 
               <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider pt-2">Skills Inventory</h3>
               <div className="flex flex-wrap gap-1.5">
-                {candidate.skills.map((sk) => (
-                  <span key={sk} className="px-3 py-1 bg-page-bg border border-border text-text-primary text-xs font-semibold rounded-[var(--radius-sm)]">
-                    {sk}
-                  </span>
-                ))}
+                {(candidate.skills || []).length > 0 ? (
+                  (candidate.skills || []).map((sk) => (
+                    <span key={sk} className="px-3 py-1 bg-page-bg border border-border text-text-primary text-xs font-semibold rounded-[var(--radius-sm)]">
+                      {sk}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-text-secondary italic">No skills listed</span>
+                )}
               </div>
             </div>
 
@@ -136,6 +139,6 @@ export default function CandidateProfilePage() {
           </div>
         </main>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

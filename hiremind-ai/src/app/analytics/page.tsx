@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Sidebar } from '@/components/Sidebar';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { analyticsService } from '@/services/analytics.service';
 import { AnalyticsSummary } from '@/types';

@@ -1,6 +1,6 @@
 import { InterviewSession } from '@/types';
 import { MOCK_INTERVIEWS } from './mockData';
-import { simulateNetworkDelay } from './api';
+import { simulateNetworkDelay, callWebhook } from './api';
 
 const interviewsDb: InterviewSession[] = [...MOCK_INTERVIEWS];
 
@@ -17,6 +17,21 @@ export const interviewsService = {
   },
 
   async createInterviewSession(candidateId: string, candidateName: string, jobId: string, jobTitle: string, mode: 'text' | 'voice'): Promise<InterviewSession> {
+    try {
+      const response = await callWebhook<InterviewSession>({
+        action: 'START_INTERVIEW',
+        role: 'candidate',
+        userId: candidateId,
+        data: { candidateId, candidateName, jobId, jobTitle, mode }
+      });
+      if (response) {
+        interviewsDb.unshift(response);
+        return response;
+      }
+    } catch (error) {
+      console.warn('Webhook START_INTERVIEW failed, falling back to mock logic', error);
+    }
+
     await simulateNetworkDelay(600);
     const newSession: InterviewSession = {
       id: `int-session-${Date.now()}`,
@@ -57,6 +72,21 @@ export const interviewsService = {
   },
 
   async submitAnswer(sessionId: string, questionIndex: number, answerText: string): Promise<{ session: InterviewSession; aiFollowUp?: string }> {
+    try {
+      const response = await callWebhook<{ session: InterviewSession; aiFollowUp?: string }>({
+        action: 'SUBMIT_INTERVIEW_ANSWER',
+        role: 'candidate',
+        data: { sessionId, questionIndex, answerText }
+      });
+      if (response) {
+        const idx = interviewsDb.findIndex((s) => s.id === sessionId);
+        if (idx !== -1) interviewsDb[idx] = response.session;
+        return response;
+      }
+    } catch (error) {
+      console.warn('Webhook SUBMIT_INTERVIEW_ANSWER failed, falling back to mock logic', error);
+    }
+
     await simulateNetworkDelay(1200); // Simulate AI processing candidate response
     const session = interviewsDb.find((s) => s.id === sessionId);
     if (!session) throw new Error('Interview session not found');

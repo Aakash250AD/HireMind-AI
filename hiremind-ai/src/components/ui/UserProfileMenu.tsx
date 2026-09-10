@@ -35,7 +35,7 @@ export function UserProfileMenu({ role, isOpen, onToggle, onClose }: UserProfile
   }, [isOpen, onClose]);
 
   const menuItems = [
-    { icon: User, title: 'My Profile', desc: 'View and edit your profile', href: role === 'hr' ? '/settings' : '/candidate/profile' },
+    { icon: User, title: 'My Profile', desc: 'View and edit your profile', href: role === 'hr' ? '/hr/profile' : '/candidate/profile' },
     { icon: Settings, title: 'Settings', desc: 'Manage account preferences', href: role === 'hr' ? '/settings' : '/candidate/settings' },
     { icon: Bell, title: 'Notifications', desc: 'Notification preferences', href: '/notifications' },
     { icon: Shield, title: 'Security', desc: 'Password and security', href: '/settings' },
@@ -81,7 +81,7 @@ export function UserProfileMenu({ role, isOpen, onToggle, onClose }: UserProfile
                   key={idx}
                   href={item.href}
                   onClick={onClose}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-sunken transition-colors group"
+                  className="flex items-center gap-3 p-3 rounded-[var(--radius-md)] hover:bg-surface-sunken transition-colors group"
                 >
                   <Icon className="w-5 h-5 text-ink-faint group-hover:text-primary transition-colors" />
                   <div className="flex flex-col">
@@ -99,7 +99,7 @@ export function UserProfileMenu({ role, isOpen, onToggle, onClose }: UserProfile
                 onClose();
                 clearCacheAndLogout();
               }}
-              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-danger-tint text-danger transition-colors group"
+              className="w-full flex items-center gap-3 p-3 rounded-[var(--radius-md)] hover:bg-danger-tint text-danger transition-colors group"
             >
               <LogOut className="w-5 h-5" />
               <span className="text-xs font-bold">Logout</span>
