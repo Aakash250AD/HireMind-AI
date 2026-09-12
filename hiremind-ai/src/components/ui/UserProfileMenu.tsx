@@ -42,6 +42,22 @@ export function UserProfileMenu({ role, isOpen, onToggle, onClose }: UserProfile
     { icon: HelpCircle, title: 'Help & Support', desc: 'Get help with HireMind AI', href: '/settings' },
   ];
 
+  const [candidateName, setCandidateName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const detailsStr = localStorage.getItem('candidateDetails');
+      if (detailsStr) {
+        try {
+          const details = JSON.parse(detailsStr);
+          if (details.name) setCandidateName(details.name);
+        } catch (e) {}
+      }
+    }
+  }, []);
+
+  const displayName = role === 'hr' ? 'HR Administrator' : (candidateName || 'Candidate');
+
   return (
     <div className="relative" ref={menuRef}>
       <button 
@@ -49,21 +65,21 @@ export function UserProfileMenu({ role, isOpen, onToggle, onClose }: UserProfile
         className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-full"
       >
         <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-hm-matte flex items-center justify-center text-white text-sm font-bold shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200">
-          {role === 'hr' ? 'HR' : 'CD'}
+          {role === 'hr' ? 'HR' : (candidateName ? candidateName.charAt(0).toUpperCase() : 'CD')}
         </div>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 bg-white border border-border rounded-[20px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+        <div className="absolute right-0 mt-3 w-80 bg-surface border border-border rounded-[20px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
           
           {/* Header */}
           <div className="p-4 border-b border-border flex items-center gap-3 bg-surface-sunken">
             <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-hm-matte flex items-center justify-center text-white text-lg font-bold">
-              {role === 'hr' ? 'HR' : 'CD'}
+              {role === 'hr' ? 'HR' : (candidateName ? candidateName.charAt(0).toUpperCase() : 'CD')}
             </div>
             <div>
               <h4 className="text-sm font-bold text-ink">
-                {role === 'hr' ? 'HR Administrator' : 'Candidate'}
+                {displayName}
               </h4>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="w-2 h-2 rounded-full bg-success" />

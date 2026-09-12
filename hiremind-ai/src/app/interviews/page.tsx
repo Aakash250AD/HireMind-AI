@@ -39,7 +39,7 @@ export default function HRInterviewsHubPage() {
             <h1 className="text-3xl font-bold text-ink">Interview Monitoring</h1>
             <p className="text-sm text-ink-soft mt-1">Monitor live and completed AI interviews across all your active jobs.</p>
           </div>
-          <div className="flex items-center gap-3 bg-white p-2 border border-border rounded-full shadow-sm">
+          <div className="flex items-center gap-3 bg-surface p-2 border border-border rounded-full shadow-sm">
              <div className="relative">
                 <Search className="w-4 h-4 text-ink-faint absolute left-3 top-1/2 -translate-y-1/2" />
                 <input 

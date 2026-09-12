@@ -33,7 +33,7 @@ export default function CandidatesPage() {
     <DashboardLayout role="hr">
       <div className="space-y-6 w-full max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
           <div>
             <h1 className="text-lg font-bold text-text-primary">Ingested Candidates Pool</h1>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -50,7 +50,7 @@ export default function CandidatesPage() {
         </div>
 
         {/* Filters Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-border p-4 rounded-[var(--radius-md)]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-surface border border-border p-4 rounded-[var(--radius-md)]">
           <div className="relative w-full sm:w-80">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
             <input
@@ -82,7 +82,7 @@ export default function CandidatesPage() {
         </div>
 
         {/* Candidate Table */}
-        <div className="bg-white border border-border rounded-[var(--radius-lg)] overflow-hidden shadow-lg">
+        <div className="bg-surface border border-border rounded-[var(--radius-lg)] overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>

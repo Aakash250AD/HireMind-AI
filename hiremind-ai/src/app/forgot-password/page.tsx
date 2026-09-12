@@ -10,7 +10,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-6 select-none">
-      <div className="w-full max-w-md bg-white border border-border rounded-[var(--radius-lg)] p-8 shadow-2xl">
+      <div className="w-full max-w-md bg-surface border border-border rounded-[var(--radius-lg)] p-8 shadow-2xl">
         <div className="flex flex-col items-center text-center mb-6">
           <Logo size="lg" />
           <h2 className="text-xl font-bold text-text-primary mt-4">Reset Password</h2>

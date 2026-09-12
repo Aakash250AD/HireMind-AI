@@ -73,7 +73,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
     <div className="min-h-screen bg-hm-bg flex font-sans text-ink">
       
       {/* 1. PREMIUM NAVIGATION RAIL */}
-      <aside className="w-64 bg-white/60 backdrop-blur-xl border-r border-border flex flex-col justify-between pt-6 pb-4 sticky top-0 h-screen select-none shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-40">
+      <aside className="w-64 bg-surface/60 backdrop-blur-xl border-r border-border flex flex-col justify-between pt-6 pb-4 sticky top-0 h-screen select-none shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-40">
         
         <div className="space-y-8">
           {/* Logo */}
@@ -81,7 +81,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
             <Link href={activeRole === 'candidate' ? '/candidate-dashboard' : '/dashboard'} className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-[var(--radius-sm)] bg-gradient-to-br from-hm-deep to-hm-matte flex items-center justify-center text-white shadow-md relative group">
                 <BrainCircuit className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <div className="absolute inset-0 bg-white/20 rounded-[var(--radius-sm)] blur opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-surface/20 rounded-[var(--radius-sm)] blur opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-lg font-extrabold text-hm-deep tracking-tight">
@@ -142,7 +142,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
       <div className="flex-1 flex flex-col min-w-0 relative">
         
         {/* Top Command Bar */}
-        <header className="bg-white/40 backdrop-blur-md border-b border-border px-8 py-4 flex items-center justify-between sticky top-0 z-30">
+        <header className="bg-surface/40 backdrop-blur-md border-b border-border px-8 py-4 flex items-center justify-between sticky top-0 z-30">
           
           {/* Command Search */}
           <div className="w-full max-w-xl relative group">
@@ -150,7 +150,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
             <input
               type="text"
               placeholder="Search jobs, candidates, or ask HireMind..."
-              className="w-full pl-11 pr-12 py-2.5 bg-white/80 border border-border rounded-full text-sm font-medium text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 focus:bg-white shadow-sm transition-all"
+              className="w-full pl-11 pr-12 py-2.5 bg-surface/80 border border-border rounded-full text-sm font-medium text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 focus:bg-white shadow-sm transition-all"
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 bg-surface-sunken border border-border px-1.5 py-0.5 rounded text-[10px] font-bold text-ink-faint">
               <Command className="w-3 h-3" />

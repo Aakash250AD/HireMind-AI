@@ -60,7 +60,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ role = 'hr' }) => {
   const currentNav = activeRole === 'candidate' ? candidateNavigation : hrNavigation;
 
   return (
-    <header className="bg-white border-b border-border sticky top-0 z-40 w-full select-none shadow-xs">
+    <header className="bg-surface border-b border-border sticky top-0 z-40 w-full select-none shadow-xs">
       <div className="max-w-7xl mx-auto px-6 py-2 flex items-center gap-8">
         
         {/* Left: Brand Logo & Badge & Navigation */}

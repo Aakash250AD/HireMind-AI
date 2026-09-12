@@ -49,7 +49,7 @@ export default function LandingPage() {
             <MagneticButton magneticPull={20}>
               <Link
                 href="/login/candidate"
-                className="w-full sm:w-auto px-8 py-3.5 bg-white hover:bg-page-bg text-primary text-sm font-extrabold rounded-[var(--radius-md)] border border-primary shadow-xl transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-3.5 bg-surface hover:bg-page-bg text-primary text-sm font-extrabold rounded-[var(--radius-md)] border border-primary shadow-xl transition-all flex items-center justify-center gap-2"
               >
                 <span>Find Jobs</span>
                 <ArrowRight className="w-4 h-4" />
@@ -66,15 +66,15 @@ export default function LandingPage() {
       </ScrollReveal>
 
       {/* Problem vs Solution */}
-      <section className="bg-white border-y border-border py-16 px-6">
+      <section className="bg-surface border-y border-border py-16 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="bg-white p-8 rounded-[var(--radius-lg)] border border-border">
+          <div className="bg-surface p-8 rounded-[var(--radius-lg)] border border-border">
             <h3 className="text-xl font-bold text-primary mb-3">The Recruitment Problem</h3>
             <p className="text-sm text-text-secondary leading-relaxed">
               Recruiters waste 70% of their time on manual tasks: parsing repetitive job descriptions, reading hundreds of resume PDFs, manually sending emails, and guessing candidate skill authenticity.
             </p>
           </div>
-          <div className="bg-white p-8 rounded-[var(--radius-lg)] border border-border">
+          <div className="bg-surface p-8 rounded-[var(--radius-lg)] border border-border">
             <h3 className="text-xl font-bold text-emerald-400 mb-3">The HireMind Solution</h3>
             <p className="text-sm text-text-secondary leading-relaxed">
               HireMind AI automates sourcing, resume screening, technical interviews, and evidence-based skill verification — presenting explainable recommendations so recruiters make informed final hiring decisions.
@@ -93,7 +93,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <TiltCard maxTilt={8}>
-              <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border h-full">
+              <div className="bg-surface p-6 rounded-[var(--radius-md)] border border-border h-full">
                 <ShieldCheck className="w-8 h-8 text-primary mb-4" />
                 <h4 className="text-base font-bold text-text-primary">AI Skill Verification</h4>
                 <p className="text-xs text-text-secondary mt-2 leading-relaxed">
@@ -103,7 +103,7 @@ export default function LandingPage() {
             </TiltCard>
 
             <TiltCard maxTilt={8}>
-              <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border h-full">
+              <div className="bg-surface p-6 rounded-[var(--radius-md)] border border-border h-full">
                 <Video className="w-8 h-8 text-primary mb-4" />
                 <h4 className="text-base font-bold text-text-primary">Interactive AI Interview</h4>
                 <p className="text-xs text-text-secondary mt-2 leading-relaxed">
@@ -113,7 +113,7 @@ export default function LandingPage() {
             </TiltCard>
 
             <TiltCard maxTilt={8}>
-              <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border h-full">
+              <div className="bg-surface p-6 rounded-[var(--radius-md)] border border-border h-full">
                 <Bot className="w-8 h-8 text-primary mb-4" />
                 <h4 className="text-base font-bold text-text-primary">Recruiter AI Copilot</h4>
                 <p className="text-xs text-text-secondary mt-2 leading-relaxed">
@@ -126,7 +126,7 @@ export default function LandingPage() {
       </ScrollReveal>
 
       {/* Human-in-the-Loop Core Philosophy */}
-      <section id="security" className="bg-white border-t border-border py-16 px-6">
+      <section id="security" className="bg-surface border-t border-border py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-border text-xs font-bold text-primary mb-4">
             <Lock className="w-3.5 h-3.5" />
@@ -150,7 +150,7 @@ export default function LandingPage() {
           </div>
           
           <div className="space-y-8">
-            <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border flex gap-4">
+            <div className="bg-surface p-6 rounded-[var(--radius-md)] border border-border flex gap-4">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <span className="text-primary font-bold">1</span>
               </div>
@@ -162,7 +162,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border flex gap-4">
+            <div className="bg-surface p-6 rounded-[var(--radius-md)] border border-border flex gap-4">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <span className="text-primary font-bold">2</span>
               </div>
@@ -174,7 +174,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[var(--radius-md)] border border-border flex gap-4">
+            <div className="bg-surface p-6 rounded-[var(--radius-md)] border border-border flex gap-4">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <span className="text-primary font-bold">3</span>
               </div>

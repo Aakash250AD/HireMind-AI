@@ -34,7 +34,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-border flex flex-col justify-between h-screen sticky top-0 z-30 shrink-0 select-none">
+    <aside className="w-64 bg-surface border-r border-border flex flex-col justify-between h-screen sticky top-0 z-30 shrink-0 select-none">
       <div>
         {/* Logo Section */}
         <div className="p-5 border-b border-border">

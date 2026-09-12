@@ -26,7 +26,7 @@ export function IdentityCard({ completionPercentage }: IdentityCardProps) {
         <div className="relative w-28 h-28 rounded-full bg-gradient-to-tr from-primary to-hm-matte flex items-center justify-center text-white text-4xl font-extrabold shadow-lg border-4 border-white">
           AK
         </div>
-        <button className="absolute bottom-0 right-0 w-8 h-8 bg-white border border-border rounded-full flex items-center justify-center text-ink-soft hover:text-primary hover:border-primary/30 shadow-sm transition-all hover:scale-110">
+        <button className="absolute bottom-0 right-0 w-8 h-8 bg-surface border border-border rounded-full flex items-center justify-center text-ink-soft hover:text-primary hover:border-primary/30 shadow-sm transition-all hover:scale-110">
           <Camera className="w-4 h-4" />
         </button>
       </div>

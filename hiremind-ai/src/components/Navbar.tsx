@@ -10,7 +10,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ title = 'Dashboard' }) => {
   return (
-    <header className="h-16 bg-white border-b border-border px-6 flex items-center justify-between sticky top-0 z-20">
+    <header className="h-16 bg-surface border-b border-border px-6 flex items-center justify-between sticky top-0 z-20">
       <div className="flex items-center gap-4">
         <h1 className="text-lg font-semibold text-text-primary tracking-tight">{title}</h1>
         <div className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-page-bg border border-border text-xs text-text-secondary">

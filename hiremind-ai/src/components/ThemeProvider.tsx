@@ -15,22 +15,23 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('hiremind_theme') as Theme;
     if (savedTheme) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTheme(savedTheme);
-      document.documentElement.classList.toggle('light-theme', savedTheme === 'light');
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    } else {
+      document.documentElement.classList.toggle('dark', false);
     }
   }, []);
 
   const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(nextTheme);
     localStorage.setItem('hiremind_theme', nextTheme);
-    document.documentElement.classList.toggle('light-theme', nextTheme === 'light');
+    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
   };
 
   const clearCacheAndLogout = () => {

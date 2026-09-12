@@ -33,7 +33,7 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
       onAdvance={() => handleDecision('APPROVED')} 
       onPass={() => handleDecision('REJECTED')}
     >
-      <div className="bg-white border border-border rounded-[var(--radius-md)] p-5 shadow-2xl relative overflow-hidden">
+      <div className="bg-surface border border-border rounded-[var(--radius-md)] p-5 shadow-2xl relative overflow-hidden">
       {/* Top Banner Notice */}
       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary mb-3">
         <Lock className="w-4 h-4" />

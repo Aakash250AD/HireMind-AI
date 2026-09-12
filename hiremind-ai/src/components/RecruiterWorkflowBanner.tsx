@@ -29,7 +29,7 @@ export const RecruiterWorkflowBanner: React.FC = () => {
               className={`px-2 py-0.5 rounded border ${
                 step === 'HUMAN REVIEW' || step === 'FINAL DECISION'
                   ? 'bg-primary/30 text-white border-border'
-                  : 'bg-white text-text-secondary border-border'
+                  : 'bg-surface text-text-secondary border-border'
               }`}
             >
               {step}

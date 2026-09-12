@@ -116,7 +116,7 @@ export default function CandidateInterviewPage() {
           <p className="text-sm text-ink-soft">Respond to the AI assistant to complete your technical screening.</p>
         </div>
 
-        <Card className="flex-1 flex flex-col overflow-hidden bg-white shadow-sm p-0">
+        <Card className="flex-1 flex flex-col overflow-hidden bg-surface shadow-sm p-0">
           <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-surface-sunken">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.role === 'candidate' ? 'justify-end' : 'justify-start'}`}>
@@ -124,7 +124,7 @@ export default function CandidateInterviewPage() {
                   className={`max-w-[80%] rounded-[var(--radius-lg)] p-4 text-sm ${
                     msg.role === 'candidate' 
                       ? 'bg-primary text-white shadow-sm rounded-tr-none' 
-                      : 'bg-white border border-border text-ink rounded-tl-none shadow-sm'
+                      : 'bg-surface border border-border text-ink rounded-tl-none shadow-sm'
                   }`}
                 >
                   <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
@@ -134,7 +134,7 @@ export default function CandidateInterviewPage() {
 
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-white border border-border text-ink rounded-[var(--radius-lg)] rounded-tl-none p-4 shadow-sm flex gap-1.5 items-center">
+                <div className="bg-surface border border-border text-ink rounded-[var(--radius-lg)] rounded-tl-none p-4 shadow-sm flex gap-1.5 items-center">
                   <span className="w-2 h-2 rounded-full bg-ink-faint animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-2 h-2 rounded-full bg-ink-faint animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-2 h-2 rounded-full bg-ink-faint animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -155,7 +155,7 @@ export default function CandidateInterviewPage() {
                       setInputValue(error);
                       setError(null);
                     }}
-                    className="self-start bg-white text-xs py-1 px-3"
+                    className="self-start bg-surface text-xs py-1 px-3"
                   >
                     Load Failed Message
                   </Button>
@@ -180,7 +180,7 @@ export default function CandidateInterviewPage() {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 border-t border-border bg-white">
+          <div className="p-4 border-t border-border bg-surface">
             <div className="flex gap-3">
               <input
                 type="text"

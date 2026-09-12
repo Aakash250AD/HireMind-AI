@@ -26,19 +26,19 @@ export function ProfileForms() {
       
       {/* Profile Completion Header */}
       <HMCard className="p-6 bg-gradient-to-r from-hm-deep to-primary border-none text-white relative overflow-hidden">
-        <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-surface/10 rounded-full blur-2xl" />
         <h3 className="text-lg font-bold mb-1 relative z-10">Complete your profile</h3>
         <p className="text-xs text-white/80 mb-4 relative z-10">Candidates with complete profiles are easier for recruiters to evaluate.</p>
         
-        <div className="w-full bg-white/20 rounded-full h-1.5 mb-4 relative z-10">
-          <div className="bg-white h-1.5 rounded-full w-[72%]" />
+        <div className="w-full bg-surface/20 rounded-full h-1.5 mb-4 relative z-10">
+          <div className="bg-surface h-1.5 rounded-full w-[72%]" />
         </div>
         
         <div className="flex flex-wrap gap-2 relative z-10">
-          <button className="text-[11px] font-semibold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5">
+          <button className="text-[11px] font-semibold bg-surface/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5">
             <Plus className="w-3 h-3" /> Add Technical Skills
           </button>
-          <button className="text-[11px] font-semibold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5">
+          <button className="text-[11px] font-semibold bg-surface/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5">
             <Plus className="w-3 h-3" /> Add Experience
           </button>
         </div>
@@ -99,7 +99,7 @@ export function ProfileForms() {
         
         <div className="relative pl-6 border-l-2 border-border space-y-6">
           <div className="relative">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-white border-4 border-primary" />
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-surface border-4 border-primary" />
             <h4 className="text-sm font-bold text-ink">AI/ML Intern</h4>
             <div className="text-xs font-semibold text-primary mb-1">HireMind Tech • Coimbatore, India</div>
             <div className="text-[11px] text-ink-faint mb-2">Jan 2025 - Present</div>
@@ -115,7 +115,7 @@ export function ProfileForms() {
         <h3 className="text-lg font-bold text-ink mb-4 pb-2 border-b border-border">Resume</h3>
         
         <div className="w-full border-2 border-dashed border-primary/30 rounded-[var(--radius-md)] p-8 flex flex-col items-center justify-center bg-primary-tint/30 hover:bg-primary-tint/50 transition-colors cursor-pointer group">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm mb-3 group-hover:scale-110 transition-transform">
+          <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center text-primary shadow-sm mb-3 group-hover:scale-110 transition-transform">
             <UploadCloud className="w-6 h-6" />
           </div>
           <p className="text-sm font-bold text-ink mb-1">Drop your resume here</p>

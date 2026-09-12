@@ -16,7 +16,7 @@ export const WorkflowVisualizer: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white border border-border rounded-[var(--radius-md)] p-6 shadow-xl">
+    <div className="bg-surface border border-border rounded-[var(--radius-md)] p-6 shadow-xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-base font-bold text-text-primary">Low-Code Backend Automation Workflow</h3>

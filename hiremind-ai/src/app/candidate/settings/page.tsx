@@ -30,7 +30,7 @@ export default function SettingsPage() {
     <DashboardLayout role="candidate">
       <div className="space-y-6 w-full max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
           <h1 className="text-lg font-bold text-text-primary mb-1">Workspace Settings & User Preferences</h1>
           <p className="text-xs text-text-secondary">
             Manage your interface theme, low-code webhook URL, cache memory, and session settings.
@@ -38,7 +38,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Theme Settings Card */}
-        <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-4">
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-4">
           <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
             {theme === 'dark' ? <Moon className="w-5 h-5 text-indigo-400" /> : <Sun className="w-5 h-5 text-amber-400" />}
             <span>Appearance Theme Settings</span>
@@ -63,7 +63,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Clear Cache & Logout Settings Card */}
-        <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-4">
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-4">
           <h2 className="text-base font-bold text-text-primary flex items-center gap-2 text-primary">
             <Trash2 className="w-5 h-5" />
             <span>Cache Reset & Session Security</span>
@@ -98,7 +98,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Low Code Integration Webhook Settings */}
-        <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-4">
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-4">
           <h2 className="text-base font-bold text-text-primary mb-1">Low-Code Webhook Base URL</h2>
 
           {saved && (

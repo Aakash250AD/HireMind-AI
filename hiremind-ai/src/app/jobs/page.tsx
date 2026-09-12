@@ -30,7 +30,7 @@ export default function JobsPage() {
   return (
     <DashboardLayout role="hr">
       <div className="space-y-6 flex-1 w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
           <div>
             <h1 className="text-lg font-bold text-text-primary">Job Position Management</h1>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -47,7 +47,7 @@ export default function JobsPage() {
         </div>
 
         {/* Search & Filters */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-border p-4 rounded-[var(--radius-md)]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-surface border border-border p-4 rounded-[var(--radius-md)]">
           <div className="relative w-full sm:w-80">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
             <input
@@ -79,7 +79,7 @@ export default function JobsPage() {
           {filteredJobs.map((job) => (
             <div
               key={job.id}
-              className="bg-white border border-border hover:border-border-hover hover:shadow-sm rounded-[var(--radius-lg)] p-6 shadow-lg transition-all flex flex-col justify-between"
+              className="bg-surface border border-border hover:border-border-hover hover:shadow-sm rounded-[var(--radius-lg)] p-6 shadow-lg transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">

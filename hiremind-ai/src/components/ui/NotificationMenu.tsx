@@ -50,7 +50,7 @@ export function NotificationMenu({ isOpen, onToggle, onClose }: NotificationMenu
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 bg-white border border-border rounded-[20px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+        <div className="absolute right-0 mt-3 w-80 bg-surface border border-border rounded-[20px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
           
           <div className="p-4 border-b border-border flex items-center justify-between bg-surface-sunken">
             <h4 className="text-sm font-bold text-ink">Notifications</h4>

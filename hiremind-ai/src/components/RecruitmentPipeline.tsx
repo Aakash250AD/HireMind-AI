@@ -35,7 +35,7 @@ export const RecruitmentPipeline: React.FC<RecruitmentPipelineProps> = ({
   ];
 
   return (
-    <div className="bg-white border border-border rounded-[var(--radius-md)] p-5 shadow-lg">
+    <div className="bg-surface border border-border rounded-[var(--radius-md)] p-5 shadow-lg">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-base font-bold text-text-primary tracking-tight">Recruitment Pipeline Workflow</h3>

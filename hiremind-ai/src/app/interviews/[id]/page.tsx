@@ -121,7 +121,7 @@ export default function HRInterviewMonitorPage() {
           </div>
 
           {/* CENTER PANE: Interview Interface / Transcript */}
-          <div className="lg:col-span-6 flex flex-col min-h-0 border border-border bg-white rounded-[var(--radius-lg)] shadow-sm overflow-hidden">
+          <div className="lg:col-span-6 flex flex-col min-h-0 border border-border bg-surface rounded-[var(--radius-lg)] shadow-sm overflow-hidden">
              <div className="bg-surface-sunken border-b border-border p-4 shrink-0 flex items-center justify-between">
                 <h3 className="text-sm font-bold text-ink flex items-center gap-2">
                   <BrainCircuit className="w-4 h-4 text-primary" /> Live Transcript
@@ -147,7 +147,7 @@ export default function HRInterviewMonitorPage() {
                </div>
              )}
 
-             <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-white">
+             <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-surface">
                 {session.questions.slice(0, session.currentQuestionIndex + 1).map((q, i) => (
                   <div key={q.id} className="space-y-4">
                      <div className="flex gap-3">
@@ -206,7 +206,7 @@ export default function HRInterviewMonitorPage() {
                           <span className="text-white/80">Technical</span>
                           <span className="font-bold">{session.technicalScore}</span>
                         </div>
-                        <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div className="w-full h-1 bg-surface/10 rounded-full overflow-hidden">
                           <div className="h-full bg-primary" style={{ width: `${session.technicalScore}%` }} />
                         </div>
                       </div>
@@ -215,7 +215,7 @@ export default function HRInterviewMonitorPage() {
                           <span className="text-white/80">Communication</span>
                           <span className="font-bold">{session.communicationScore}</span>
                         </div>
-                        <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div className="w-full h-1 bg-surface/10 rounded-full overflow-hidden">
                           <div className="h-full bg-primary" style={{ width: `${session.communicationScore}%` }} />
                         </div>
                       </div>

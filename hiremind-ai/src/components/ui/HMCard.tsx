@@ -10,7 +10,7 @@ interface HMCardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function HMCard({ children, className, hoverEffect = false, glass = false, ...props }: HMCardProps) {
   return (
     <div
-      className={`bg-white border border-border rounded-[var(--radius-hm-card)] shadow-[var(--shadow-hm-card)] transition-all duration-200 ${
+      className={`bg-surface border border-border rounded-[var(--radius-hm-card)] shadow-[var(--shadow-hm-card)] transition-all duration-200 ${
         hoverEffect ? 'hover:-translate-y-0.5 hover:shadow-[var(--shadow-hm-card-hover)] hover:border-border-hover' : ''
       } ${glass ? 'hm-glass' : ''} ${className || ''}`}
       {...props}

@@ -106,7 +106,7 @@ export default function HRDashboard() {
         {error && (
           <Card className="bg-danger-tint border-danger text-danger flex items-center justify-between p-4">
             <span className="text-sm font-medium">{error}</span>
-            <Button variant="secondary" onClick={loadDashboard} className="bg-white">Retry</Button>
+            <Button variant="secondary" onClick={loadDashboard} className="bg-surface">Retry</Button>
           </Card>
         )}
 
@@ -148,11 +148,11 @@ export default function HRDashboard() {
                         drag="x"
                         dragConstraints={{ left: -220, right: 0 }}
                         dragElastic={0.1}
-                        className="relative z-10 bg-white border border-border hover:border-border-hover rounded-[var(--radius-lg)] flex flex-col justify-between h-full cursor-grab active:cursor-grabbing"
+                        className="relative z-10 bg-surface border border-border hover:border-border-hover rounded-[var(--radius-lg)] flex flex-col justify-between h-full cursor-grab active:cursor-grabbing"
                       >
                         {/* Upper content is 3D tilted */}
                         <TiltCard maxTilt={4} className="flex-1 w-full rounded-t-[var(--radius-lg)] overflow-hidden">
-                          <div className="p-4 sm:p-6 pb-2 w-full h-full bg-white flex flex-col gap-4">
+                          <div className="p-4 sm:p-6 pb-2 w-full h-full bg-surface flex flex-col gap-4">
                             <div className="flex justify-between items-start">
                               <div>
                                 <div className="flex items-center gap-3 mb-1">
@@ -175,7 +175,7 @@ export default function HRDashboard() {
                         </TiltCard>
 
                         {/* Action row remains completely flat and sharp */}
-                        <div className="flex items-center justify-between p-4 sm:px-6 pt-4 border-t border-border bg-white rounded-b-[var(--radius-lg)]">
+                        <div className="flex items-center justify-between p-4 sm:px-6 pt-4 border-t border-border bg-surface rounded-b-[var(--radius-lg)]">
                           <div className="flex gap-2 relative z-10 overflow-hidden">
                             {job.skills.slice(0,3).map((skill, i) => (
                               <motion.span 

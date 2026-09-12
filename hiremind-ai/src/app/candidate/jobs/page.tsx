@@ -16,9 +16,16 @@ import { MagneticButton } from '@/components/animations/MagneticButton';
 function ApplyModal({ job, onClose, onSuccess }: { job: Job, onClose: () => void, onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('');
+  const [name, setName] = useState('');
+  const [skills, setSkills] = useState('');
+  const [degree, setDegree] = useState('');
 
   const handleApply = async () => {
-    if (!fileName.trim()) return alert('Please enter a resume file name (e.g. resume.pdf)');
+    if (!name.trim()) return alert('Please enter your name.');
+    if (!degree.trim()) return alert('Please enter your degree.');
+    if (!skills.trim()) return alert('Please enter your skills.');
+    if (!fileName.trim()) return alert('Please upload a resume file.');
+    
     setLoading(true);
     try {
       await candidatesService.uploadAndScreenResume(fileName, job.id);
@@ -32,21 +39,56 @@ function ApplyModal({ job, onClose, onSuccess }: { job: Job, onClose: () => void
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
-      <Card className="w-full max-w-md space-y-6 shadow-2xl">
+      <Card className="w-full max-w-md space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div>
           <h3 className="text-xl font-bold text-ink">Apply for {job.title}</h3>
-          <p className="text-sm text-ink-soft mt-1">Please attach your resume to apply.</p>
+          <p className="text-sm text-ink-soft mt-1">Please fill in your details to apply.</p>
         </div>
         
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-ink">Resume File</label>
-          <input 
-            type="file" 
-            accept=".pdf,.doc,.docx,.jpg,.jpeg"
-            onChange={(e) => setFileName(e.target.files?.[0]?.name || '')}
-            className="w-full px-4 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-surface-sunken file:text-ink hover:file:bg-border cursor-pointer bg-page-bg"
-          />
-          <p className="text-xs text-ink-faint">Accepted formats: PDF, DOC, DOCX, JPG. For this demo, no actual file is uploaded.</p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-ink mb-1.5">Full Name</label>
+            <input 
+              type="text" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 bg-page-bg text-ink"
+              placeholder="e.g. John Doe"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-ink mb-1.5">Degree / Education</label>
+            <input 
+              type="text" 
+              value={degree}
+              onChange={(e) => setDegree(e.target.value)}
+              className="w-full px-4 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 bg-page-bg text-ink"
+              placeholder="e.g. B.S. Computer Science"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-ink mb-1.5">Key Skills</label>
+            <input 
+              type="text" 
+              value={skills}
+              onChange={(e) => setSkills(e.target.value)}
+              className="w-full px-4 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 bg-page-bg text-ink"
+              placeholder="e.g. React, TypeScript, Node.js"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-ink mb-1.5">Resume Upload</label>
+            <input 
+              type="file" 
+              accept=".pdf,.doc,.docx,.jpg,.jpeg"
+              onChange={(e) => setFileName(e.target.files?.[0]?.name || '')}
+              className="w-full px-4 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-surface-sunken file:text-ink hover:file:bg-border cursor-pointer bg-page-bg"
+            />
+            <p className="text-xs text-ink-faint mt-1">Accepted formats: PDF, DOC, DOCX, JPG.</p>
+          </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-border">

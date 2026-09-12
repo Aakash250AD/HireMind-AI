@@ -18,7 +18,7 @@ export function HMSkillChip({ skill, selected = false, onClick, interactive = fa
       } ${
         selected
           ? 'bg-primary border-primary text-white shadow-sm'
-          : 'bg-white border-border text-ink-soft hover:border-ink-faint'
+          : 'bg-surface border-border text-ink-soft hover:border-ink-faint'
       }`}
       disabled={!interactive}
     >

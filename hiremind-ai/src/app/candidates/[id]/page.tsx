@@ -40,7 +40,7 @@ export default function CandidateProfilePage() {
         </div>
         <main className="space-y-6 flex-1 w-full mt-6">
           {/* Top Profile Header */}
-          <div className="bg-white border border-border p-6 rounded-[var(--radius-md)] shadow-lg">
+          <div className="bg-surface border border-border p-6 rounded-[var(--radius-md)] shadow-lg">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 rounded-[var(--radius-lg)] bg-primary flex items-center justify-center font-extrabold text-text-primary text-xl border border-border shadow-lg shrink-0">
@@ -93,7 +93,7 @@ export default function CandidateProfilePage() {
 
           {/* Summary & Resume Detail */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 bg-white border border-border rounded-[var(--radius-md)] p-6 shadow-lg space-y-4">
+            <div className="md:col-span-2 bg-surface border border-border rounded-[var(--radius-md)] p-6 shadow-lg space-y-4">
               <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Candidate Executive Summary</h3>
               <p className="text-xs text-text-secondary leading-relaxed bg-page-bg p-4 rounded-[var(--radius-sm)] border border-border">
                 {candidate.summary}
@@ -113,7 +113,7 @@ export default function CandidateProfilePage() {
               </div>
             </div>
 
-            <div className="bg-white border border-border rounded-[var(--radius-md)] p-6 shadow-lg space-y-4 flex flex-col justify-between">
+            <div className="bg-surface border border-border rounded-[var(--radius-md)] p-6 shadow-lg space-y-4 flex flex-col justify-between">
               <div>
                 <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider mb-2">Education & Resume</h3>
                 <div className="text-xs text-text-secondary space-y-2">

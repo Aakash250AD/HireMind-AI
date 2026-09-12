@@ -25,7 +25,7 @@ export function HMButton({
   
   const variants = {
     primary: "bg-primary hover:bg-primary-hover text-white shadow-[var(--shadow-hm-button)] hover:shadow-lg border border-transparent",
-    secondary: "bg-white hover:bg-surface-sunken text-primary border border-border shadow-sm hover:border-primary/30",
+    secondary: "bg-surface hover:bg-surface-sunken text-primary border border-border shadow-sm hover:border-primary/30",
     outline: "bg-transparent hover:bg-surface-sunken text-ink-soft border border-border hover:border-ink-faint",
     ghost: "bg-transparent hover:bg-surface-sunken text-ink-soft border-transparent"
   };

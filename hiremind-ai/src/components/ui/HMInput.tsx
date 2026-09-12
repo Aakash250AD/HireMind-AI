@@ -23,7 +23,7 @@ export const HMInput = React.forwardRef<HTMLInputElement, HMInputProps>(
           )}
           <input
             ref={ref}
-            className={`w-full bg-white border border-border rounded-md text-sm font-medium text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all ${
+            className={`w-full bg-surface border border-border rounded-md text-sm font-medium text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all ${
               icon ? 'pl-10 pr-4 py-2.5' : 'px-4 py-2.5'
             } ${error ? 'border-danger focus:border-danger focus:ring-danger/20' : ''} ${className}`}
             {...props}

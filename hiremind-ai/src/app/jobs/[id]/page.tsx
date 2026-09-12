@@ -90,7 +90,7 @@ export default function JobShortlistPage() {
         {/* Job Overview Section */}
         {job && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 bg-white border border-border rounded-[var(--radius-md)] p-6 shadow-sm space-y-4">
+            <div className="md:col-span-2 bg-surface border border-border rounded-[var(--radius-md)] p-6 shadow-sm space-y-4">
               <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Job Description</h3>
               <p className="text-xs text-text-secondary leading-relaxed bg-page-bg p-4 rounded-[var(--radius-sm)] border border-border">
                 {job.description}
@@ -103,7 +103,7 @@ export default function JobShortlistPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-border rounded-[var(--radius-md)] p-6 shadow-sm space-y-4 flex flex-col justify-center">
+            <div className="bg-surface border border-border rounded-[var(--radius-md)] p-6 shadow-sm space-y-4 flex flex-col justify-center">
               <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider mb-2">Recruitment Pipeline Stats</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 bg-page-bg border border-border rounded-[var(--radius-sm)]">
@@ -126,7 +126,7 @@ export default function JobShortlistPage() {
         {error && (
           <Card className="bg-danger-tint border-danger text-danger flex items-center justify-between p-4">
             <span className="text-sm font-medium">{error}</span>
-            <Button variant="secondary" onClick={loadShortlist} className="bg-white">Retry</Button>
+            <Button variant="secondary" onClick={loadShortlist} className="bg-surface">Retry</Button>
           </Card>
         )}
 

@@ -92,10 +92,10 @@ export default function HRProfilePage() {
           <div className="lg:col-span-7 space-y-6">
             
             {/* Identity Card */}
-            <Card className="p-0 overflow-hidden border border-border bg-white shadow-sm">
+            <Card className="p-0 overflow-hidden border border-border bg-surface shadow-sm">
               <div className="h-24 bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border"></div>
               <div className="px-6 pb-6 relative">
-                <div className="absolute -top-12 left-6 w-24 h-24 bg-white rounded-full p-1 shadow-sm border border-border">
+                <div className="absolute -top-12 left-6 w-24 h-24 bg-surface rounded-full p-1 shadow-sm border border-border">
                   <div className="w-full h-full rounded-full bg-primary flex items-center justify-center text-3xl font-bold text-white shadow-inner">
                     {profile.name.charAt(0)}{profile.name.split(' ')[1]?.charAt(0)}
                   </div>
@@ -118,7 +118,7 @@ export default function HRProfilePage() {
             </Card>
 
             {/* Profile Form */}
-            <Card id="settings" className="border border-border bg-white shadow-sm space-y-6">
+            <Card id="settings" className="border border-border bg-surface shadow-sm space-y-6">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
                   <User className="w-5 h-5 text-primary" />
@@ -194,7 +194,7 @@ export default function HRProfilePage() {
             </Card>
 
             {/* Notification Preferences */}
-            <Card id="notifications" className="border border-border bg-white shadow-sm space-y-6">
+            <Card id="notifications" className="border border-border bg-surface shadow-sm space-y-6">
               <div className="border-b border-border pb-4">
                 <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
                   <Bell className="w-5 h-5 text-primary" />
@@ -213,7 +213,7 @@ export default function HRProfilePage() {
                       onClick={() => setNotifications(prev => ({ ...prev, [key]: !value }))}
                       className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${value ? 'bg-primary' : 'bg-surface-sunken border border-border'}`}
                     >
-                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${value ? 'translate-x-2' : '-translate-x-2'}`} />
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-surface shadow ring-0 transition duration-200 ease-in-out ${value ? 'translate-x-2' : '-translate-x-2'}`} />
                     </button>
                   </div>
                 ))}
@@ -231,22 +231,22 @@ export default function HRProfilePage() {
                 <p className="text-xs text-ink-faint mb-3">Currently showing org-wide totals (per-recruiter filtering coming soon).</p>
               </div>
               
-              <div className="bg-white border border-border rounded-[var(--radius-lg)] p-4 shadow-sm flex flex-col justify-center items-center text-center">
+              <div className="bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-sm flex flex-col justify-center items-center text-center">
                 <Briefcase className="w-5 h-5 text-indigo-500 mb-2" />
                 <span className="text-2xl font-bold text-ink">{loadingStats ? '-' : stats.jobs}</span>
                 <span className="text-xs font-medium text-ink-soft mt-1">Active Jobs</span>
               </div>
-              <div className="bg-white border border-border rounded-[var(--radius-lg)] p-4 shadow-sm flex flex-col justify-center items-center text-center">
+              <div className="bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-sm flex flex-col justify-center items-center text-center">
                 <Users className="w-5 h-5 text-blue-500 mb-2" />
                 <span className="text-2xl font-bold text-ink">{loadingStats ? '-' : stats.candidates}</span>
                 <span className="text-xs font-medium text-ink-soft mt-1">Total Candidates</span>
               </div>
-              <div className="bg-white border border-border rounded-[var(--radius-lg)] p-4 shadow-sm flex flex-col justify-center items-center text-center">
+              <div className="bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-sm flex flex-col justify-center items-center text-center">
                 <Video className="w-5 h-5 text-amber-500 mb-2" />
                 <span className="text-2xl font-bold text-ink">{loadingStats ? '-' : stats.interviews}</span>
                 <span className="text-xs font-medium text-ink-soft mt-1">Pending Interviews</span>
               </div>
-              <div className="bg-white border border-border rounded-[var(--radius-lg)] p-4 shadow-sm flex flex-col justify-center items-center text-center">
+              <div className="bg-surface border border-border rounded-[var(--radius-lg)] p-4 shadow-sm flex flex-col justify-center items-center text-center">
                 <Award className="w-5 h-5 text-success mb-2" />
                 <span className="text-2xl font-bold text-ink">{loadingStats ? '-' : stats.hires}</span>
                 <span className="text-xs font-medium text-ink-soft mt-1">Hires Made</span>
@@ -254,7 +254,7 @@ export default function HRProfilePage() {
             </div>
 
             {/* Account Security */}
-            <Card id="security" className="border border-border bg-white shadow-sm space-y-6">
+            <Card id="security" className="border border-border bg-surface shadow-sm space-y-6">
               <div className="border-b border-border pb-4">
                 <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
                   <Shield className="w-5 h-5 text-primary" />

@@ -47,7 +47,7 @@ export default function CopilotPage() {
     <DashboardLayout role="hr">
       <div className="space-y-6 w-full max-w-7xl mx-auto">
         {/* Top Info Header */}
-        <div className="bg-white border border-border p-5 rounded-[var(--radius-lg)] shadow-lg flex items-center justify-between">
+        <div className="bg-surface border border-border p-5 rounded-[var(--radius-lg)] shadow-lg flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-[var(--radius-md)] bg-primary/20 border border-border text-primary">
               <Bot className="w-6 h-6" />
@@ -73,7 +73,7 @@ export default function CopilotPage() {
                 key={i}
                 onClick={() => handleSend(prompt)}
                 disabled={loading}
-                className="text-xs px-3 py-1.5 rounded-[var(--radius-sm)] bg-white hover:bg-primary/40 text-text-secondary hover:text-text-primary border border-border hover:border-border-hover hover:shadow-sm transition-all text-left"
+                className="text-xs px-3 py-1.5 rounded-[var(--radius-sm)] bg-surface hover:bg-primary/40 text-text-secondary hover:text-text-primary border border-border hover:border-border-hover hover:shadow-sm transition-all text-left"
               >
                 {prompt}
               </button>
@@ -82,7 +82,7 @@ export default function CopilotPage() {
         </div>
 
         {/* Copilot Chat Log Window */}
-        <div className="flex-1 bg-white border border-border rounded-[var(--radius-lg)] p-6 overflow-y-auto space-y-4 my-4 min-h-[400px]">
+        <div className="flex-1 bg-surface border border-border rounded-[var(--radius-lg)] p-6 overflow-y-auto space-y-4 my-4 min-h-[400px]">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -150,7 +150,7 @@ export default function CopilotPage() {
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask Copilot anything about candidates, verification scores, or job pipelines..."
             disabled={loading}
-            className="flex-1 p-3.5 bg-white border border-border rounded-[var(--radius-md)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+            className="flex-1 p-3.5 bg-surface border border-border rounded-[var(--radius-md)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
           />
           <button
             onClick={() => handleSend()}

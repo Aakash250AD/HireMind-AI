@@ -39,7 +39,7 @@ export default function AnalyticsPage() {
     <DashboardLayout role="hr">
       <div className="space-y-6 w-full max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-lg font-bold text-text-primary">AI Automation Efficiency Analytics</h1>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -53,32 +53,32 @@ export default function AnalyticsPage() {
 
         {/* Metric KPI Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <div className="bg-white border border-border p-4 rounded-[var(--radius-md)] shadow">
+          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
             <span className="text-[10px] uppercase font-bold text-text-secondary block">Time to Screen</span>
             <div className="text-xl font-extrabold text-emerald-400 mt-1">{data.timeToScreenDays} Days</div>
             <span className="text-[9px] text-text-muted">vs 4.2 days manual</span>
           </div>
-          <div className="bg-white border border-border p-4 rounded-[var(--radius-md)] shadow">
+          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
             <span className="text-[10px] uppercase font-bold text-text-secondary block">Time to Hire</span>
             <div className="text-xl font-extrabold text-text-primary mt-1">{data.timeToHireDays} Days</div>
             <span className="text-[9px] text-text-muted">Industry avg: 24 days</span>
           </div>
-          <div className="bg-white border border-border p-4 rounded-[var(--radius-md)] shadow">
+          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
             <span className="text-[10px] uppercase font-bold text-text-secondary block">Screened Pool</span>
             <div className="text-xl font-extrabold text-text-primary mt-1">{data.candidatesScreened}</div>
             <span className="text-[9px] text-text-muted">100% LLM parsed</span>
           </div>
-          <div className="bg-white border border-border p-4 rounded-[var(--radius-md)] shadow">
+          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
             <span className="text-[10px] uppercase font-bold text-text-secondary block">Interview Rate</span>
             <div className="text-xl font-extrabold text-primary mt-1">{data.interviewCompletionRate}%</div>
             <span className="text-[9px] text-text-muted">Autonomous audio/text</span>
           </div>
-          <div className="bg-white border border-border p-4 rounded-[var(--radius-md)] shadow">
+          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
             <span className="text-[10px] uppercase font-bold text-text-secondary block">Shortlist Precision</span>
             <div className="text-xl font-extrabold text-amber-400 mt-1">{data.shortlistRate}%</div>
             <span className="text-[9px] text-text-muted">Passed benchmarks</span>
           </div>
-          <div className="bg-white border border-border p-4 rounded-[var(--radius-md)] shadow">
+          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
             <span className="text-[10px] uppercase font-bold text-text-secondary block">Verification Rate</span>
             <div className="text-xl font-extrabold text-indigo-400 mt-1">{data.verificationRate}%</div>
             <span className="text-[9px] text-text-muted">High confidence</span>
@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
         {/* Recharts Analytics Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Applications Trend Line Chart */}
-          <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
+          <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
             <h3 className="text-sm font-bold text-text-primary mb-4">Applications Ingested Over Time</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -104,7 +104,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Candidate Score Distribution Bar Chart */}
-          <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
+          <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
             <h3 className="text-sm font-bold text-text-primary mb-4">Candidate Overall Score Distribution</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">

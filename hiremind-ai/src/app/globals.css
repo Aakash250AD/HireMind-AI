@@ -14,6 +14,10 @@
   --color-ink: #0D0D0D; /* Updated to Deep Black */
   --color-ink-soft: #282828; /* Updated to Matte Black */
   --color-ink-faint: #8A93A3;
+
+  --color-text-primary: #0D0D0D;
+  --color-text-secondary: #282828;
+  --color-text-muted: #8A93A3;
   
   --color-surface: #FFFFFF;
   --color-surface-sunken: #F5F8FC; /* Updated to Soft Background */
@@ -64,6 +68,8 @@
     --ink: #0D0D0D;
     --ink-soft: #282828;
     --ink-faint: #8A93A3;
+    --text-primary: #0D0D0D;
+    --text-secondary: #282828;
     --surface: #FFFFFF;
     --surface-sunken: #F5F8FC;
     --border: rgba(20, 24, 31, 0.12);
@@ -74,6 +80,55 @@
     --danger: #C13B3B;
     --danger-tint: #FBEAEA;
   }
+
+  .dark {
+    --color-primary: #3b82f6;
+    --color-primary-hover: #60a5fa;
+    --color-primary-tint: rgba(59, 130, 246, 0.15);
+    
+    --color-ink: #ffffff;
+    --color-ink-soft: #f1f5f9;
+    --color-ink-faint: #cbd5e1;
+    
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #f1f5f9;
+    --color-text-muted: #cbd5e1;
+    
+    --color-surface: #0f172a;
+    --color-surface-sunken: #020617;
+    
+    --color-border: rgba(255, 255, 255, 0.15);
+    --color-border-hover: rgba(255, 255, 255, 0.25);
+    
+    --color-success: #34d399;
+    --color-success-tint: rgba(52, 211, 153, 0.15);
+    --color-warning: #fbbf24;
+    --color-warning-tint: rgba(251, 191, 36, 0.15);
+    --color-danger: #f87171;
+    --color-danger-tint: rgba(248, 113, 113, 0.15);
+    
+    --color-hm-deep: #ffffff;
+    --color-hm-matte: #f1f5f9;
+    --color-hm-bg: #020617;
+
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --primary-tint: rgba(59, 130, 246, 0.15);
+    --ink: #ffffff;
+    --ink-soft: #f1f5f9;
+    --ink-faint: #cbd5e1;
+    --text-primary: #ffffff;
+    --text-secondary: #f1f5f9;
+    --surface: #0f172a;
+    --surface-sunken: #020617;
+    --border: rgba(255, 255, 255, 0.15);
+    --success: #34d399;
+    --success-tint: rgba(52, 211, 153, 0.15);
+    --warning: #fbbf24;
+    --warning-tint: rgba(251, 191, 36, 0.15);
+    --danger: #f87171;
+    --danger-tint: rgba(248, 113, 113, 0.15);
+  }
 }
 
 body {
@@ -82,6 +137,12 @@ body {
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Ensure cards and elements don't get the dots if they shouldn't */
+.bg-surface,
+.bg-white {
+  background-image: none;
 }
 
 h1, h2, h3, h4, h5, h6 {

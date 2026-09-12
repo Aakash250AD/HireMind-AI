@@ -35,7 +35,7 @@ export default function AutomationsPage() {
     <DashboardLayout role="hr">
       <div className="space-y-6 w-full max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-lg font-bold text-text-primary">Automation Execution Pipeline</h1>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -58,7 +58,7 @@ export default function AutomationsPage() {
             {workflows.map((wf) => (
               <div
                 key={wf.id}
-                className="bg-white border border-border hover:border-border-hover hover:shadow-sm p-5 rounded-[var(--radius-lg)] shadow-lg transition-all flex flex-col justify-between"
+                className="bg-surface border border-border hover:border-border-hover hover:shadow-sm p-5 rounded-[var(--radius-lg)] shadow-lg transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between">
@@ -113,7 +113,7 @@ export default function AutomationsPage() {
         </div>
 
         {/* Email Communication Automation UI */}
-        <div className="bg-white border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-4">
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-bold text-text-primary flex items-center gap-2">

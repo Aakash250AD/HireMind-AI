@@ -62,7 +62,7 @@ export default function CandidateInterviewsHub() {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                   {activeInterviews.map(interview => (
-                    <Card key={interview.id} className="flex flex-col justify-between border border-primary/20 bg-white shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                    <Card key={interview.id} className="flex flex-col justify-between border border-primary/20 bg-surface shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
                       <div className="space-y-4 p-2">
                         <div>

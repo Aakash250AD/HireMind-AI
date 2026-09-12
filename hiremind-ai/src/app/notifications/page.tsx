@@ -26,7 +26,7 @@ export default function NotificationsPage() {
   return (
     <DashboardLayout role="hr">
       <div className="space-y-6 w-full max-w-7xl mx-auto">
-        <div className="bg-white border border-border p-5 rounded-[var(--radius-lg)] shadow-lg flex items-center justify-between">
+        <div className="bg-surface border border-border p-5 rounded-[var(--radius-lg)] shadow-lg flex items-center justify-between">
           <div>
             <h1 className="text-base font-bold text-text-primary">System Alerts & Pipeline Notifications</h1>
             <p className="text-xs text-text-secondary mt-0.5">Real-time alerts triggered by autonomous screening nodes.</p>
@@ -43,7 +43,7 @@ export default function NotificationsPage() {
           {notifications.map((n) => (
             <div
               key={n.id}
-              className={`bg-white border p-4 rounded-[var(--radius-md)] shadow transition-all flex items-start justify-between gap-4 ${
+              className={`bg-surface border p-4 rounded-[var(--radius-md)] shadow transition-all flex items-start justify-between gap-4 ${
                 n.unread ? 'border-border' : 'border-border'
               }`}
             >

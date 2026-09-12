@@ -26,13 +26,13 @@ export function HMAIOrb({ size = 'md', className = '' }: HMAIOrbProps) {
         <div className="absolute top-[5%] left-[10%] w-[60%] h-[30%] bg-gradient-to-b from-white/80 to-transparent rounded-full rotate-[-15deg] blur-[1px]" />
         
         {/* Inner core particle */}
-        <div className="absolute inset-0 m-auto w-1/4 h-1/4 bg-white rounded-full blur-[2px] animate-pulse-soft shadow-[0_0_15px_#fff]" />
+        <div className="absolute inset-0 m-auto w-1/4 h-1/4 bg-surface rounded-full blur-[2px] animate-pulse-soft shadow-[0_0_15px_#fff]" />
       </div>
       
       {/* Tiny floating particles (pure CSS) */}
       <div className="absolute inset-0 animate-spin-slow pointer-events-none">
         <div className="absolute top-[10%] left-[20%] w-1.5 h-1.5 bg-primary rounded-full blur-[1px]" />
-        <div className="absolute bottom-[20%] right-[15%] w-1 h-1 bg-white rounded-full" />
+        <div className="absolute bottom-[20%] right-[15%] w-1 h-1 bg-surface rounded-full" />
         <div className="absolute top-[40%] right-[5%] w-2 h-2 bg-primary/50 rounded-full blur-[2px]" />
       </div>
     </div>

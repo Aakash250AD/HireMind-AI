@@ -13,7 +13,7 @@ export function ProfilePreviewModal({ isOpen, onClose }: ProfilePreviewModalProp
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-hm-deep/80 backdrop-blur-sm animate-in fade-in duration-200">
       
-      <div className="w-full max-w-4xl max-h-[90vh] bg-white rounded-[var(--radius-lg)] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="w-full max-w-4xl max-h-[90vh] bg-surface rounded-[var(--radius-lg)] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         
         {/* Modal Header */}
         <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-surface-sunken shrink-0">
@@ -29,13 +29,13 @@ export function ProfilePreviewModal({ isOpen, onClose }: ProfilePreviewModalProp
         {/* Modal Content Scroll Area */}
         <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar bg-hm-bg">
           
-          <div className="bg-white rounded-[var(--radius-lg)] border border-border overflow-hidden shadow-sm">
+          <div className="bg-surface rounded-[var(--radius-lg)] border border-border overflow-hidden shadow-sm">
             {/* Header / Banner */}
             <div className="h-32 bg-gradient-to-r from-hm-deep to-primary relative" />
             
             <div className="px-8 pb-8 relative">
               {/* Avatar overlapping banner */}
-              <div className="absolute -top-12 w-24 h-24 rounded-full bg-white border-4 border-white shadow-md flex items-center justify-center text-3xl font-black text-hm-deep overflow-hidden">
+              <div className="absolute -top-12 w-24 h-24 rounded-full bg-surface border-4 border-white shadow-md flex items-center justify-center text-3xl font-black text-hm-deep overflow-hidden">
                 AK
               </div>
               

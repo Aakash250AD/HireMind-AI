@@ -54,7 +54,7 @@ export default function CreateJobPage() {
   return (
     <DashboardLayout role="hr">
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="bg-white border border-border p-6 rounded-[var(--radius-md)] shadow-lg">
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-md)] shadow-lg">
             <h2 className="text-lg font-bold text-text-primary mb-1">Create Job & Trigger AI Extraction</h2>
             <p className="text-xs text-text-secondary mb-6">
               Paste your raw job description below. HireMind AI will extract required skills, keywords, and responsibilities.
@@ -163,7 +163,7 @@ export default function CreateJobPage() {
                   <span className="font-bold text-text-secondary uppercase">Required Skills Extracted:</span>
                   <div className="flex flex-wrap gap-1.5 mt-1">
                     {extractedData.requiredSkills?.map((s) => (
-                      <span key={s} className="px-2.5 py-1 rounded bg-white border border-border text-text-primary font-semibold">
+                      <span key={s} className="px-2.5 py-1 rounded bg-surface border border-border text-text-primary font-semibold">
                         {s}
                       </span>
                     ))}
@@ -174,7 +174,7 @@ export default function CreateJobPage() {
                   <span className="font-bold text-text-secondary uppercase">Extracted Keywords:</span>
                   <div className="flex flex-wrap gap-1.5 mt-1">
                     {extractedData.extractedKeywords?.map((kw) => (
-                      <span key={kw} className="px-2.5 py-1 rounded bg-white text-text-secondary font-medium">
+                      <span key={kw} className="px-2.5 py-1 rounded bg-surface text-text-secondary font-medium">
                         {kw}
                       </span>
                     ))}

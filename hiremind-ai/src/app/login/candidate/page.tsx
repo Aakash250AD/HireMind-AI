@@ -16,7 +16,9 @@ import {
 
 export default function CandidateLoginPage() {
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -25,6 +27,10 @@ export default function CandidateLoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
+    // Save details
+    localStorage.setItem('candidateDetails', JSON.stringify({ name, email, mobile }));
+    
     setTimeout(() => {
       setLoading(false);
       router.push('/candidate-dashboard');
@@ -43,7 +49,7 @@ export default function CandidateLoginPage() {
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-4 md:p-8 font-sans">
       
       {/* Container Split Card */}
-      <div className="w-full max-w-5xl bg-white border border-border rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
+      <div className="w-full max-w-5xl bg-surface border border-border rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
         
         {/* Left Column: Unique Visual Hero Experience (5 Cols) */}
         <div className="lg:col-span-5 bg-gradient-to-br from-[#0A66C2] via-[#004182] to-[#0A0D14] p-8 md:p-10 text-text-primary flex flex-col justify-between relative overflow-hidden">
@@ -60,8 +66,8 @@ export default function CandidateLoginPage() {
             </Link>
             
             <Link href="/" className="inline-block">
-              <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-[var(--radius-lg)] border border-white/15">
-                <div className="w-7 h-7 bg-white rounded-[var(--radius-md)] flex items-center justify-center text-primary font-bold">
+              <div className="flex items-center gap-2.5 bg-surface/10 backdrop-blur-md px-3.5 py-2 rounded-[var(--radius-lg)] border border-white/15">
+                <div className="w-7 h-7 bg-surface rounded-[var(--radius-md)] flex items-center justify-center text-primary font-bold">
                   <BrainCircuit className="w-4 h-4" />
                 </div>
                 <span className="font-extrabold tracking-tight text-white text-base">
@@ -73,7 +79,7 @@ export default function CandidateLoginPage() {
 
           {/* Dynamic Hero Feature Card */}
           <div className="relative z-10 space-y-6 my-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-sky-200 border border-white/15">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface/10 text-xs font-semibold text-sky-200 border border-white/15">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
               <span>Fast-Track Your Career</span>
             </div>
@@ -112,7 +118,7 @@ export default function CandidateLoginPage() {
         </div>
 
         {/* Right Column: Interactive Form (7 Cols) */}
-        <div className="lg:col-span-7 p-8 md:p-12 flex flex-col justify-center bg-white">
+        <div className="lg:col-span-7 p-8 md:p-12 flex flex-col justify-center bg-surface">
           
           <div className="w-full max-w-md mx-auto">
             {/* Form Header */}
@@ -129,7 +135,7 @@ export default function CandidateLoginPage() {
             <button
               onClick={handleGoogleLogin}
               disabled={googleLoading || loading}
-              className="w-full py-2.5 px-4 mb-6 bg-white hover:bg-page-bg border border-border rounded-[var(--radius-md)] shadow-sm transition-all flex items-center justify-center gap-3"
+              className="w-full py-2.5 px-4 mb-6 bg-surface hover:bg-page-bg border border-border rounded-[var(--radius-md)] shadow-sm transition-all flex items-center justify-center gap-3"
             >
               {googleLoading ? (
                 <span className="text-xs font-bold text-ink">Connecting to Google...</span>
@@ -169,6 +175,22 @@ export default function CandidateLoginPage() {
               
               <div>
                 <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">
+                  Candidate Name
+                </label>
+                <div className="relative mb-4">
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full pl-3.5 pr-4 py-2.5 bg-page-bg border border-border rounded-[var(--radius-md)] text-xs font-semibold text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all"
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">
                   Candidate Email
                 </label>
                 <div className="relative">
@@ -180,6 +202,22 @@ export default function CandidateLoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 bg-page-bg border border-border rounded-[var(--radius-md)] text-xs font-semibold text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all"
                     placeholder="candidate@example.com"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">
+                  Mobile Number
+                </label>
+                <div className="relative mb-4">
+                  <input
+                    type="tel"
+                    required
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    className="w-full pl-3.5 pr-4 py-2.5 bg-page-bg border border-border rounded-[var(--radius-md)] text-xs font-semibold text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all"
+                    placeholder="+1 (555) 000-0000"
                   />
                 </div>
               </div>
@@ -218,7 +256,6 @@ export default function CandidateLoginPage() {
                 </label>
               </div>
 
-              {/* Submit CTA */}
               <button
                 type="submit"
                 disabled={loading || googleLoading}
@@ -233,6 +270,13 @@ export default function CandidateLoginPage() {
                   </>
                 )}
               </button>
+
+              <div className="mt-6 text-center text-xs text-ink-faint">
+                Don't have an account?{' '}
+                <Link href="/register" className="text-primary font-bold hover:underline">
+                  Sign up
+                </Link>
+              </div>
 
             </form>
           </div>

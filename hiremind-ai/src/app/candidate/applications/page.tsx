@@ -97,7 +97,7 @@ export default function CandidateApplicationsPage() {
                                 isCompleted 
                                   ? 'bg-primary text-white shadow-md'
                                   : isCurrent
-                                  ? 'bg-white border-2 border-primary text-primary shadow-[0_0_15px_rgba(22,87,204,0.3)] animate-pulse'
+                                  ? 'bg-surface border-2 border-primary text-primary shadow-[0_0_15px_rgba(22,87,204,0.3)] animate-pulse'
                                   : 'bg-surface-sunken border border-border text-ink-faint'
                               }`}
                             >
