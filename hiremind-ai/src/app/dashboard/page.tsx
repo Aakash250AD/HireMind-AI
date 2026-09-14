@@ -3,17 +3,18 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { DashboardLayout } from '@/components/DashboardLayout';
-import { callWebhook } from '@/lib/apiClient';
-import { WEBHOOKS } from '@/lib/webhooks';
+import { jobsService } from '@/services/jobs.service';
+import { analyticsService } from '@/services/analytics.service';
 import { Card } from '@/components/ui/Card';
 import { StatCard } from '@/components/ui/StatCard';
 import { Button } from '@/components/ui/Button';
 import { StatusPill } from '@/components/ui/StatusPill';
-import { Sparkles, Briefcase, Plus, Users, CheckCircle2, ChevronRight, X } from 'lucide-react';
+import { Sparkles, Briefcase, Plus, Users, CheckCircle2, ChevronRight, X, Check, XCircle, Award } from 'lucide-react';
 import { TiltCard } from '@/components/animations/TiltCard';
 import { MagneticButton } from '@/components/animations/MagneticButton';
 import { GlitterBackground } from '@/components/animations/GlitterBackground';
 import { motion } from 'framer-motion';
+import { supabase } from '@/lib/supabase';
 
 interface HRStats {
   activeJobs: number;
@@ -23,21 +24,12 @@ interface HRStats {
   hired: number;
 }
 
-interface Job {
-  id: string;
-  title: string;
-  category: string;
-  status: string;
-  description: string;
-  location: string;
-  salary: string;
-  skills: string[];
-  applicantCount: number;
-}
+import { Job } from '@/types';
 
 export default function HRDashboard() {
   const [stats, setStats] = useState<HRStats | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [topCandidates, setTopCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,11 +45,20 @@ export default function HRDashboard() {
     setError(null);
     try {
       const [statsData, jobsData] = await Promise.all([
-        callWebhook<HRStats>(WEBHOOKS.hrStats),
-        callWebhook<Job[]>(WEBHOOKS.jobList),
+        analyticsService.getHRStats(),
+        jobsService.getJobs(),
       ]);
+      
+      // Fetch top 10 candidates directly from Supabase
+      const { data: candidatesData } = await supabase
+        .from('candidates')
+        .select('*')
+        .order('overallScore', { ascending: false })
+        .limit(10);
+        
       setStats(statsData);
       setJobs(jobsData || []);
+      setTopCandidates(candidatesData || []);
     } catch (err) {
       setError((err as Error).message || 'Failed to load dashboard data');
     } finally {
@@ -70,15 +71,58 @@ export default function HRDashboard() {
     setJobPosting(true);
     try {
       const formData = new FormData(e.currentTarget);
-      const payload = Object.fromEntries(formData.entries());
-      await callWebhook(WEBHOOKS.jobCreate, payload);
-      setIsPostingJob(false);
-      // Reload jobs
-      loadDashboard();
+      const jobData = {
+        title: formData.get('title') as string,
+        department: formData.get('department') as string,
+        description: formData.get('description') as string,
+        skills: formData.get('skills') as string,
+      };
+
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const { data, error } = await supabase.from('jobs').insert([
+        {
+          title: jobData.title,
+          department: jobData.department,
+          description: jobData.description,
+          skills_required: Array.isArray(jobData.skills) 
+            ? jobData.skills 
+            : jobData.skills.split(',').map((s: string) => s.trim()),
+          created_by: session?.user?.id
+        }
+      ]).select();
+
+      if (error) {
+        alert('Error: ' + error.message);
+      } else {
+        alert('Job posted successfully!');
+        e.currentTarget.reset();
+        setIsPostingJob(false);
+        loadDashboard();
+      }
     } catch (err) {
       alert('Failed to post job');
     } finally {
       setJobPosting(false);
+    }
+  }
+
+  async function handleDecision(candidateId: string, email: string, name: string, decision: 'HIRED' | 'REJECTED') {
+    const webhookUrl = process.env.NEXT_PUBLIC_HR_DECISION_WEBHOOK;
+    if (!webhookUrl) {
+      alert('Webhook not configured');
+      return;
+    }
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candidateId, email, name, role: 'recruiter', decision })
+      });
+      alert(`Candidate ${decision.toLowerCase()} successfully!`);
+      loadDashboard(); // Refresh
+    } catch (err) {
+      alert('Failed to submit decision');
     }
   }
 
@@ -119,11 +163,11 @@ export default function HRDashboard() {
           <>
             {/* KPI Cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 relative z-10">
-              <StatCard label="Active Jobs" value={jobs.length} delta={2} withTilt />
-              <StatCard label="Total Applications" value={stats.totalApplications || 85} delta={18} withTilt />
-              <StatCard label="Pending Applications" value={stats.pendingApplications || 43} delta={5} withTilt />
-              <StatCard label="Offers Extended" value={stats.offers || 8} delta={2} withTilt />
-              <StatCard label="Hired" value={stats.hired || 12} withTilt />
+              <StatCard label="Active Jobs" value={jobs.length} delta={0} withTilt />
+              <StatCard label="Total Applications" value={stats.totalApplications ?? 0} delta={0} withTilt />
+              <StatCard label="Pending Applications" value={stats.pendingApplications ?? 0} delta={0} withTilt />
+              <StatCard label="Offers Extended" value={stats.offers ?? 0} delta={0} withTilt />
+              <StatCard label="Hired" value={stats.hired ?? 0} withTilt />
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -158,15 +202,15 @@ export default function HRDashboard() {
                                 <div className="flex items-center gap-3 mb-1">
                                   <h3 className="text-base font-semibold text-ink">{job.title}</h3>
                                   <StatusPill status={job.status} variant={job.status === 'ACTIVE' ? 'success' : 'default'} />
-                                  <StatusPill status={job.category} />
+                                  <StatusPill status={job.department} />
                                 </div>
                                 <p className="text-sm text-ink-soft line-clamp-2 mb-2">{job.description}</p>
                                 <div className="flex items-center gap-4 text-xs text-ink-faint font-medium">
                                   <span>{job.location}</span>
-                                  <span>{job.salary}</span>
+                                  <span>{job.salaryRange}</span>
                                   <span className="flex items-center gap-1 text-primary">
                                     <Users className="w-3.5 h-3.5" />
-                                    {job.applicantCount} applicants
+                                    {job.candidateCount} applicants
                                   </span>
                                 </div>
                               </div>
@@ -177,7 +221,7 @@ export default function HRDashboard() {
                         {/* Action row remains completely flat and sharp */}
                         <div className="flex items-center justify-between p-4 sm:px-6 pt-4 border-t border-border bg-surface rounded-b-[var(--radius-lg)]">
                           <div className="flex gap-2 relative z-10 overflow-hidden">
-                            {job.skills.slice(0,3).map((skill, i) => (
+                            {(job.requiredSkills || []).slice(0,3).map((skill, i) => (
                               <motion.span 
                                 key={skill}
                                 initial={{ opacity: 0, y: 10 }}
@@ -188,14 +232,14 @@ export default function HRDashboard() {
                                 {skill}
                               </motion.span>
                             ))}
-                            {job.skills.length > 3 && (
+                            {(job.requiredSkills || []).length > 3 && (
                               <motion.span 
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 3 * 0.1, duration: 0.3 }}
                                 className="px-2 py-1 bg-surface-sunken rounded text-[11px] font-medium text-ink-faint"
                               >
-                                +{job.skills.length - 3}
+                                +{(job.requiredSkills || []).length - 3}
                               </motion.span>
                             )}
                           </div>
@@ -213,6 +257,45 @@ export default function HRDashboard() {
 
               <div className="space-y-6">
                  {/* Sidebar Content Area (Available for future widgets) */}
+                 <div className="bg-surface border border-border rounded-[var(--radius-lg)] p-5 shadow-lg relative z-10">
+                   <div className="flex items-center gap-2 mb-4">
+                     <Award className="w-5 h-5 text-primary" />
+                     <h2 className="text-lg font-semibold text-ink">Candidate Review Board</h2>
+                   </div>
+                   <div className="space-y-3">
+                     {topCandidates.length === 0 ? (
+                       <p className="text-sm text-ink-faint">No candidates found.</p>
+                     ) : (
+                       topCandidates.map(cand => (
+                         <div key={cand.id} className="p-3 bg-surface-sunken border border-border rounded-md hover:border-primary/30 transition-colors">
+                           <div className="flex justify-between items-start mb-2">
+                             <div>
+                               <p className="text-sm font-bold text-ink">{cand.name || cand.full_name || 'Anonymous'}</p>
+                               <p className="text-[11px] text-ink-soft">{cand.email}</p>
+                             </div>
+                             <span className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded text-[10px] font-extrabold">
+                               {cand.overallScore}%
+                             </span>
+                           </div>
+                           <div className="flex items-center gap-2 mt-3">
+                             <Button 
+                               onClick={() => handleDecision(cand.id, cand.email, cand.name || cand.full_name, 'HIRED')}
+                               className="flex-1 h-8 text-[11px] bg-emerald-500/10 hover:bg-emerald-500 text-emerald-600 hover:text-white border border-emerald-500/20 transition-all"
+                             >
+                               <Check className="w-3 h-3 mr-1" /> Hire
+                             </Button>
+                             <Button 
+                               onClick={() => handleDecision(cand.id, cand.email, cand.name || cand.full_name, 'REJECTED')}
+                               className="flex-1 h-8 text-[11px] bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-500/20 transition-all"
+                             >
+                               <XCircle className="w-3 h-3 mr-1" /> Reject
+                             </Button>
+                           </div>
+                         </div>
+                       ))
+                     )}
+                   </div>
+                 </div>
               </div>
             </div>
           </>
@@ -237,12 +320,12 @@ export default function HRDashboard() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-ink mb-1">Location</label>
-                    <input required name="location" className="w-full px-3 py-2 bg-surface-sunken border border-border rounded-[var(--radius-sm)] text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g. Remote" />
+                    <label className="block text-sm font-medium text-ink mb-1">Department</label>
+                    <input required name="department" className="w-full px-3 py-2 bg-surface-sunken border border-border rounded-[var(--radius-sm)] text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g. Engineering" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-ink mb-1">Salary Range</label>
-                    <input required name="salary" className="w-full px-3 py-2 bg-surface-sunken border border-border rounded-[var(--radius-sm)] text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g. ₹12L - ₹16L" />
+                    <label className="block text-sm font-medium text-ink mb-1">Required Skills (comma separated)</label>
+                    <input required name="skills" className="w-full px-3 py-2 bg-surface-sunken border border-border rounded-[var(--radius-sm)] text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g. React, Node.js" />
                   </div>
                 </div>
                 <div className="pt-4 flex justify-end gap-3 border-t border-border mt-6">

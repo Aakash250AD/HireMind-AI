@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { DashboardLayout } from '@/components/DashboardLayout';
-import { callWebhook } from '@/lib/apiClient';
-import { WEBHOOKS } from '@/lib/webhooks';
 import { Card } from '@/components/ui/Card';
 import { StatCard } from '@/components/ui/StatCard';
 import { Button } from '@/components/ui/Button';
@@ -87,8 +85,9 @@ export default function CandidateDashboardPage() {
         ) : (
           <>
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
               <StatCard label="Applied Jobs" value={appliedJobsCount} />
+              <StatCard label="Rounds Completed" value={`${currentStep - 1} / ${TRACKER_STEPS.length}`} />
               <StatCard label="AI Match %" value={`${avgMatch}%`} />
               <StatCard label="Interview Score" value={`${avgInterview}%`} />
               <StatCard label="Skill Verification" value={`${avgVerification}%`} />

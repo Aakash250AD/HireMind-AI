@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/DashboardLayout';
+import { supabase } from '@/lib/supabase';
 import { jobsService } from '@/services/jobs.service';
 import { Job } from '@/types';
 import { Sparkles, Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
@@ -31,24 +32,35 @@ export default function CreateJobPage() {
   };
 
   const handleCreateJob = async () => {
-    const finalJob: Omit<Job, 'id' | 'createdAt' | 'candidateCount'> = {
-      title: jobTitle || extractedData?.title || 'New AI Position',
-      department,
-      location,
-      employmentType,
-      experienceYears: experience,
-      education,
-      salaryRange: salary,
-      description: jobDescription,
-      requiredSkills: extractedData?.requiredSkills || ['Python', 'AI Agents'],
-      preferredSkills: extractedData?.preferredSkills || ['Docker', 'AWS'],
-      responsibilities: extractedData?.responsibilities || ['Develop autonomous pipelines.'],
-      status: 'ACTIVE',
-      extractedKeywords: extractedData?.extractedKeywords
-    };
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const { data, error } = await supabase.from('jobs').insert([
+        {
+          title: jobTitle || extractedData?.title || 'New AI Position',
+          department,
+          location,
+          employment_type: employmentType,
+          experience_years: experience,
+          education,
+          salary_range: salary,
+          description: jobDescription,
+          skills_required: extractedData?.requiredSkills || ['Python', 'AI Agents'],
+          preferred_skills: extractedData?.preferredSkills || ['Docker', 'AWS'],
+          responsibilities: extractedData?.responsibilities || ['Develop autonomous pipelines.'],
+          status: 'ACTIVE',
+          created_by: session?.user?.id
+        }
+      ]).select();
 
-    const created = await jobsService.createJob(finalJob);
-    router.push(`/jobs/${created.id}`);
+      if (error) throw error;
+      
+      alert('Job posted successfully!');
+      router.push('/candidate/jobs');
+    } catch (err: any) {
+      console.error(err);
+      alert('Failed to post job: ' + err.message);
+    }
   };
 
   return (

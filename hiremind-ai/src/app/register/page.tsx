@@ -15,12 +15,14 @@ import {
   Briefcase,
   Users
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [role, setRole] = useState<'candidate' | 'hr' | null>(null);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,8 +42,19 @@ export default function RegisterPage() {
     setLoading(true);
     setError('');
     try {
-      // Simulate registration
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            company,
+            role: role
+          }
+        }
+      });
+      
+      if (error) throw error;
       
       if (role === 'hr') {
         router.push('/onboarding/hr');
@@ -54,21 +67,30 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleSignup = () => {
+  const handleGoogleSignup = async () => {
     if (!role) {
       setError('Please select an account type before continuing with Google.');
       return;
     }
     setGoogleLoading(true);
     setError('');
-    setTimeout(() => {
+    try {
+      const redirectPath = role === 'hr' ? '/onboarding/hr' : '/onboarding/candidate';
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}${redirectPath}`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent'
+          }
+        }
+      });
+      if (error) throw error;
+    } catch (err) {
+      setError((err as Error).message || 'Google Signup failed');
       setGoogleLoading(false);
-      if (role === 'hr') {
-        router.push('/onboarding/hr');
-      } else {
-        router.push('/onboarding/candidate');
-      }
-    }, 1200);
+    }
   };
 
   return (
@@ -111,6 +133,25 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
+
+            {role === 'hr' && (
+              <div>
+                <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">
+                  Company Name
+                </label>
+                <div className="relative">
+                  <Briefcase className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint" />
+                  <input
+                    type="text"
+                    required
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                    placeholder="e.g. Acme Corp"
+                    className="w-full pl-10 pr-4 py-3 bg-page-bg border border-border rounded-[var(--radius-md)] text-sm font-medium text-ink placeholder-ink-faint focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
+                  />
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">

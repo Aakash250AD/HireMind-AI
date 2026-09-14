@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { UploadCloud, CheckCircle2, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
+import { candidatesService } from '@/services/candidates.service';
 
 interface ResumeUploaderProps {
   jobId?: string;
@@ -15,37 +16,70 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({ jobId, onScreeni
   const [status, setStatus] = useState<'idle' | 'uploading' | 'screening' | 'success'>('idle');
   const [progress, setProgress] = useState(0);
 
-  const handleSimulatedUpload = async (uploadedFile: File) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const handleUpload = async (uploadedFile: File) => {
     setFile(uploadedFile);
     setStatus('uploading');
     setProgress(30);
+    setError(null);
 
-    setTimeout(() => {
-      setProgress(60);
-      setStatus('screening');
-    }, 1000);
+    try {
+      // 1. Read file as Base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const base64Data = reader.result as string;
+          // Clean base64 string (remove data:application/pdf;base64, prefix if present)
+          const fileBase64 = base64Data.split(',')[1] || base64Data;
+          const mimeType = uploadedFile.type || 'application/pdf';
 
-    // Simulate webhook/backend processing time
-    setTimeout(() => {
-      setProgress(100);
-      setStatus('success');
-      if (onScreeningComplete) {
-        onScreeningComplete();
-      }
-    }, 2500);
+          setProgress(60);
+          setStatus('screening');
+
+          // 2. Call backend
+          await candidatesService.uploadAndScreenResume(
+            uploadedFile.name,
+            fileBase64,
+            mimeType,
+            jobId || 'default-job-id'
+          );
+
+          setProgress(100);
+          setStatus('success');
+          if (onScreeningComplete) {
+            onScreeningComplete();
+          }
+        } catch (err) {
+          console.error('Upload failed:', err);
+          setError('Failed to process the resume. Please try again.');
+          setStatus('idle');
+        }
+      };
+      reader.onerror = () => {
+        setError('Failed to read the file.');
+        setStatus('idle');
+      };
+
+      reader.readAsDataURL(uploadedFile);
+    } catch (err) {
+      console.error(err);
+      setError('An unexpected error occurred.');
+      setStatus('idle');
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleSimulatedUpload(e.dataTransfer.files[0]);
+      handleUpload(e.dataTransfer.files[0]);
     }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      handleSimulatedUpload(e.target.files[0]);
+      handleUpload(e.target.files[0]);
     }
   };
 
@@ -67,6 +101,11 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({ jobId, onScreeni
       >
         {status === 'idle' && (
           <>
+            {error && (
+              <div className="w-full p-3 mb-4 text-xs font-semibold text-danger bg-danger-tint border border-danger rounded-[var(--radius-md)] text-left">
+                {error}
+              </div>
+            )}
             <div className="w-14 h-14 bg-primary-tint rounded-full flex items-center justify-center text-primary mb-4 shadow-sm">
               <UploadCloud className="w-7 h-7" />
             </div>

@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { DashboardLayout } from '@/components/DashboardLayout';
-import { callWebhook } from '@/lib/apiClient';
-import { WEBHOOKS } from '@/lib/webhooks';
+import { shortlistService } from '@/services/shortlist.service';
 import { jobsService } from '@/services/jobs.service';
 import { Job } from '@/types';
 import { Card } from '@/components/ui/Card';
@@ -41,7 +40,7 @@ export default function JobShortlistPage() {
     setLoading(true);
     try {
       const [shortlist, jobDetails] = await Promise.all([
-        callWebhook<ShortlistCandidate[]>(WEBHOOKS.shortlist, { jobId }),
+        shortlistService.getShortlist(jobId),
         jobsService.getJobById(jobId)
       ]);
       setCandidates(shortlist || []);
@@ -56,7 +55,7 @@ export default function JobShortlistPage() {
   async function handleDecision(candidateId: string, decision: 'advance' | 'pass') {
     setMakingDecision(true);
     try {
-      await callWebhook(WEBHOOKS.decision, { jobId, candidateId, decision });
+      await shortlistService.submitDecision(jobId, candidateId, decision);
       // Remove from view
       setCandidates(c => c.filter(cand => cand.id !== candidateId));
       setSelectedCandidate(null);

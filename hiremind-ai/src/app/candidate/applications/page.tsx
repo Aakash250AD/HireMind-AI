@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { DashboardLayout } from '@/components/DashboardLayout';
-import { callWebhook } from '@/lib/apiClient';
-import { WEBHOOKS } from '@/lib/webhooks';
+import { candidatesService } from '@/services/candidates.service';
 import { Card } from '@/components/ui/Card';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { Button } from '@/components/ui/Button';
@@ -39,7 +38,7 @@ export default function CandidateApplicationsPage() {
   async function loadApplications() {
     setLoading(true);
     try {
-      const data = await callWebhook<ApplicationStatus>(WEBHOOKS.candidateStatus);
+      const data = await candidatesService.getCandidateApplications();
       setStatus(data);
     } catch (err) {
       console.error(err);

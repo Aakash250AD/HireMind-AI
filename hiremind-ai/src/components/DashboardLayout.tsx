@@ -29,6 +29,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { HMAICopilot } from './ui/HMAICopilot';
 import { UserProfileMenu } from './ui/UserProfileMenu';
 import { NotificationMenu } from './ui/NotificationMenu';
+import { ProfileGuard } from '../components/ProfileGuard';
 
 
 interface DashboardLayoutProps {

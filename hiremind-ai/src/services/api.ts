@@ -1,10 +1,73 @@
 // Base API Configuration & Helper for Low-Code Automation Webhook Integration
 
-const getWebhookUrl = () => {
-  const isDev = process.env.NEXT_PUBLIC_ENVIRONMENT === 'development';
-  return isDev 
-    ? process.env.NEXT_PUBLIC_AUTOMATION_TEST_WEBHOOK_URL 
-    : process.env.NEXT_PUBLIC_AUTOMATION_WEBHOOK_URL;
+const DOMAIN_WEBHOOKS: Record<string, string | undefined> = {
+  auth: process.env.NEXT_PUBLIC_WEBHOOK_AUTH,
+  jobs: process.env.NEXT_PUBLIC_WEBHOOK_JOBS,
+  candidates: process.env.NEXT_PUBLIC_WEBHOOK_CANDIDATES,
+  interviews: process.env.NEXT_PUBLIC_WEBHOOK_INTERVIEWS,
+  evaluation: process.env.NEXT_PUBLIC_WEBHOOK_EVALUATION,
+  shortlist: process.env.NEXT_PUBLIC_WEBHOOK_SHORTLIST,
+  decision: process.env.NEXT_PUBLIC_WEBHOOK_DECISION,
+  copilot: process.env.NEXT_PUBLIC_WEBHOOK_COPILOT,
+  notifications: process.env.NEXT_PUBLIC_WEBHOOK_NOTIFICATIONS,
+  automations: process.env.NEXT_PUBLIC_WEBHOOK_AUTOMATIONS,
+  analytics: process.env.NEXT_PUBLIC_WEBHOOK_ANALYTICS,
+};
+
+const ACTION_DOMAIN: Record<string, string> = {
+  // Auth
+  LOGIN: 'auth',
+  REGISTER: 'auth',
+  GET_CURRENT_USER: 'auth',
+  LOGOUT: 'auth',
+  
+  // Jobs
+  CREATE_JOB: 'jobs',
+  GET_JOBS: 'jobs',
+  GET_JOB: 'jobs',
+  UPDATE_JOB: 'jobs',
+  DELETE_JOB: 'jobs',
+  ANALYZE_JOB_DESCRIPTION: 'jobs',
+  
+  // Candidates
+  APPLY_JOB: 'candidates',
+  GET_CANDIDATES: 'candidates',
+  GET_CANDIDATE: 'candidates',
+  UPDATE_CANDIDATE_STAGE: 'candidates',
+  
+  // Decision
+  SUBMIT_DECISION: 'decision',
+  
+  // Interviews & Evaluation
+  START_INTERVIEW: 'interviews',
+  SUBMIT_INTERVIEW_ANSWER: 'interviews',
+  
+  // Shortlist
+  GET_SHORTLIST: 'shortlist',
+  GET_SHORTLIST_REASONING: 'shortlist',
+  
+  // Copilot
+  ASK_COPILOT: 'copilot',
+  
+  // Notifications & Emails
+  GET_EMAILS: 'notifications',
+  RETRY_EMAIL: 'notifications',
+  GET_NOTIFICATIONS: 'notifications',
+  MARK_NOTIFICATION_READ: 'notifications',
+  MARK_ALL_NOTIFICATIONS_READ: 'notifications',
+  
+  // Automations
+  GET_AUTOMATIONS: 'automations',
+  TRIGGER_WORKFLOW: 'automations',
+  
+  // Analytics
+  GET_ANALYTICS_SUMMARY: 'analytics',
+};
+
+const getWebhookUrl = (action: string): string | undefined => {
+  const domain = ACTION_DOMAIN[action];
+  if (!domain) return undefined;
+  return DOMAIN_WEBHOOKS[domain];
 };
 
 // Simulated latency helper to mimic asynchronous AI execution when running locally
@@ -27,11 +90,11 @@ export interface WebhookResponse<T = unknown> {
 }
 
 export async function callWebhook<T>(payload: WebhookPayload): Promise<T> {
-  const url = getWebhookUrl();
+  const url = getWebhookUrl(payload.action);
   
   if (!url) {
-    console.warn(`[Webhook API] No webhook URL configured. Falling back to local mock data for action: ${payload.action}`);
-    throw new Error('WEBHOOK_NOT_CONFIGURED');
+    console.warn(`[Webhook API] No webhook URL configured for action: ${payload.action} (Domain: ${ACTION_DOMAIN[payload.action] || 'Unknown'})`);
+    throw new Error(`WEBHOOK_NOT_CONFIGURED_FOR_${payload.action}`);
   }
 
   const timeoutMs = parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT || '30000');
@@ -75,7 +138,6 @@ export async function callWebhook<T>(payload: WebhookPayload): Promise<T> {
       console.warn(`[Webhook API] Call failed for action: ${payload.action}`, err);
     }
     
-    // Throw error so individual services can catch it and return fallback data
     throw err;
   }
 }

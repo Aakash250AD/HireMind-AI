@@ -37,7 +37,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const clearCacheAndLogout = () => {
     localStorage.clear();
     sessionStorage.clear();
-    router.push('/login');
+    router.push('/');
   };
 
   return (

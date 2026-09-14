@@ -16,6 +16,7 @@ import { MagneticButton } from '@/components/animations/MagneticButton';
 function ApplyModal({ job, onClose, onSuccess }: { job: Job, onClose: () => void, onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState('');
   const [skills, setSkills] = useState('');
   const [degree, setDegree] = useState('');
@@ -24,12 +25,33 @@ function ApplyModal({ job, onClose, onSuccess }: { job: Job, onClose: () => void
     if (!name.trim()) return alert('Please enter your name.');
     if (!degree.trim()) return alert('Please enter your degree.');
     if (!skills.trim()) return alert('Please enter your skills.');
-    if (!fileName.trim()) return alert('Please upload a resume file.');
+    if (!file) return alert('Please upload a resume file.');
     
     setLoading(true);
     try {
-      await candidatesService.uploadAndScreenResume(fileName, job.id);
-      onSuccess();
+      // Read file to Base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const result = e.target?.result as string;
+        if (!result) return;
+        const base64Data = result.split(',')[1];
+        
+        try {
+          await candidatesService.uploadAndScreenResume(
+            file.name, 
+            base64Data, 
+            file.type || 'application/pdf', 
+            job.id
+          );
+          onSuccess();
+        } catch (err) {
+          console.error(err);
+          alert('Failed to apply. Please try again.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      reader.readAsDataURL(file);
     } catch (err) {
       alert('Failed to apply. Please try again.');
     } finally {
@@ -84,7 +106,13 @@ function ApplyModal({ job, onClose, onSuccess }: { job: Job, onClose: () => void
             <input 
               type="file" 
               accept=".pdf,.doc,.docx,.jpg,.jpeg"
-              onChange={(e) => setFileName(e.target.files?.[0]?.name || '')}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) {
+                  setFile(f);
+                  setFileName(f.name);
+                }
+              }}
               className="w-full px-4 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-surface-sunken file:text-ink hover:file:bg-border cursor-pointer bg-page-bg"
             />
             <p className="text-xs text-ink-faint mt-1">Accepted formats: PDF, DOC, DOCX, JPG.</p>
