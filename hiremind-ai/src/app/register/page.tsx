@@ -69,6 +69,7 @@ export default function RegisterPage() {
 
   const handleGoogleSignup = async () => {
     if (!role) {
+      
       setError('Please select an account type before continuing with Google.');
       return;
     }
