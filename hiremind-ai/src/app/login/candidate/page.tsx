@@ -3,12 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { 
+import {
   ArrowRight,
-  ArrowLeft, 
-  Sparkles, 
-  ShieldCheck, 
-  BrainCircuit, 
+  ArrowLeft,
+  Sparkles,
+  ShieldCheck,
+  BrainCircuit,
   CheckCircle2,
   Lock,
   Mail,
@@ -22,15 +22,21 @@ export default function CandidateLoginPage() {
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
     try {
-      // Bypassing API login
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
       router.push('/candidate-dashboard');
     } catch (err: any) {
       setError(err.message || 'Authentication failed');
@@ -57,13 +63,13 @@ export default function CandidateLoginPage() {
 
   return (
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-4 md:p-8 font-sans">
-      
+
       {/* Container Split Card */}
       <div className="w-full max-w-5xl bg-surface border border-border rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
-        
+
         {/* Left Column: Unique Visual Hero Experience (5 Cols) */}
         <div className="lg:col-span-5 bg-gradient-to-br from-[#0A66C2] via-[#004182] to-[#0A0D14] p-8 md:p-10 text-text-primary flex flex-col justify-between relative overflow-hidden">
-          
+
           {/* Subtle Background Glow Spheres */}
           <div className="absolute -top-12 -left-12 w-48 h-48 bg-[#38BDF8]/20 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute -bottom-16 -right-16 w-60 h-60 bg-primary/40 rounded-full blur-3xl pointer-events-none" />
@@ -74,7 +80,7 @@ export default function CandidateLoginPage() {
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Home</span>
             </Link>
-            
+
             <Link href="/" className="inline-block">
               <div className="flex items-center gap-2.5 bg-surface/10 backdrop-blur-md px-3.5 py-2 rounded-[var(--radius-lg)] border border-white/15">
                 <div className="w-7 h-7 bg-surface rounded-[var(--radius-md)] flex items-center justify-center text-primary font-bold">
@@ -129,12 +135,12 @@ export default function CandidateLoginPage() {
 
         {/* Right Column: Interactive Form (7 Cols) */}
         <div className="lg:col-span-7 p-8 md:p-12 flex flex-col justify-center bg-surface">
-          
+
           <div className="w-full max-w-md mx-auto">
             {/* Form Header */}
             <div className="mb-8">
               <h1 className="text-xl md:text-2xl font-extrabold text-ink tracking-tight">
-                {isSignUp ? 'Create Candidate Account' : 'Candidate Portal Access'}
+                Candidate Portal Access
               </h1>
               <p className="text-xs text-ink-soft mt-1">
                 Enter your applicant credentials to manage your job applications and AI interviews.
@@ -187,7 +193,7 @@ export default function CandidateLoginPage() {
                   {error}
                 </div>
               )}
-              
+
               <div>
                 <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">
                   Email Address
@@ -244,20 +250,20 @@ export default function CandidateLoginPage() {
                 disabled={loading}
                 className="w-full py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-md)] shadow-lg shadow-primary/30 border border-primary/20 transition-colors flex items-center justify-center gap-2"
               >
-                {loading ? 'Authenticating...' : isSignUp ? 'Create Account' : 'Secure Login'}
+                {loading ? 'Authenticating...' : 'Secure Login'}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
             {/* Toggle Sign Up */}
             <div className="mt-8 text-center text-xs text-ink-soft">
-              {isSignUp ? 'Already have an account?' : 'Don\'t have an account?'}
-              <button 
-                onClick={() => { setIsSignUp(!isSignUp); setError(null); }} 
+              Don't have an account?
+              <Link
+                href="/register"
                 className="ml-1 text-primary hover:text-dark-blue font-bold transition-colors"
               >
-                {isSignUp ? 'Sign In' : 'Create Account'}
-              </button>
+                Create Account
+              </Link>
             </div>
           </div>
         </div>

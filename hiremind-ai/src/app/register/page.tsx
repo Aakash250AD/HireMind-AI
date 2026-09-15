@@ -49,7 +49,7 @@ export default function RegisterPage() {
           data: {
             full_name: fullName,
             company,
-            role: role
+            role: role === 'hr' ? 'recruiter' : 'candidate'
           }
         }
       });

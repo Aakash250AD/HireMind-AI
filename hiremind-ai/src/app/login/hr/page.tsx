@@ -30,8 +30,41 @@ export default function HRLoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
     try {
-      // Bypassing API login
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+      if (authError) throw authError;
+
+      if (!authData.user) {
+        throw new Error('Authentication failed.');
+      }
+
+      const { data: userProfile, error: profileError } = await supabase
+        .from('users')
+        .select('id, email, role, status')
+        .eq('auth_provider_user_id', authData.user.id)
+        .single();
+
+      if (profileError || !userProfile) {
+        await supabase.auth.signOut();
+        throw new Error('User profile not found.');
+      }
+
+      if (userProfile.status !== 'active') {
+        await supabase.auth.signOut();
+        throw new Error('Your account is not active.');
+      }
+
+      if (userProfile.role !== 'hr') {
+        await supabase.auth.signOut();
+        throw new Error('This account is not registered as a hr.');
+      }
+
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Authentication failed');
