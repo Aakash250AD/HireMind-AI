@@ -31,13 +31,36 @@ export const jobsService = {
     });
   },
 
-  async analyzeJobDescription(rawDescription: string, titleHint?: string): Promise<Partial<Job>> {
-    return await callWebhook<Partial<Job>>({
-      action: 'ANALYZE_JOB_DESCRIPTION',
-      role: 'admin',
-      data: { rawDescription, titleHint }
-    });
-  },
+ async analyzeJobDescription(rawDescription: string, titleHint?: string) {
+  const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_JOB_AI;
+
+  if (!webhookUrl) {
+    throw new Error('Job AI webhook URL is not configured.');
+  }
+
+  const response = await fetch(webhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      raw_job_description: rawDescription,
+      title_hint: titleHint,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Job AI extraction failed: ${response.status}`);
+  }
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.error || 'Job AI extraction failed.');
+  }
+
+  return result.data?.extraction ?? result.data;
+},
 
   async createJob(newJob: Omit<Job, 'id' | 'createdAt' | 'candidateCount'>): Promise<Job> {
     const { data: { session } } = await supabase.auth.getSession();
