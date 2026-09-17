@@ -122,7 +122,7 @@ export default function CandidateOnboardingPage() {
           {currentStep === 1 && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <h2 className="text-2xl font-extrabold mb-2 text-ink">Personal Information</h2>
-              <p className="text-sm text-ink-faint mb-8">Let's start with your basic contact and location details.</p>
+              <p className="text-sm text-ink-faint mb-8">Let&apos;s start with your basic contact and location details.</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>

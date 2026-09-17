@@ -4,34 +4,91 @@ import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { analyticsService } from '@/services/analytics.service';
 import { AnalyticsSummary } from '@/types';
-import { 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  LineChart, 
+import { Sparkles } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  LineChart,
   Line,
-  CartesianGrid 
+  CartesianGrid
 } from 'recharts';
+
+function Metric({ label, value, suffix = '', hint }: { label: string; value: number | null | undefined; suffix?: string; hint: string }) {
+  const available = value !== null && value !== undefined;
+  return (
+    <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
+      <span className="text-[10px] uppercase font-bold text-text-secondary block">{label}</span>
+      <div className={`text-xl font-extrabold mt-1 ${available ? 'text-text-primary' : 'text-text-muted'}`}>
+        {available ? `${value}${suffix}` : 'Not yet available'}
+      </div>
+      <span className="text-[9px] text-text-muted">{hint}</span>
+    </div>
+  );
+}
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notConfigured, setNotConfigured] = useState(false);
 
   useEffect(() => {
-    async function loadAnalytics() {
-      const summary = await analyticsService.getAnalyticsSummary();
-      setData(summary);
-    }
     loadAnalytics();
   }, []);
 
-  if (!data) {
+  async function loadAnalytics() {
+    setLoading(true);
+    setError(null);
+    setNotConfigured(false);
+    try {
+      const summary = await analyticsService.getAnalyticsSummary();
+      setData(summary);
+    } catch (err) {
+      const message = (err as Error).message || '';
+      if (message.includes('WEBHOOK_NOT_CONFIGURED')) {
+        setNotConfigured(true);
+      } else {
+        setError(message || 'Failed to load analytics');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-page-bg flex items-center justify-center text-xs text-text-secondary">
-        Loading Recruitment Analytics...
-      </div>
+      <DashboardLayout role="hr">
+        <div className="py-20 text-center text-xs text-text-secondary">Loading Recruitment Analytics...</div>
+      </DashboardLayout>
+    );
+  }
+
+  if (notConfigured) {
+    return (
+      <DashboardLayout role="hr">
+        <div className="flex flex-col items-center justify-center py-24 text-center gap-3">
+          <Sparkles className="w-10 h-10 text-text-secondary" />
+          <h2 className="text-base font-bold text-text-primary">Analytics Isn&apos;t Connected Yet</h2>
+          <p className="text-xs text-text-secondary max-w-sm">
+            Once the analytics webhook is configured, recruitment funnel, score distribution, and time-to-hire metrics will appear here.
+          </p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <DashboardLayout role="hr">
+        <div className="flex flex-col items-center justify-center py-24 text-center gap-3">
+          <p className="text-sm text-danger">{error || 'Failed to load analytics'}</p>
+          <button onClick={loadAnalytics} className="text-xs font-bold text-primary underline">Retry</button>
+        </div>
+      </DashboardLayout>
     );
   }
 
@@ -47,42 +104,18 @@ export default function AnalyticsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2 bg-page-bg p-1.5 rounded-[var(--radius-sm)] border border-border text-xs font-semibold">
-            <span className="px-3 py-1 bg-primary text-text-primary rounded">Last 30 Days</span>
+            <span className="px-3 py-1 bg-primary text-white rounded">Last 30 Days</span>
           </div>
         </div>
 
         {/* Metric KPI Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
-            <span className="text-[10px] uppercase font-bold text-text-secondary block">Time to Screen</span>
-            <div className="text-xl font-extrabold text-emerald-400 mt-1">{data.timeToScreenDays} Days</div>
-            <span className="text-[9px] text-text-muted">vs 4.2 days manual</span>
-          </div>
-          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
-            <span className="text-[10px] uppercase font-bold text-text-secondary block">Time to Hire</span>
-            <div className="text-xl font-extrabold text-text-primary mt-1">{data.timeToHireDays} Days</div>
-            <span className="text-[9px] text-text-muted">Industry avg: 24 days</span>
-          </div>
-          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
-            <span className="text-[10px] uppercase font-bold text-text-secondary block">Screened Pool</span>
-            <div className="text-xl font-extrabold text-text-primary mt-1">{data.candidatesScreened}</div>
-            <span className="text-[9px] text-text-muted">100% LLM parsed</span>
-          </div>
-          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
-            <span className="text-[10px] uppercase font-bold text-text-secondary block">Interview Rate</span>
-            <div className="text-xl font-extrabold text-primary mt-1">{data.interviewCompletionRate}%</div>
-            <span className="text-[9px] text-text-muted">Autonomous audio/text</span>
-          </div>
-          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
-            <span className="text-[10px] uppercase font-bold text-text-secondary block">Shortlist Precision</span>
-            <div className="text-xl font-extrabold text-amber-400 mt-1">{data.shortlistRate}%</div>
-            <span className="text-[9px] text-text-muted">Passed benchmarks</span>
-          </div>
-          <div className="bg-surface border border-border p-4 rounded-[var(--radius-md)] shadow">
-            <span className="text-[10px] uppercase font-bold text-text-secondary block">Verification Rate</span>
-            <div className="text-xl font-extrabold text-indigo-400 mt-1">{data.verificationRate}%</div>
-            <span className="text-[9px] text-text-muted">High confidence</span>
-          </div>
+          <Metric label="Time to Screen" value={data.timeToScreenDays} suffix=" Days" hint="Automated screening turnaround" />
+          <Metric label="Time to Hire" value={data.timeToHireDays} suffix=" Days" hint="Application to hire" />
+          <Metric label="Screened Pool" value={data.candidatesScreened} hint="Resumes parsed" />
+          <Metric label="Interview Rate" value={data.interviewCompletionRate} suffix="%" hint="Completed AI interviews" />
+          <Metric label="Shortlist Precision" value={data.shortlistRate} suffix="%" hint="Passed benchmarks" />
+          <Metric label="Verification Rate" value={data.verificationRate} suffix="%" hint="High confidence" />
         </div>
 
         {/* Recharts Analytics Section */}
@@ -90,33 +123,41 @@ export default function AnalyticsPage() {
           {/* Applications Trend Line Chart */}
           <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
             <h3 className="text-sm font-bold text-text-primary mb-4">Applications Ingested Over Time</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data.applicationsOverTime}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#383838" />
-                  <XAxis dataKey="date" stroke="#A1A1AA" tick={{ fontSize: 11 }} />
-                  <YAxis stroke="#A1A1AA" tick={{ fontSize: 11 }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#1F1F1F', borderColor: '#383838', color: '#FFF' }} />
-                  <Line type="monotone" dataKey="count" stroke="#722F37" strokeWidth={3} dot={{ fill: '#722F37' }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            {data.applicationsOverTime.length === 0 ? (
+              <div className="h-64 flex items-center justify-center text-xs text-text-muted">No application data yet.</div>
+            ) : (
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={data.applicationsOverTime}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                    <XAxis dataKey="date" stroke="var(--text-secondary)" tick={{ fontSize: 11 }} />
+                    <YAxis stroke="var(--text-secondary)" tick={{ fontSize: 11 }} />
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
+                    <Line type="monotone" dataKey="count" stroke="var(--primary)" strokeWidth={3} dot={{ fill: 'var(--primary)' }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </div>
 
           {/* Candidate Score Distribution Bar Chart */}
           <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg">
             <h3 className="text-sm font-bold text-text-primary mb-4">Candidate Overall Score Distribution</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.candidateScoreDistribution}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#383838" />
-                  <XAxis dataKey="range" stroke="#A1A1AA" tick={{ fontSize: 11 }} />
-                  <YAxis stroke="#A1A1AA" tick={{ fontSize: 11 }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#1F1F1F', borderColor: '#383838', color: '#FFF' }} />
-                  <Bar dataKey="count" fill="#722F37" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            {data.candidateScoreDistribution.length === 0 ? (
+              <div className="h-64 flex items-center justify-center text-xs text-text-muted">No scored candidates yet.</div>
+            ) : (
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.candidateScoreDistribution}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                    <XAxis dataKey="range" stroke="var(--text-secondary)" tick={{ fontSize: 11 }} />
+                    <YAxis stroke="var(--text-secondary)" tick={{ fontSize: 11 }} />
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
+                    <Bar dataKey="count" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </div>
         </div>
       </div>

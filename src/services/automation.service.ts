@@ -1,101 +1,92 @@
 import { AutomationWorkflow, EmailCommunication } from '@/types';
-import { MOCK_AUTOMATIONS, MOCK_EMAILS } from './mockData';
-import { simulateNetworkDelay, callWebhook } from './api';
+import { supabase } from '@/lib/supabase';
+import { callWebhook } from './api';
 
-const automationsDb: AutomationWorkflow[] = [...MOCK_AUTOMATIONS];
-const emailsDb: EmailCommunication[] = [...MOCK_EMAILS];
+interface AutomationRow {
+  id: string;
+  name: string;
+  description: string | null;
+  status: AutomationWorkflow['status'];
+  last_run: string | null;
+  duration: string | null;
+  processed_count: number | null;
+  node_count: number | null;
+  error: string | null;
+}
+
+function mapAutomationRow(row: AutomationRow): AutomationWorkflow {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description ?? '',
+    status: row.status,
+    lastRun: row.last_run ?? '',
+    duration: row.duration ?? '',
+    processedCount: row.processed_count ?? 0,
+    nodeCount: row.node_count ?? 0,
+    error: row.error ?? undefined
+  };
+}
+
+interface EmailRow {
+  id: string;
+  candidate_name: string | null;
+  candidate_email: string;
+  email_type: EmailCommunication['emailType'];
+  status: EmailCommunication['status'];
+  sent_time: string | null;
+  subject: string | null;
+  preview: string | null;
+}
+
+function mapEmailRow(row: EmailRow): EmailCommunication {
+  return {
+    id: row.id,
+    candidateName: row.candidate_name ?? '',
+    candidateEmail: row.candidate_email,
+    emailType: row.email_type,
+    status: row.status,
+    sentTime: row.sent_time ?? '',
+    subject: row.subject ?? '',
+    preview: row.preview ?? ''
+  };
+}
 
 export const automationService = {
   async getAutomations(): Promise<AutomationWorkflow[]> {
-    try {
-      const response = await callWebhook<AutomationWorkflow[]>({
-        action: 'GET_AUTOMATIONS',
-        role: 'admin'
-      });
-      if (response) { return response; }
-    } catch (error) {
-      console.warn('Webhook GET_AUTOMATIONS failed, falling back to mock logic', error);
-    }
+    const { data, error } = await supabase
+      .from('automation_runs')
+      .select('*')
+      .order('last_run', { ascending: false });
 
-    await simulateNetworkDelay(350);
-    return [...automationsDb];
+    if (error) throw error;
+    return (data ?? []).map(mapAutomationRow);
   },
 
   async triggerWorkflow(workflowId: string): Promise<AutomationWorkflow> {
-    try {
-      const response = await callWebhook<AutomationWorkflow>({
-        action: 'TRIGGER_WORKFLOW',
-        role: 'admin',
-        data: { workflowId }
-      });
-      if (response) {
-        const index = automationsDb.findIndex((a) => a.id === workflowId);
-        if (index !== -1) automationsDb[index] = response;
-        return response;
-      }
-    } catch (err) {
-      console.warn('Webhook TRIGGER_WORKFLOW failed, falling back to mock logic:', err);
-    }
-
-    await simulateNetworkDelay(1200);
-    const index = automationsDb.findIndex((a) => a.id === workflowId);
-    if (index !== -1) {
-      automationsDb[index] = {
-        ...automationsDb[index],
-        status: 'RUNNING',
-        lastRun: 'Just now',
-        processedCount: automationsDb[index].processedCount + 1
-      };
-      // Auto-complete after 3 seconds simulation
-      setTimeout(() => {
-        automationsDb[index].status = 'COMPLETED';
-      }, 3000);
-      return automationsDb[index];
-    }
-    throw new Error('Automation workflow not found');
+    const result = await callWebhook<AutomationWorkflow>({
+      action: 'TRIGGER_WORKFLOW',
+      role: 'hr',
+      data: { workflowId }
+    });
+    return result;
   },
 
   async getEmailCommunications(): Promise<EmailCommunication[]> {
-    try {
-      const response = await callWebhook<EmailCommunication[]>({
-        action: 'GET_EMAILS',
-        role: 'admin'
-      });
-      if (response) { return response; }
-    } catch (error) {
-      console.warn('Webhook GET_EMAILS failed, falling back to mock logic', error);
-    }
+    const { data, error } = await supabase
+      .from('email_communications')
+      .select('*')
+      .order('sent_time', { ascending: false });
 
-    await simulateNetworkDelay(300);
-    return [...emailsDb];
+    if (error) throw error;
+    return (data ?? []).map(mapEmailRow);
   },
 
   async retryEmail(emailId: string): Promise<EmailCommunication> {
-    try {
-      const response = await callWebhook<EmailCommunication>({
-        action: 'RETRY_EMAIL',
-        role: 'admin',
-        data: { emailId }
-      });
-      if (response) {
-        const index = emailsDb.findIndex((e) => e.id === emailId);
-        if (index !== -1) emailsDb[index] = response;
-        return response;
-      }
-    } catch (error) {
-      console.warn('Webhook RETRY_EMAIL failed, falling back to mock logic', error);
-    }
-
-    await simulateNetworkDelay(800);
-    const index = emailsDb.findIndex((e) => e.id === emailId);
-    if (index !== -1) {
-      emailsDb[index] = {
-        ...emailsDb[index],
-        status: 'SENT',
-        sentTime: 'Just now'
-      };
-      return emailsDb[index];
-    }
-    throw new Error('Email communication record not found');
+    return await callWebhook<EmailCommunication>({
+      action: 'RETRY_EMAIL',
+      role: 'hr',
+      data: { emailId }
+    });
   }
 };

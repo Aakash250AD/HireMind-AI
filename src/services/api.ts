@@ -41,6 +41,7 @@ const ACTION_DOMAIN: Record<string, string> = {
   // Interviews & Evaluation
   START_INTERVIEW: 'interviews',
   SUBMIT_INTERVIEW_ANSWER: 'interviews',
+  GET_INTERVIEW: 'interviews',
   
   // Shortlist
   GET_SHORTLIST: 'shortlist',
@@ -77,7 +78,7 @@ export const simulateNetworkDelay = (ms: number = 600): Promise<void> => {
 
 export interface WebhookPayload {
   action: string;
-  role: 'admin' | 'candidate';
+  role: 'hr' | 'candidate';
   userId?: string;
   data?: unknown;
 }

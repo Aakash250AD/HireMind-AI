@@ -46,7 +46,7 @@ export default function HRLoginPage() {
 
       const { data: userProfile, error: profileError } = await supabase
         .from('users')
-        .select('id, email, role, status')
+        .select('id, email, role')
         .eq('auth_provider_user_id', authData.user.id)
         .single();
 
@@ -55,19 +55,14 @@ export default function HRLoginPage() {
         throw new Error('User profile not found.');
       }
 
-      if (userProfile.status !== 'active') {
-        await supabase.auth.signOut();
-        throw new Error('Your account is not active.');
-      }
-
       if (userProfile.role !== 'hr') {
         await supabase.auth.signOut();
-        throw new Error('This account is not registered as a hr.');
+        throw new Error('This account is not registered as HR.');
       }
 
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+    } catch (err) {
+      setError((err as Error).message || 'Authentication failed');
     } finally {
       setLoading(false);
     }
@@ -77,14 +72,16 @@ export default function HRLoginPage() {
     setGoogleLoading(true);
     setError(null);
     try {
-      // Bypassing API login
-      router.push('/dashboard');
-    } catch (err: any) {
-      if (err.message?.includes('provider is not supported') || err.message?.includes('Google')) {
-        setError('Google Sign-in is currently undergoing maintenance. Please use Work Email.');
-      } else {
-        setError(err.message || 'Google Login failed');
-      }
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+          queryParams: { access_type: 'offline', prompt: 'consent' }
+        }
+      });
+      if (oauthError) throw oauthError;
+    } catch (err) {
+      setError((err as Error).message || 'Google Login failed');
       setGoogleLoading(false);
     }
   };

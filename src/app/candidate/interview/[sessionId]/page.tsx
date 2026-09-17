@@ -17,14 +17,18 @@ interface Message {
 export default function CandidateInterviewPage() {
   const params = useParams();
   const router = useRouter();
-  const sessionId = params.sessionId as string;
+  // Route param is the applications.id this interview belongs to.
+  const applicationId = params.sessionId as string;
 
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [starting, setStarting] = useState(true);
+  const [startError, setStartError] = useState<string | null>(null);
 
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
@@ -36,51 +40,28 @@ export default function CandidateInterviewPage() {
     let isMounted = true;
 
     async function initInterview() {
-      setIsTyping(true);
+      setStarting(true);
+      setStartError(null);
       try {
-        if (sessionId === 'new') {
-          // Dummy data for candidate to start the session, as we don't have global auth state hooked up here
-          const newSession = await interviewsService.createInterviewSession(
-            'cand-123',
-            'Candidate User',
-            'job-456',
-            'Software Engineer',
-            'text'
-          );
-          if (!isMounted) return;
-          
-          if (newSession.questions.length > 0) {
-            setMessages([{ id: Date.now().toString(), role: 'ai', text: newSession.questions[0].question }]);
-          }
-          router.replace(`/candidate/interview/${newSession.id}`);
-        } else {
-          // If we somehow landed here with an ID but no messages, we could fetch it.
-          const existingSession = await interviewsService.getInterviewById(sessionId);
-          if (existingSession && isMounted) {
-            setQuestionIndex(existingSession.currentQuestionIndex);
-            if (existingSession.status === 'COMPLETED') {
-               setIsCompleted(true);
-            } else if (existingSession.questions.length > existingSession.currentQuestionIndex) {
-               setMessages([{ id: Date.now().toString(), role: 'ai', text: existingSession.questions[existingSession.currentQuestionIndex].question }]);
-            }
-          }
+        const result = await interviewsService.createInterviewSession(applicationId);
+        if (!isMounted) return;
+        setSessionId(result.id);
+        if (result.currentQuestion) {
+          setMessages([{ id: Date.now().toString(), role: 'ai', text: result.currentQuestion }]);
         }
       } catch (err) {
-        if (isMounted) setError('Failed to start the interview session. Please try again.');
+        if (isMounted) setStartError((err as Error).message || 'Failed to start the interview session.');
       } finally {
-        if (isMounted) setIsTyping(false);
+        if (isMounted) setStarting(false);
       }
     }
 
-    if (messages.length === 0) {
-      initInterview();
-    }
-
+    initInterview();
     return () => { isMounted = false; };
-  }, [sessionId, router, messages.length]);
+  }, [applicationId]);
 
   const handleSend = async () => {
-    if (!inputValue.trim() || isTyping || isCompleted) return;
+    if (!inputValue.trim() || isTyping || isCompleted || !sessionId) return;
 
     const answerText = inputValue.trim();
     const newMessage: Message = { id: Date.now().toString(), role: 'candidate', text: answerText };
@@ -90,15 +71,12 @@ export default function CandidateInterviewPage() {
     setError(null);
 
     try {
-      // Must pass sessionId to be completely stateless to the backend
       const response = await interviewsService.submitAnswer(sessionId, questionIndex, answerText);
-      
-      const { session, aiFollowUp } = response;
-      
-      if (session.status === 'COMPLETED' || !aiFollowUp) {
+
+      if (response.completed || !response.nextQuestion) {
         setIsCompleted(true);
       } else {
-        setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', text: aiFollowUp }]);
+        setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', text: response.nextQuestion! }]);
         setQuestionIndex(prev => prev + 1);
       }
     } catch (err) {
@@ -108,22 +86,45 @@ export default function CandidateInterviewPage() {
     }
   };
 
+  if (starting) {
+    return (
+      <DashboardLayout role="candidate">
+        <div className="max-w-4xl mx-auto py-20 text-center text-ink-faint">
+          Preparing your AI interview...
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (startError) {
+    return (
+      <DashboardLayout role="candidate">
+        <div className="max-w-4xl mx-auto py-20 text-center space-y-4">
+          <AlertCircle className="w-10 h-10 text-danger mx-auto" />
+          <h2 className="text-lg font-bold text-ink">Couldn&apos;t start your interview</h2>
+          <p className="text-sm text-ink-soft">{startError}</p>
+          <Button onClick={() => router.push('/candidate/interviews')}>Back to Interviews</Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout role="candidate">
       <div className="max-w-4xl mx-auto h-[calc(100vh-12rem)] flex flex-col">
         <div className="mb-4 space-y-1">
           <h1 className="text-2xl font-semibold text-ink">AI Interview</h1>
-          <p className="text-sm text-ink-soft">Respond to the AI assistant to complete your technical screening.</p>
+          <p className="text-sm text-ink-soft">Respond to the AI assistant to complete your technical screening. Voice mode is coming soon — text only for now.</p>
         </div>
 
         <Card className="flex-1 flex flex-col overflow-hidden bg-surface shadow-sm p-0">
           <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-surface-sunken">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.role === 'candidate' ? 'justify-end' : 'justify-start'}`}>
-                <div 
+                <div
                   className={`max-w-[80%] rounded-[var(--radius-lg)] p-4 text-sm ${
-                    msg.role === 'candidate' 
-                      ? 'bg-primary text-white shadow-sm rounded-tr-none' 
+                    msg.role === 'candidate'
+                      ? 'bg-primary text-white shadow-sm rounded-tr-none'
                       : 'bg-surface border border-border text-ink rounded-tl-none shadow-sm'
                   }`}
                 >
@@ -149,8 +150,8 @@ export default function CandidateInterviewPage() {
                     <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
                     <p className="text-sm">Having trouble reaching the interviewer. Retry sending your last message?</p>
                   </div>
-                  <Button 
-                    variant="secondary" 
+                  <Button
+                    variant="secondary"
                     onClick={() => {
                       setInputValue(error);
                       setError(null);
@@ -175,7 +176,7 @@ export default function CandidateInterviewPage() {
                 </div>
               </div>
             )}
-            
+
             <div ref={endOfMessagesRef} />
           </div>
 
@@ -191,8 +192,8 @@ export default function CandidateInterviewPage() {
                 disabled={isCompleted || isTyping}
                 className="flex-1 text-ink bg-surface-sunken border border-border rounded-full px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all disabled:opacity-50"
               />
-              <Button 
-                onClick={handleSend} 
+              <Button
+                onClick={handleSend}
                 disabled={!inputValue.trim() || isTyping || isCompleted}
                 className="rounded-full w-12 h-12 p-0 flex items-center justify-center shrink-0"
               >

@@ -202,7 +202,7 @@ export default function CandidateJobsPage() {
                           <span className="flex items-center gap-1"><DollarSign className="w-3.5 h-3.5" /> {job.salaryRange}</span>
                         </div>
                       </div>
-                      <StatusPill status={job.status === 'ACTIVE' ? 'Hiring' : job.status} />
+                      <StatusPill status={job.status === 'open' ? 'Hiring' : job.status} />
                     </div>
                     
                     <p className="text-sm text-ink leading-relaxed line-clamp-2">

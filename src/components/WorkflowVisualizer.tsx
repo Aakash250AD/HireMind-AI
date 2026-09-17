@@ -24,8 +24,8 @@ export const WorkflowVisualizer: React.FC = () => {
             Frontend visual representation of backend webhook nodes executed on external platforms.
           </p>
         </div>
-        <span className="text-xs font-bold text-primary bg-primary/20 border border-border px-3 py-1 rounded-full">
-          ● Workflow Engine Connected
+        <span className="text-xs font-bold text-text-secondary bg-page-bg border border-border px-3 py-1 rounded-full">
+          Pipeline reference diagram
         </span>
       </div>
 

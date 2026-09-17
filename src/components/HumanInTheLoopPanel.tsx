@@ -2,13 +2,18 @@
 
 import React, { useState } from 'react';
 import { Candidate } from '@/types';
-import { ShieldAlert, CheckCircle, XCircle, FileQuestion, Lock } from 'lucide-react';
-import { SwipeToDecideCard } from '@/components/animations/SwipeToDecideCard';
+import { CheckCircle, XCircle, FileQuestion, Lock, AlertTriangle } from 'lucide-react';
 
 interface HumanInTheLoopPanelProps {
   candidate: Candidate;
   onDecisionSubmitted?: (status: 'APPROVED' | 'REJECTED' | 'INFO_REQUESTED', notes: string) => void;
 }
+
+const DECISION_COPY: Record<'APPROVED' | 'REJECTED' | 'INFO_REQUESTED', { verb: string; detail: string }> = {
+  APPROVED: { verb: 'approve this candidate for hire', detail: 'They will be notified they have been approved.' },
+  REJECTED: { verb: 'reject this candidate', detail: 'They will be notified their application was not successful.' },
+  INFO_REQUESTED: { verb: 'request more information from this candidate', detail: 'They will be notified additional information is needed.' }
+};
 
 export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
   candidate,
@@ -17,22 +22,22 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
   const [notes, setNotes] = useState(candidate.recruiterNotes || '');
   const [submitting, setSubmitting] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(candidate.decisionStatus || 'PENDING');
+  const [pendingDecision, setPendingDecision] = useState<'APPROVED' | 'REJECTED' | 'INFO_REQUESTED' | null>(null);
 
   const handleDecision = async (status: 'APPROVED' | 'REJECTED' | 'INFO_REQUESTED') => {
     setSubmitting(true);
-    setCurrentStatus(status);
-    if (onDecisionSubmitted) {
-      await onDecisionSubmitted(status, notes);
+    setPendingDecision(null);
+    try {
+      setCurrentStatus(status);
+      if (onDecisionSubmitted) {
+        await onDecisionSubmitted(status, notes);
+      }
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   return (
-    <SwipeToDecideCard 
-      swipeThreshold={150} 
-      onAdvance={() => handleDecision('APPROVED')} 
-      onPass={() => handleDecision('REJECTED')}
-    >
       <div className="bg-surface border border-border rounded-[var(--radius-md)] p-5 shadow-2xl relative overflow-hidden">
       {/* Top Banner Notice */}
       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary mb-3">
@@ -96,7 +101,7 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
             disabled={submitting}
-            onClick={() => handleDecision('INFO_REQUESTED')}
+            onClick={() => setPendingDecision('INFO_REQUESTED')}
             className="flex-1 sm:flex-none px-3.5 py-2 bg-page-bg hover:bg-zinc-700 text-amber-400 text-xs font-bold rounded-[var(--radius-sm)] border border-amber-500/40 transition-colors flex items-center justify-center gap-1.5"
           >
             <FileQuestion className="w-3.5 h-3.5" />
@@ -104,7 +109,7 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
           </button>
           <button
             disabled={submitting}
-            onClick={() => handleDecision('REJECTED')}
+            onClick={() => setPendingDecision('REJECTED')}
             className="flex-1 sm:flex-none px-3.5 py-2 bg-rose-950/50 hover:bg-rose-900 text-error text-xs font-bold rounded-[var(--radius-sm)] border border-border transition-colors flex items-center justify-center gap-1.5"
           >
             <XCircle className="w-3.5 h-3.5" />
@@ -112,7 +117,7 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
           </button>
           <button
             disabled={submitting}
-            onClick={() => handleDecision('APPROVED')}
+            onClick={() => setPendingDecision('APPROVED')}
             className="flex-1 sm:flex-none px-4 py-2 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow border border-border transition-colors flex items-center justify-center gap-1.5"
           >
             <CheckCircle className="w-4 h-4" />
@@ -120,7 +125,37 @@ export const HumanInTheLoopPanel: React.FC<HumanInTheLoopPanelProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      {pendingDecision && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
+          <div className="w-full max-w-sm bg-surface border border-border rounded-[var(--radius-lg)] shadow-2xl p-6 space-y-4">
+            <div className="flex items-center gap-2 text-amber-500">
+              <AlertTriangle className="w-5 h-5" />
+              <h3 className="text-sm font-bold uppercase tracking-wide">Confirm Decision</h3>
+            </div>
+            <p className="text-sm text-text-primary">
+              You are about to <strong>{DECISION_COPY[pendingDecision].verb}</strong>. This action cannot be undone.
+            </p>
+            <p className="text-xs text-text-secondary">{DECISION_COPY[pendingDecision].detail}</p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => setPendingDecision(null)}
+                className="px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary rounded-[var(--radius-sm)] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDecision(pendingDecision)}
+                disabled={submitting}
+                className="px-4 py-2 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-sm)] transition-colors"
+              >
+                {submitting ? 'Submitting...' : 'Confirm'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
-    </SwipeToDecideCard>
   );
 };

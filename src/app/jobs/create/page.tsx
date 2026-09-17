@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/DashboardLayout';
-import { supabase } from '@/lib/supabase';
 import { jobsService } from '@/services/jobs.service';
 import { Job } from '@/types';
 import { Sparkles, Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
@@ -13,7 +12,7 @@ export default function CreateJobPage() {
   const [jobTitle, setJobTitle] = useState('');
   const [department, setDepartment] = useState('Artificial Intelligence');
   const [location, setLocation] = useState('San Francisco, CA');
-  const [employmentType, setEmploymentType] = useState<Job['employmentType']>('Full-Time');
+  const [employmentType, setEmploymentType] = useState<Job['employmentType']>('full-time');
   const [experience, setExperience] = useState('4+ years');
   const [education, setEducation] = useState("Bachelor's or Master's in CS");
   const [salary, setSalary] = useState('₹15L - ₹19L');
@@ -22,44 +21,47 @@ export default function CreateJobPage() {
   // AI Extraction state
   const [analyzing, setAnalyzing] = useState(false);
   const [extractedData, setExtractedData] = useState<Partial<Job> | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const handleAnalyzeWithAI = async () => {
     if (!jobDescription.trim()) return;
     setAnalyzing(true);
-    const result = await jobsService.analyzeJobDescription(jobDescription, jobTitle);
-    setExtractedData(result);
-    setAnalyzing(false);
+    try {
+      const result = await jobsService.analyzeJobDescription(jobDescription, jobTitle);
+      setExtractedData(result);
+    } catch (err) {
+      setCreateError((err as Error).message || 'AI analysis failed.');
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const handleCreateJob = async () => {
+    setCreating(true);
+    setCreateError(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      const { data, error } = await supabase.from('jobs').insert([
-        {
-          title: jobTitle || extractedData?.title || 'New AI Position',
-          department,
-          location,
-          employment_type: employmentType,
-          experience_years: experience,
-          education,
-          salary_range: salary,
-          description: jobDescription,
-          skills_required: extractedData?.requiredSkills || ['Python', 'AI Agents'],
-          preferred_skills: extractedData?.preferredSkills || ['Docker', 'AWS'],
-          responsibilities: extractedData?.responsibilities || ['Develop autonomous pipelines.'],
-          status: 'ACTIVE',
-          created_by: session?.user?.id
-        }
-      ]).select();
+      await jobsService.createJob({
+        title: jobTitle || extractedData?.title || 'New AI Position',
+        department,
+        location,
+        employmentType,
+        experienceLevel: experience,
+        education,
+        salaryRange: salary,
+        description: jobDescription,
+        requiredSkills: extractedData?.requiredSkills || [],
+        preferredSkills: extractedData?.preferredSkills || [],
+        responsibilities: extractedData?.responsibilities || [],
+        status: 'open',
+        extractedKeywords: extractedData?.extractedKeywords
+      });
 
-      if (error) throw error;
-      
-      alert('Job posted successfully!');
-      router.push('/candidate/jobs');
-    } catch (err: any) {
-      console.error(err);
-      alert('Failed to post job: ' + err.message);
+      router.push('/jobs');
+    } catch (err) {
+      setCreateError((err as Error).message || 'Failed to post job.');
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -194,13 +196,26 @@ export default function CreateJobPage() {
                 </div>
               </div>
 
+              {createError && (
+                <div className="p-3 bg-danger-tint border border-danger text-danger text-xs font-semibold rounded-[var(--radius-sm)]">
+                  {createError}
+                </div>
+              )}
+
               <button
                 type="button"
                 onClick={handleCreateJob}
-                className="w-full py-3 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow border border-border transition-colors flex items-center justify-center gap-2 mt-4"
+                disabled={creating}
+                className="w-full py-3 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-extrabold rounded-[var(--radius-sm)] shadow border border-border transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-60"
               >
-                <span>Confirm & Publish Job Position</span>
-                <ArrowRight className="w-4 h-4" />
+                {creating ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <span>Confirm & Publish Job Position</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </div>
           )}

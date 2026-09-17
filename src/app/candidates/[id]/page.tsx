@@ -7,26 +7,59 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 import { HumanInTheLoopPanel } from '@/components/HumanInTheLoopPanel';
 import { candidatesService } from '@/services/candidates.service';
 import { Candidate } from '@/types';
-import { Mail, Phone, MapPin, Briefcase, GraduationCap, FileText, Sparkles, Video } from 'lucide-react';
+import { Mail, Phone, MapPin, Briefcase, GraduationCap, Video, MessageSquareText, CheckCircle } from 'lucide-react';
 
 export default function CandidateProfilePage() {
   const params = useParams();
-  const candidateId = (params?.id as string) || 'cand-1';
+  const candidateId = params?.id as string;
   const [candidate, setCandidate] = useState<Candidate | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchProfile() {
-      const data = await candidatesService.getCandidateById(candidateId);
-      setCandidate(data);
-    }
     fetchProfile();
   }, [candidateId]);
 
-  if (!candidate) {
+  async function fetchProfile() {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await candidatesService.getCandidateById(candidateId);
+      setCandidate(data);
+    } catch (err) {
+      setError((err as Error).message || 'Failed to load candidate profile');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) {
     return (
       <DashboardLayout role="hr">
         <div className="flex items-center justify-center py-20 text-xs text-text-secondary">
           Loading Candidate Profile...
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout role="hr">
+        <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+          <p className="text-sm text-danger">{error}</p>
+          <button onClick={fetchProfile} className="text-xs font-bold text-primary underline">Retry</button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!candidate) {
+    return (
+      <DashboardLayout role="hr">
+        <div className="flex flex-col items-center justify-center py-20 gap-2 text-center">
+          <p className="text-sm text-text-secondary">Candidate not found.</p>
+          <Link href="/candidates" className="text-xs font-bold text-primary underline">Back to Candidates</Link>
         </div>
       </DashboardLayout>
     );
@@ -96,7 +129,10 @@ export default function CandidateProfilePage() {
             <div className="md:col-span-2 bg-surface border border-border rounded-[var(--radius-md)] p-6 shadow-lg space-y-4">
               <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Candidate Executive Summary</h3>
               <p className="text-xs text-text-secondary leading-relaxed bg-page-bg p-4 rounded-[var(--radius-sm)] border border-border">
-                {candidate.summary}
+                {candidate.summary || 'No AI summary available yet.'}
+              </p>
+              <p className="text-[10px] text-text-muted">
+                Match ({candidate.matchScore}%) is derived from resume-to-job comparison. Interview ({candidate.interviewScore}%) reflects live AI interview performance, scored separately.
               </p>
 
               <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider pt-2">Skills Inventory</h3>
@@ -128,15 +164,63 @@ export default function CandidateProfilePage() {
                 </div>
               </div>
 
-              <Link
-                href="/interview/int-session-101"
-                className="w-full py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-sm)] border border-border transition-colors flex items-center justify-center gap-2"
-              >
-                <Video className="w-4 h-4" />
-                <span>Launch AI Candidate Interview</span>
-              </Link>
+              {candidate.interview ? (
+                <Link
+                  href={`/interviews/${candidate.id}`}
+                  className="w-full py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-sm)] border border-border transition-colors flex items-center justify-center gap-2"
+                >
+                  <Video className="w-4 h-4" />
+                  <span>{candidate.interview.status === 'in_progress' ? 'Monitor Live Interview' : 'View Interview Results'}</span>
+                </Link>
+              ) : (
+                <div className="w-full py-2.5 bg-page-bg text-text-secondary text-xs font-semibold rounded-[var(--radius-sm)] border border-border text-center">
+                  No interview started yet
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Interview Transcript & Evaluation */}
+          {candidate.interview && (
+            <div className="bg-surface border border-border rounded-[var(--radius-md)] p-6 shadow-lg space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider flex items-center gap-2">
+                  <MessageSquareText className="w-4 h-4 text-primary" />
+                  AI Interview Transcript & Evaluation
+                </h3>
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-page-bg border border-border text-text-secondary">
+                  {candidate.interview.status === 'in_progress' ? 'In Progress' : 'Completed'}
+                </span>
+              </div>
+
+              {candidate.interview.transcript.length === 0 ? (
+                <p className="text-xs text-text-secondary italic">No transcript recorded yet.</p>
+              ) : (
+                <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                  {candidate.interview.transcript.map((turn, i) => (
+                    <div key={i} className="text-xs bg-page-bg border border-border rounded-[var(--radius-sm)] p-3">
+                      <div className="font-bold uppercase text-[10px] text-text-secondary mb-1">
+                        {turn.role === 'candidate' ? 'Candidate' : 'AI Interviewer'}
+                        {turn.score != null && <span className="ml-2 text-primary">Score: {turn.score}</span>}
+                      </div>
+                      <p className="text-text-primary">{turn.text}</p>
+                      {turn.feedback && <p className="text-text-muted mt-1 italic">{turn.feedback}</p>}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {candidate.interview.evaluationSummary && (
+                <div className="pt-3 border-t border-border flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-[10px] font-bold uppercase text-text-secondary block mb-1">AI Evaluation Summary</span>
+                    <p className="text-xs text-text-primary leading-relaxed">{candidate.interview.evaluationSummary}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </main>
       </div>
     </DashboardLayout>

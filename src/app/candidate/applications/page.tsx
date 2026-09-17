@@ -30,6 +30,7 @@ const TRACKER_STEPS = [
 export default function CandidateApplicationsPage() {
   const [status, setStatus] = useState<ApplicationStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadApplications();
@@ -37,11 +38,12 @@ export default function CandidateApplicationsPage() {
 
   async function loadApplications() {
     setLoading(true);
+    setError(null);
     try {
       const data = await candidatesService.getCandidateApplications();
       setStatus(data);
     } catch (err) {
-      console.error(err);
+      setError((err as Error).message || 'Failed to load your applications');
     } finally {
       setLoading(false);
     }
@@ -55,11 +57,18 @@ export default function CandidateApplicationsPage() {
           <p className="text-sm text-ink-soft mt-1">Track the status of your job applications in real-time.</p>
         </div>
 
+        {error && (
+          <Card className="bg-danger-tint border-danger text-danger flex items-center justify-between p-4">
+            <span className="text-sm font-medium">{error}</span>
+            <Button variant="secondary" onClick={loadApplications} className="bg-surface">Retry</Button>
+          </Card>
+        )}
+
         {loading ? (
           <div className="py-20 flex justify-center">
             <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           </div>
-        ) : (
+        ) : error ? null : (
           <div className="space-y-6">
             {status && status.applications.length > 0 ? (
               status.applications.map(app => (
@@ -135,7 +144,7 @@ export default function CandidateApplicationsPage() {
                 <FileSearch className="w-12 h-12 text-ink-faint" />
                 <div>
                   <h3 className="text-lg font-bold text-ink">No Applications Found</h3>
-                  <p className="text-sm text-ink-soft mt-1">You haven't applied to any jobs yet.</p>
+                  <p className="text-sm text-ink-soft mt-1">You haven&apos;t applied to any jobs yet.</p>
                 </div>
                 <Link href="/candidate/jobs">
                   <Button variant="primary">Browse Open Roles</Button>

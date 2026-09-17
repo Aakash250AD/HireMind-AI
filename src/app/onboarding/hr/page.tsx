@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/Logo';
-import { 
-  CheckCircle2, 
-  ArrowRight, 
+import { supabase } from '@/lib/supabase';
+import {
+  CheckCircle2,
+  ArrowRight,
   User,
   Briefcase,
   Target,
@@ -39,12 +40,33 @@ export default function HROnboardingPage() {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const finishOnboarding = () => {
+  const [onboardingError, setOnboardingError] = useState<string | null>(null);
+
+  const finishOnboarding = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setOnboardingError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      // Only full_name/company_name map to real users columns today; the rest of this
+      // form's fields (professional/recruitment/company detail) have no backend field yet.
+      const { error } = await supabase
+        .from('users')
+        .update({
+          full_name: personal.fullName || undefined,
+          company_name: professional.companyName || company.companyName || undefined
+        })
+        .eq('auth_provider_user_id', session.user.id);
+
+      if (error) throw error;
+
       router.push('/dashboard');
-    }, 1500);
+    } catch (err) {
+      setOnboardingError((err as Error).message || 'Failed to save profile');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

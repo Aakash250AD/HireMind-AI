@@ -4,37 +4,31 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { jobsService } from '@/services/jobs.service';
-import { analyticsService } from '@/services/analytics.service';
+import { candidatesService } from '@/services/candidates.service';
+import { analyticsService, HRStats } from '@/services/analytics.service';
 import { Card } from '@/components/ui/Card';
 import { StatCard } from '@/components/ui/StatCard';
 import { Button } from '@/components/ui/Button';
 import { StatusPill } from '@/components/ui/StatusPill';
-import { Sparkles, Briefcase, Plus, Users, CheckCircle2, ChevronRight, X, Check, XCircle, Award } from 'lucide-react';
+import { Plus, Users, X, Award } from 'lucide-react';
 import { TiltCard } from '@/components/animations/TiltCard';
 import { MagneticButton } from '@/components/animations/MagneticButton';
 import { GlitterBackground } from '@/components/animations/GlitterBackground';
 import { motion } from 'framer-motion';
-import { supabase } from '@/lib/supabase';
 
-interface HRStats {
-  activeJobs: number;
-  totalApplications: number;
-  pendingApplications: number;
-  offers: number;
-  hired: number;
-}
-
-import { Job } from '@/types';
+import { Job, Candidate } from '@/types';
 
 export default function HRDashboard() {
   const [stats, setStats] = useState<HRStats | null>(null);
+  const [statsNotConfigured, setStatsNotConfigured] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [topCandidates, setTopCandidates] = useState<any[]>([]);
+  const [topCandidates, setTopCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [isPostingJob, setIsPostingJob] = useState(false);
   const [jobPosting, setJobPosting] = useState(false);
+  const [postJobError, setPostJobError] = useState<string | null>(null);
 
   useEffect(() => {
     loadDashboard();
@@ -43,22 +37,24 @@ export default function HRDashboard() {
   async function loadDashboard() {
     setLoading(true);
     setError(null);
+    setStatsNotConfigured(false);
     try {
-      const [statsData, jobsData] = await Promise.all([
-        analyticsService.getHRStats(),
+      const [jobsData, candidatesData] = await Promise.all([
         jobsService.getJobs(),
+        candidatesService.getCandidates()
       ]);
-      
-      // Fetch top 10 candidates directly from Supabase
-      const { data: candidatesData } = await supabase
-        .from('candidates')
-        .select('*')
-        .order('overallScore', { ascending: false })
-        .limit(10);
-        
-      setStats(statsData);
+
       setJobs(jobsData || []);
-      setTopCandidates(candidatesData || []);
+      setTopCandidates(
+        [...(candidatesData || [])].sort((a, b) => b.overallScore - a.overallScore).slice(0, 10)
+      );
+
+      try {
+        const statsData = await analyticsService.getHRStats();
+        setStats(statsData);
+      } catch (statsErr) {
+        setStatsNotConfigured(true);
+      }
     } catch (err) {
       setError((err as Error).message || 'Failed to load dashboard data');
     } finally {
@@ -69,60 +65,36 @@ export default function HRDashboard() {
   async function handlePostJob(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setJobPosting(true);
+    setPostJobError(null);
     try {
       const formData = new FormData(e.currentTarget);
-      const jobData = {
-        title: formData.get('title') as string,
-        department: formData.get('department') as string,
-        description: formData.get('description') as string,
-        skills: formData.get('skills') as string,
-      };
+      const title = formData.get('title') as string;
+      const department = formData.get('department') as string;
+      const description = formData.get('description') as string;
+      const skillsRaw = formData.get('skills') as string;
 
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      const { data, error } = await supabase.from('jobs').insert([
-        {
-          title: jobData.title,
-          department: jobData.department,
-          description: jobData.description,
-          skills_required: Array.isArray(jobData.skills) 
-            ? jobData.skills 
-            : jobData.skills.split(',').map((s: string) => s.trim()),
-          created_by: session?.user?.id
-        }
-      ]).select();
+      await jobsService.createJob({
+        title,
+        department,
+        description,
+        location: '',
+        employmentType: 'full-time',
+        experienceLevel: '',
+        education: '',
+        salaryRange: '',
+        requiredSkills: skillsRaw.split(',').map((s) => s.trim()).filter(Boolean),
+        preferredSkills: [],
+        responsibilities: [],
+        status: 'open'
+      });
 
-      if (error) {
-        alert('Error: ' + error.message);
-      } else {
-        alert('Job posted successfully!');
-        e.currentTarget.reset();
-        setIsPostingJob(false);
-        loadDashboard();
-      }
+      e.currentTarget.reset();
+      setIsPostingJob(false);
+      loadDashboard();
     } catch (err) {
-      alert('Failed to post job');
+      setPostJobError((err as Error).message || 'Failed to post job');
     } finally {
       setJobPosting(false);
-    }
-  }
-
-  async function handleDecision(candidateId: string, email: string, name: string, decision: 'HIRED' | 'REJECTED') {
-    const webhookUrl = process.env.NEXT_PUBLIC_HR_DECISION_WEBHOOK;
-    if (!webhookUrl) {
-      alert('Webhook not configured');
-      return;
-    }
-    try {
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ candidateId, email, name, role: 'recruiter', decision })
-      });
-      alert(`Candidate ${decision.toLowerCase()} successfully!`);
-      loadDashboard(); // Refresh
-    } catch (err) {
-      alert('Failed to submit decision');
     }
   }
 
@@ -159,17 +131,25 @@ export default function HRDashboard() {
             <div className="animate-spin inline-block w-8 h-8 border border-current border-t-transparent text-primary rounded-full" role="status" aria-label="loading"></div>
             <p className="mt-2 text-sm">Loading dashboard...</p>
           </div>
-        ) : stats ? (
+        ) : (
           <>
             {/* KPI Cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 relative z-10">
-              <StatCard label="Active Jobs" value={jobs.length} delta={0} withTilt />
-              <StatCard label="Total Applications" value={stats.totalApplications ?? 0} delta={0} withTilt />
-              <StatCard label="Pending Applications" value={stats.pendingApplications ?? 0} delta={0} withTilt />
-              <StatCard label="Offers Extended" value={stats.offers ?? 0} delta={0} withTilt />
-              <StatCard label="Hired" value={stats.hired ?? 0} withTilt />
+              <StatCard label="Active Jobs" value={jobs.filter((j) => j.status === 'open').length} withTilt />
+              {statsNotConfigured || !stats ? (
+                <div className="col-span-2 md:col-span-4 flex items-center px-4 py-3 bg-surface-sunken border border-border rounded-[var(--radius-md)] text-xs text-ink-faint">
+                  Application/offer/hire stats aren&apos;t connected yet — pending the analytics webhook.
+                </div>
+              ) : (
+                <>
+                  <StatCard label="Total Applications" value={stats.totalApplications ?? 0} withTilt />
+                  <StatCard label="Pending Applications" value={stats.pendingApplications ?? 0} withTilt />
+                  <StatCard label="Offers Extended" value={stats.offers ?? 0} withTilt />
+                  <StatCard label="Hired" value={stats.hired ?? 0} withTilt />
+                </>
+              )}
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Jobs Grid */}
               <div className="lg:col-span-2 space-y-4">
@@ -201,7 +181,7 @@ export default function HRDashboard() {
                               <div>
                                 <div className="flex items-center gap-3 mb-1">
                                   <h3 className="text-base font-semibold text-ink">{job.title}</h3>
-                                  <StatusPill status={job.status} variant={job.status === 'ACTIVE' ? 'success' : 'default'} />
+                                  <StatusPill status={job.status} variant={job.status === 'open' ? 'success' : 'default'} />
                                   <StatusPill status={job.department} />
                                 </div>
                                 <p className="text-sm text-ink-soft line-clamp-2 mb-2">{job.description}</p>
@@ -270,27 +250,19 @@ export default function HRDashboard() {
                          <div key={cand.id} className="p-3 bg-surface-sunken border border-border rounded-md hover:border-primary/30 transition-colors">
                            <div className="flex justify-between items-start mb-2">
                              <div>
-                               <p className="text-sm font-bold text-ink">{cand.name || cand.full_name || 'Anonymous'}</p>
+                               <p className="text-sm font-bold text-ink">{cand.name || 'Anonymous'}</p>
                                <p className="text-[11px] text-ink-soft">{cand.email}</p>
                              </div>
                              <span className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded text-[10px] font-extrabold">
                                {cand.overallScore}%
                              </span>
                            </div>
-                           <div className="flex items-center gap-2 mt-3">
-                             <Button 
-                               onClick={() => handleDecision(cand.id, cand.email, cand.name || cand.full_name, 'HIRED')}
-                               className="flex-1 h-8 text-[11px] bg-emerald-500/10 hover:bg-emerald-500 text-emerald-600 hover:text-white border border-emerald-500/20 transition-all"
-                             >
-                               <Check className="w-3 h-3 mr-1" /> Hire
-                             </Button>
-                             <Button 
-                               onClick={() => handleDecision(cand.id, cand.email, cand.name || cand.full_name, 'REJECTED')}
-                               className="flex-1 h-8 text-[11px] bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-500/20 transition-all"
-                             >
-                               <XCircle className="w-3 h-3 mr-1" /> Reject
-                             </Button>
-                           </div>
+                           <Link
+                             href={`/candidates/${cand.id}`}
+                             className="mt-3 flex items-center justify-center gap-1.5 w-full h-8 text-[11px] font-bold text-primary bg-primary/10 hover:bg-primary hover:text-white border border-primary/20 rounded-[var(--radius-sm)] transition-all"
+                           >
+                             Review & Decide
+                           </Link>
                          </div>
                        ))
                      )}
@@ -299,7 +271,7 @@ export default function HRDashboard() {
               </div>
             </div>
           </>
-        ) : null}
+        )}
 
         {/* Post Job Modal (Simple implementation) */}
         {isPostingJob && (
@@ -309,6 +281,11 @@ export default function HRDashboard() {
                 <X className="w-5 h-5" />
               </button>
               <h2 className="text-xl font-semibold text-ink mb-6">Post New Job</h2>
+              {postJobError && (
+                <div className="mb-4 p-3 bg-danger-tint border border-danger text-danger text-xs font-semibold rounded-[var(--radius-sm)]">
+                  {postJobError}
+                </div>
+              )}
               <form onSubmit={handlePostJob} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-ink mb-1">Job Title</label>

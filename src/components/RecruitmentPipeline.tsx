@@ -13,13 +13,12 @@ interface RecruitmentPipelineProps {
 export const RecruitmentPipeline: React.FC<RecruitmentPipelineProps> = ({
   currentStage,
   stageCounts = {
-    Applied: 348,
-    Screening: 276,
-    Interview: 42,
-    Verification: 32,
-    Shortlisted: 18,
-    'Human Review': 12,
-    Hired: 6,
+    Applied: 0,
+    Screening: 0,
+    Interview: 0,
+    Shortlisted: 0,
+    'Human Review': 0,
+    Hired: 0,
     Archived: 0
   },
   onStageClick
@@ -28,7 +27,6 @@ export const RecruitmentPipeline: React.FC<RecruitmentPipelineProps> = ({
     'Applied',
     'Screening',
     'Interview',
-    'Verification',
     'Shortlisted',
     'Human Review',
     'Hired'

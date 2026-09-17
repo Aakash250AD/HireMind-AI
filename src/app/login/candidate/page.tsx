@@ -17,6 +17,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function CandidateLoginPage() {
   const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
@@ -26,20 +27,83 @@ export default function CandidateLoginPage() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email.trim() || !password) {
+      setError('Please enter your email and password.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+      // ============================================================
+      // 1. Authenticate with Supabase Auth
+      // ============================================================
+      const {
+        data: authData,
+        error: authError,
+      } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       });
 
-      if (error) throw error;
+      if (authError) {
+        throw authError;
+      }
 
+      // ============================================================
+      // 2. Make sure Supabase returned an authenticated user/session
+      // ============================================================
+      if (!authData.user || !authData.session) {
+        throw new Error('Authentication failed. No active session was created.');
+      }
+
+      const authUserId = authData.user.id;
+
+      // ============================================================
+      // 3. Load the application profile using auth.users.id
+      // ============================================================
+      const {
+        data: userProfile,
+        error: profileError,
+      } = await supabase
+        .from('profiles')
+        .select('id, role')
+        .eq('id', authUserId)
+        .single();
+
+      if (profileError || !userProfile) {
+        await supabase.auth.signOut();
+
+        throw new Error(
+          'Your account is authenticated, but your HireMind candidate profile was not found.'
+        );
+      }
+
+      // ============================================================
+      // 4. Validate the application role
+      // ============================================================
+      if (userProfile.role !== 'candidate') {
+        await supabase.auth.signOut();
+
+        throw new Error(
+          'This account is not registered as a candidate.'
+        );
+      }
+
+      // ============================================================
+      // 5. Authentication + profile + role validation succeeded
+      // ============================================================
       router.push('/candidate-dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Authentication failed. Please try again.';
+
+      // Do not expose tokens/passwords in the browser log.
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -48,35 +112,51 @@ export default function CandidateLoginPage() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     setError(null);
+
     try {
-      // Bypassing API login
-      router.push('/candidate-dashboard');
-    } catch (err: any) {
-      if (err.message?.includes('provider is not supported') || err.message?.includes('Google')) {
-        setError('Google Sign-in is currently undergoing maintenance. Please use Work Email.');
-      } else {
-        setError(err.message || 'Google Login failed');
+      const { error: oauthError } =
+        await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/candidate-dashboard`,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
+            },
+          },
+        });
+
+      if (oauthError) {
+        throw oauthError;
       }
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Google Login failed.';
+
+      setError(message);
       setGoogleLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-page-bg flex items-center justify-center p-4 md:p-8 font-sans">
-
       {/* Container Split Card */}
       <div className="w-full max-w-5xl bg-surface border border-border rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
 
-        {/* Left Column: Unique Visual Hero Experience (5 Cols) */}
+        {/* Left Column */}
         <div className="lg:col-span-5 bg-gradient-to-br from-[#0A66C2] via-[#004182] to-[#0A0D14] p-8 md:p-10 text-text-primary flex flex-col justify-between relative overflow-hidden">
 
-          {/* Subtle Background Glow Spheres */}
           <div className="absolute -top-12 -left-12 w-48 h-48 bg-[#38BDF8]/20 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute -bottom-16 -right-16 w-60 h-60 bg-primary/40 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Top Logo and Back */}
+          {/* Logo and Back */}
           <div className="relative z-10 flex flex-col items-start gap-4">
-            <Link href="/" className="text-white/80 hover:text-primary flex items-center gap-1.5 text-xs font-semibold transition-colors">
+            <Link
+              href="/"
+              className="text-white/80 hover:text-primary flex items-center gap-1.5 text-xs font-semibold transition-colors"
+            >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Home</span>
             </Link>
@@ -86,6 +166,7 @@ export default function CandidateLoginPage() {
                 <div className="w-7 h-7 bg-surface rounded-[var(--radius-md)] flex items-center justify-center text-primary font-bold">
                   <BrainCircuit className="w-4 h-4" />
                 </div>
+
                 <span className="font-extrabold tracking-tight text-white text-base">
                   HireMind <span className="text-[#38BDF8]">AI</span>
                 </span>
@@ -93,7 +174,7 @@ export default function CandidateLoginPage() {
             </Link>
           </div>
 
-          {/* Dynamic Hero Feature Card */}
+          {/* Hero */}
           <div className="relative z-10 space-y-6 my-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface/10 text-xs font-semibold text-sky-200 border border-white/15">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
@@ -105,19 +186,22 @@ export default function CandidateLoginPage() {
             </h2>
 
             <p className="text-xs md:text-sm text-sky-100/80 leading-relaxed">
-              Complete instant AI screening, demonstrate verified evidence for your core technical skills, and track active application status in real-time.
+              Complete instant AI screening, demonstrate verified evidence for
+              your core technical skills, and track active application status
+              in real-time.
             </p>
 
-            {/* Feature Highlights */}
             <div className="space-y-2.5 pt-2">
               <div className="flex items-center gap-2.5 text-xs font-medium text-sky-100">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Direct AI Interview & Voice Evaluation</span>
               </div>
+
               <div className="flex items-center gap-2.5 text-xs font-medium text-sky-100">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Real-time Application Status Telemetry</span>
               </div>
+
               <div className="flex items-center gap-2.5 text-xs font-medium text-sky-100">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>1-Click Fast-Track AI Job Applications</span>
@@ -125,36 +209,40 @@ export default function CandidateLoginPage() {
             </div>
           </div>
 
-          {/* Footer Badge */}
+          {/* Footer */}
           <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-sky-200/70">
             <span>Secure Applicant Data</span>
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
           </div>
-
         </div>
 
-        {/* Right Column: Interactive Form (7 Cols) */}
+        {/* Right Column */}
         <div className="lg:col-span-7 p-8 md:p-12 flex flex-col justify-center bg-surface">
-
           <div className="w-full max-w-md mx-auto">
-            {/* Form Header */}
+
+            {/* Header */}
             <div className="mb-8">
               <h1 className="text-xl md:text-2xl font-extrabold text-ink tracking-tight">
                 Candidate Portal Access
               </h1>
+
               <p className="text-xs text-ink-soft mt-1">
-                Enter your applicant credentials to manage your job applications and AI interviews.
+                Enter your applicant credentials to manage your job
+                applications and AI interviews.
               </p>
             </div>
 
-            {/* Google Authentication Button */}
+            {/* Google */}
             <button
+              type="button"
               onClick={handleGoogleLogin}
               disabled={googleLoading || loading}
               className="w-full py-2.5 px-4 mb-6 bg-surface hover:bg-page-bg border border-border rounded-[var(--radius-md)] shadow-sm transition-all flex items-center justify-center gap-3"
             >
               {googleLoading ? (
-                <span className="text-xs font-bold text-ink">Connecting to Google...</span>
+                <span className="text-xs font-bold text-ink">
+                  Connecting to Google...
+                </span>
               ) : (
                 <>
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -175,31 +263,42 @@ export default function CandidateLoginPage() {
                       fill="#EA4335"
                     />
                   </svg>
-                  <span className="text-xs font-bold text-ink">Sign in with Google</span>
+
+                  <span className="text-xs font-bold text-ink">
+                    Sign in with Google
+                  </span>
                 </>
               )}
             </button>
 
             <div className="flex items-center my-6">
-              <div className="flex-1 border-t border-border"></div>
-              <span className="px-3 text-xs text-ink-faint font-medium">OR CONTINUE WITH EMAIL</span>
-              <div className="flex-1 border-t border-border"></div>
+              <div className="flex-1 border-t border-border" />
+
+              <span className="px-3 text-xs text-ink-faint font-medium">
+                OR CONTINUE WITH EMAIL
+              </span>
+
+              <div className="flex-1 border-t border-border" />
             </div>
 
-            {/* Authentication Form */}
+            {/* Email Authentication */}
             <form onSubmit={handleAuth} className="space-y-4">
+
               {error && (
                 <div className="p-3 mb-4 text-xs font-semibold text-danger bg-danger-tint border border-danger rounded-[var(--radius-md)]">
                   {error}
                 </div>
               )}
 
+              {/* Email */}
               <div>
                 <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">
                   Email Address
                 </label>
+
                 <div className="relative mb-4">
                   <Mail className="w-4 h-4 text-ink-faint absolute left-3.5 top-3" />
+
                   <input
                     type="email"
                     required
@@ -211,17 +310,24 @@ export default function CandidateLoginPage() {
                 </div>
               </div>
 
+              {/* Password */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider">
                     Password
                   </label>
-                  <Link href="/forgot-password" className="text-[11px] font-bold text-primary hover:underline">
+
+                  <Link
+                    href="/forgot-password"
+                    className="text-[11px] font-bold text-primary hover:underline"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
+
                 <div className="relative mb-4">
                   <Lock className="w-4 h-4 text-ink-faint absolute left-3.5 top-3" />
+
                   <input
                     type="password"
                     required
@@ -233,6 +339,7 @@ export default function CandidateLoginPage() {
                 </div>
               </div>
 
+              {/* Remember */}
               <div className="flex items-center justify-between pt-1">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
@@ -241,23 +348,29 @@ export default function CandidateLoginPage() {
                     onChange={(e) => setRemember(e.target.checked)}
                     className="w-4 h-4 rounded text-primary focus:ring-[#0A66C2] border-border"
                   />
-                  <span className="text-xs text-ink-soft font-medium">Keep me signed in</span>
+
+                  <span className="text-xs text-ink-soft font-medium">
+                    Keep me signed in
+                  </span>
                 </label>
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || googleLoading}
                 className="w-full py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-md)] shadow-lg shadow-primary/30 border border-primary/20 transition-colors flex items-center justify-center gap-2"
               >
                 {loading ? 'Authenticating...' : 'Secure Login'}
+
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Toggle Sign Up */}
+            {/* Register */}
             <div className="mt-8 text-center text-xs text-ink-soft">
-              Don't have an account?
+              Don&apos;t have an account?
+
               <Link
                 href="/register"
                 className="ml-1 text-primary hover:text-dark-blue font-bold transition-colors"
@@ -267,9 +380,7 @@ export default function CandidateLoginPage() {
             </div>
           </div>
         </div>
-
       </div>
-
     </div>
   );
 }

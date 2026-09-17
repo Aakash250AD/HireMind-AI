@@ -12,19 +12,20 @@ export default function CopilotPage() {
     {
       id: 'welcome-1',
       sender: 'assistant',
-      content: `**Hello Sarah! I am your HireMind AI Recruiter Copilot.**\n\nI can analyze candidates across active jobs, audit evidence confidence scores, and summarize shortlist rationale.\n\nHow can I assist your recruitment decisions today?`,
+      content: `**Hello! I'm your HireMind AI Recruiter Copilot.**\n\nI can analyze candidates across active jobs, audit evidence confidence scores, and summarize shortlist rationale.\n\nHow can I assist your recruitment decisions today?`,
       timestamp: 'Just now'
     }
   ]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notConfigured, setNotConfigured] = useState(false);
 
   const handleSend = async (promptToSend?: string) => {
     const prompt = promptToSend || inputPrompt;
     if (!prompt.trim() || loading) return;
 
     const userMsg: CopilotMessage = {
-      // eslint-disable-next-line react-hooks/purity
-      id: `user-${Date.now()}`,
+      id: `user-${crypto.randomUUID()}`,
       sender: 'user',
       content: prompt,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -33,12 +34,19 @@ export default function CopilotPage() {
     setMessages((prev) => [...prev, userMsg]);
     if (!promptToSend) setInputPrompt('');
     setLoading(true);
+    setError(null);
+    setNotConfigured(false);
 
     try {
       const assistantMsg = await copilotService.askCopilot(prompt);
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (err) {
-      console.error(err);
+      const message = (err as Error).message || '';
+      if (message.includes('WEBHOOK_NOT_CONFIGURED')) {
+        setNotConfigured(true);
+      } else {
+        setError(message || 'The Copilot failed to respond.');
+      }
     }
     setLoading(false);
   };
@@ -137,6 +145,18 @@ export default function CopilotPage() {
             <div className="flex items-center gap-2 text-xs text-text-secondary bg-page-bg p-3 rounded-[var(--radius-md)] w-max border border-border">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
               <span>AI Copilot is synthesizing candidate telemetry...</span>
+            </div>
+          )}
+
+          {notConfigured && (
+            <div className="text-xs text-text-secondary bg-page-bg p-3 rounded-[var(--radius-md)] w-max border border-border">
+              AI Copilot isn&apos;t connected yet — pending the copilot webhook.
+            </div>
+          )}
+
+          {error && (
+            <div className="text-xs text-danger bg-danger-tint p-3 rounded-[var(--radius-md)] w-max border border-danger">
+              {error}
             </div>
           )}
         </div>

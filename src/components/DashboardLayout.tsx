@@ -71,8 +71,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
   const currentSidebar = activeRole === 'candidate' ? candidateSidebarItems : hrSidebarItems;
 
   return (
+    <ProfileGuard requireRole={role}>
     <div className="min-h-screen bg-hm-bg flex font-sans text-ink">
-      
+
       {/* 1. PREMIUM NAVIGATION RAIL */}
       <aside className="w-64 bg-surface/60 backdrop-blur-xl border-r border-border flex flex-col justify-between pt-6 pb-4 sticky top-0 h-screen select-none shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-40">
         
@@ -197,11 +198,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role
           </div>
         </main>
         
-        {/* Floating AI Copilot */}
-        <HMAICopilot />
+        {/* Floating AI Copilot (HR only) */}
+        {activeRole === 'hr' && <HMAICopilot />}
 
       </div>
 
     </div>
+    </ProfileGuard>
   );
 };

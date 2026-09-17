@@ -3,13 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { User, Phone, Briefcase, ArrowRight, Loader2 } from 'lucide-react';
+import { User, Briefcase, ArrowRight, Loader2 } from 'lucide-react';
 
 export default function CompleteProfilePage() {
   const router = useRouter();
   const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [role, setRole] = useState<'recruiter' | 'candidate' | ''>('');
+  const [role, setRole] = useState<'hr' | 'candidate' | ''>('');
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,22 +22,17 @@ export default function CompleteProfilePage() {
       }
       
       const { data: profile } = await supabase
-        .from('profiles')
+        .from('users')
         .select('*')
-        .eq('id', session.user.id)
+        .eq('auth_provider_user_id', session.user.id)
         .single();
-        
+
       if (profile) {
-        if (profile.is_completed) {
-          router.push(profile.role === 'recruiter' ? '/dashboard' : '/candidate-dashboard');
-          return;
-        }
-        setFullName(profile.full_name || session.user.user_metadata?.full_name || '');
-        setPhone(profile.phone || '');
-        setRole(profile.role || '');
-      } else {
-        setFullName(session.user.user_metadata?.full_name || '');
+        router.push(profile.role === 'hr' ? '/dashboard' : '/candidate-dashboard');
+        return;
       }
+
+      setFullName(session.user.user_metadata?.full_name || '');
       setInitializing(false);
     }
     
@@ -47,7 +41,7 @@ export default function CompleteProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !phone || !role) {
+    if (!fullName || !role) {
       setError('Please fill out all required fields.');
       return;
     }
@@ -58,20 +52,19 @@ export default function CompleteProfilePage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
-      const { error: upsertError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: session.user.id,
+      const { error: insertError } = await supabase
+        .from('users')
+        .insert({
+          email: session.user.email,
           full_name: fullName,
-          phone: phone,
-          role: role,
-          is_completed: true,
-          updated_at: new Date().toISOString()
+          role,
+          auth_provider: 'google',
+          auth_provider_user_id: session.user.id
         });
 
-      if (upsertError) throw upsertError;
+      if (insertError) throw insertError;
 
-      router.push(role === 'recruiter' ? '/dashboard' : '/candidate-dashboard');
+      router.push(role === 'hr' ? '/dashboard' : '/candidate-dashboard');
     } catch (err) {
       setError((err as Error).message || 'Failed to save profile');
     } finally {
@@ -122,32 +115,15 @@ export default function CompleteProfilePage() {
 
           <div>
             <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">
-              Phone Number
-            </label>
-            <div className="relative">
-              <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint" />
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+1 (555) 000-0000"
-                className="w-full pl-10 pr-4 py-3 bg-page-bg border border-border rounded-[var(--radius-md)] text-sm font-medium text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
-              />
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-xs font-bold text-ink-soft uppercase tracking-wider mb-1.5">
               Account Type
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => setRole('recruiter')}
+                onClick={() => setRole('hr')}
                 className={`py-3 px-4 border rounded-[var(--radius-md)] text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
-                  role === 'recruiter' 
-                    ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary/20' 
+                  role === 'hr'
+                    ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary/20'
                     : 'border-border bg-page-bg text-ink-soft hover:border-ink-faint hover:text-ink'
                 }`}
               >

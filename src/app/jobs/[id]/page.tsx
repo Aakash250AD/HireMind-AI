@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { shortlistService } from '@/services/shortlist.service';
+import { candidatesService } from '@/services/candidates.service';
 import { jobsService } from '@/services/jobs.service';
 import { Job } from '@/types';
 import { Card } from '@/components/ui/Card';
@@ -22,13 +23,13 @@ interface ShortlistCandidate {
 
 export default function JobShortlistPage() {
   const params = useParams();
-  const jobId = (params?.id as string) || 'job-1';
-  
+  const jobId = params?.id as string;
+
   const [candidates, setCandidates] = useState<ShortlistCandidate[]>([]);
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [selectedCandidate, setSelectedCandidate] = useState<ShortlistCandidate | null>(null);
   const [makingDecision, setMakingDecision] = useState(false);
 
@@ -38,15 +39,29 @@ export default function JobShortlistPage() {
 
   async function loadShortlist() {
     setLoading(true);
+    setError(null);
     try {
       const [shortlist, jobDetails] = await Promise.all([
         shortlistService.getShortlist(jobId),
         jobsService.getJobById(jobId)
       ]);
-      setCandidates(shortlist || []);
+      setCandidates(
+        (shortlist || []).map((entry) => ({
+          id: entry.candidate.id,
+          name: entry.candidate.name,
+          matchPercentage: entry.candidate.matchScore,
+          interviewScore: entry.candidate.interviewScore,
+          verificationBadges: entry.candidate.skills,
+          transcriptExcerpt: entry.candidate.interview?.transcript?.find((t) => t.role === 'candidate')?.text ?? '',
+          explanationText: entry.explainableReasoning
+        }))
+      );
       setJob(jobDetails);
     } catch (err) {
-      setError((err as Error).message);
+      const message = (err as Error).message || '';
+      if (!message.includes('WEBHOOK_NOT_CONFIGURED')) {
+        setError(message || 'Failed to load shortlist');
+      }
     } finally {
       setLoading(false);
     }
@@ -55,7 +70,10 @@ export default function JobShortlistPage() {
   async function handleDecision(candidateId: string, decision: 'advance' | 'pass') {
     setMakingDecision(true);
     try {
-      await shortlistService.submitDecision(jobId, candidateId, decision);
+      await candidatesService.submitRecruiterDecision(
+        candidateId,
+        decision === 'advance' ? 'APPROVED' : 'REJECTED'
+      );
       // Remove from view
       setCandidates(c => c.filter(cand => cand.id !== candidateId));
       setSelectedCandidate(null);
@@ -221,7 +239,7 @@ export default function JobShortlistPage() {
                     Key Interview Excerpt
                   </h3>
                   <div className="bg-surface-sunken border border-border p-4 rounded-[var(--radius-sm)] italic text-sm text-ink-soft border-l-4 border-l-primary">
-                    "{selectedCandidate.transcriptExcerpt}"
+                    &quot;{selectedCandidate.transcriptExcerpt}&quot;
                   </div>
                 </div>
 

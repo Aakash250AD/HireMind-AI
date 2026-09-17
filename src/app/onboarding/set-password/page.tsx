@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Lock, ArrowRight } from 'lucide-react';
+import type { Session } from '@supabase/supabase-js';
 
 export default function SetPasswordPage() {
   const router = useRouter();
-  const [session, setSession] = useState<any>(null);
-  
+  const [session, setSession] = useState<Session | null>(null);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
   }, []);
@@ -27,16 +28,20 @@ export default function SetPasswordPage() {
     setLoading(true);
     setError(null);
     try {
-      const email = session?.user?.email || '';
-      const role = (session?.user as any)?.role || 'candidate';
       await supabase.auth.updateUser({ password });
-      
-      // Redirect based on role
-      if (role === 'admin' || role === 'hr') {
-        router.push('/dashboard');
-      } else {
-        router.push('/candidate-dashboard');
+
+      const userId = session?.user?.id;
+      let role: string | null = session?.user?.user_metadata?.role ?? null;
+      if (!role && userId) {
+        const { data } = await supabase
+          .from('users')
+          .select('role')
+          .eq('auth_provider_user_id', userId)
+          .single();
+        role = data?.role ?? null;
       }
+
+      router.push(role === 'hr' ? '/dashboard' : '/candidate-dashboard');
     } catch (err) {
       setError((err as Error).message || 'Failed to set password');
     } finally {

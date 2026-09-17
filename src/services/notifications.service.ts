@@ -1,61 +1,46 @@
 import { NotificationItem } from '@/types';
-import { MOCK_NOTIFICATIONS } from './mockData';
-import { simulateNetworkDelay, callWebhook } from './api';
+import { supabase } from '@/lib/supabase';
 
-const notificationsDb: NotificationItem[] = [...MOCK_NOTIFICATIONS];
+interface NotificationRow {
+  id: string;
+  title: string;
+  message: string;
+  timestamp: string;
+  type: NotificationItem['type'];
+  unread: boolean;
+  action_url: string | null;
+}
+
+function mapNotificationRow(row: NotificationRow): NotificationItem {
+  return {
+    id: row.id,
+    title: row.title,
+    message: row.message,
+    timestamp: row.timestamp,
+    type: row.type,
+    unread: row.unread,
+    actionUrl: row.action_url ?? undefined
+  };
+}
 
 export const notificationsService = {
   async getNotifications(): Promise<NotificationItem[]> {
-    try {
-      const response = await callWebhook<NotificationItem[]>({
-        action: 'GET_NOTIFICATIONS',
-        role: 'admin'
-      });
-      if (response) { return response; }
-    } catch (error) {
-      console.warn('Webhook GET_NOTIFICATIONS failed, falling back to mock logic', error);
-    }
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .order('timestamp', { ascending: false });
 
-    await simulateNetworkDelay(250);
-    return [...notificationsDb];
+    if (error) throw error;
+    return (data ?? []).map(mapNotificationRow);
   },
 
   async markAsRead(id: string): Promise<void> {
-    try {
-      const response = await callWebhook<void>({
-        action: 'MARK_NOTIFICATION_READ',
-        role: 'admin',
-        data: { notificationId: id }
-      });
-      if (response !== undefined) {
-        const item = notificationsDb.find((n) => n.id === id);
-        if (item) item.unread = false;
-        return;
-      }
-    } catch (error) {
-      console.warn('Webhook MARK_NOTIFICATION_READ failed, falling back to mock logic', error);
-    }
-
-    await simulateNetworkDelay(200);
-    const item = notificationsDb.find((n) => n.id === id);
-    if (item) item.unread = false;
+    const { error } = await supabase.from('notifications').update({ unread: false }).eq('id', id);
+    if (error) throw error;
   },
 
   async markAllAsRead(): Promise<void> {
-    try {
-      const response = await callWebhook<void>({
-        action: 'MARK_ALL_NOTIFICATIONS_READ',
-        role: 'admin'
-      });
-      if (response !== undefined) {
-        notificationsDb.forEach((n) => (n.unread = false));
-        return;
-      }
-    } catch (error) {
-      console.warn('Webhook MARK_ALL_NOTIFICATIONS_READ failed, falling back to mock logic', error);
-    }
-
-    await simulateNetworkDelay(300);
-    notificationsDb.forEach((n) => (n.unread = false));
+    const { error } = await supabase.from('notifications').update({ unread: false }).eq('unread', true);
+    if (error) throw error;
   }
 };

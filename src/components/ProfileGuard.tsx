@@ -3,134 +3,273 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export function ProfileGuard({ children, requireRole }: { children: React.ReactNode, requireRole?: 'recruiter' | 'candidate' }) {
+type Role = 'hr' | 'candidate';
+
+type GuardStatus =
+  | 'checking'
+  | 'authorized'
+  | 'unauthenticated'
+  | 'wrong-role'
+  | 'profile-not-found';
+
+async function resolveRole(): Promise<Role | null> {
+  // Get the authenticated Supabase user.
+  // Do not trust a client-provided role or user ID.
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return null;
+  }
+
+  // public.profiles.id must equal auth.users.id
+  const {
+    data: profile,
+    error: profileError,
+  } = await supabase
+    .from('profiles')
+    .select('id, role')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (profileError || !profile) {
+    return null;
+  }
+
+  if (profile.role === 'hr' || profile.role === 'candidate') {
+    return profile.role;
+  }
+
+  return null;
+}
+
+export function ProfileGuard({
+  children,
+  requireRole,
+}: {
+  children: React.ReactNode;
+  requireRole?: Role;
+}) {
   const router = useRouter();
   const pathname = usePathname();
-  const [authorized, setAuthorized] = useState(false);
-  const [checking, setChecking] = useState(true);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  
-  // Onboarding Form State
-  const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState<'recruiter' | 'candidate'>('candidate');
-  const [submitting, setSubmitting] = useState(false);
+
+  const [status, setStatus] = useState<GuardStatus>('checking');
+  const [userRole, setUserRole] = useState<Role | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
-    async function checkProfile() {
-      // BYPASSING ALL AUTHENTICATION FOR LOCAL DEV
-      if (mounted) {
-        setAuthorized(true);
-        setChecking(false);
-      }
-    }
+    const checkSession = async () => {
+      if (!mounted) return;
 
-    checkProfile();
+      setStatus('checking');
+
+      try {
+        // Check whether a Supabase session exists.
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
+        if (sessionError || !session) {
+          if (!mounted) return;
+
+          setUserRole(null);
+          setStatus('unauthenticated');
+          return;
+        }
+
+        // Resolve the role ONLY from public.profiles.
+        const role = await resolveRole();
+
+        if (!mounted) return;
+
+        if (!role) {
+          setUserRole(null);
+          setStatus('profile-not-found');
+          return;
+        }
+
+        setUserRole(role);
+
+        if (requireRole && role !== requireRole) {
+          setStatus('wrong-role');
+          return;
+        }
+
+        setStatus('authorized');
+      } catch (error) {
+        if (!mounted) return;
+
+        console.error(
+          'ProfileGuard authentication check failed:',
+          error instanceof Error ? error.message : 'Unknown error'
+        );
+
+        setUserRole(null);
+        setStatus('unauthenticated');
+      }
+    };
+
+    // Initial authentication check.
+    void checkSession();
+
+    // React to future auth changes.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      // Defer the async Supabase work.
+      // This avoids running another Supabase call directly
+      // inside the auth-state callback.
+      setTimeout(() => {
+        if (!mounted) return;
+
+        if (event === 'SIGNED_OUT') {
+          setUserRole(null);
+          setStatus('unauthenticated');
+          return;
+        }
+
+        void checkSession();
+      }, 0);
+    });
 
     return () => {
       mounted = false;
+      subscription.unsubscribe();
     };
-  }, [pathname, requireRole, router]);
+  }, [requireRole]);
 
-  const handleOnboardingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      setShowOnboarding(false);
-      setAuthorized(true);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  // ------------------------------------------------------------
+  // CHECKING
+  // ------------------------------------------------------------
 
-  if (checking) {
+  if (status === 'checking') {
     return (
       <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center">
         <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
-        <p className="text-ink-soft text-sm font-semibold">Verifying credentials...</p>
+
+        <p className="text-ink-soft text-sm font-semibold">
+          Verifying credentials...
+        </p>
       </div>
     );
   }
 
+  // ------------------------------------------------------------
+  // NOT AUTHENTICATED
+  // ------------------------------------------------------------
+
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-6 text-center">
+        <ShieldAlert className="w-10 h-10 text-danger mb-4" />
+
+        <h1 className="text-lg font-bold text-ink mb-1">
+          Please sign in
+        </h1>
+
+        <p className="text-sm text-ink-soft mb-6 max-w-sm">
+          You need to be signed in to view this page.
+        </p>
+
+        <button
+          onClick={() => router.push('/')}
+          className="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-[var(--radius-md)] transition-colors"
+        >
+          Go to Sign In
+        </button>
+      </div>
+    );
+  }
+
+  // ------------------------------------------------------------
+  // PROFILE NOT FOUND
+  // ------------------------------------------------------------
+
+  if (status === 'profile-not-found') {
+    return (
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-6 text-center">
+        <ShieldAlert className="w-10 h-10 text-danger mb-4" />
+
+        <h1 className="text-lg font-bold text-ink mb-1">
+          Profile not found
+        </h1>
+
+        <p className="text-sm text-ink-soft mb-6 max-w-sm">
+          Your account is authenticated, but your HireMind profile could not
+          be found.
+        </p>
+
+        <button
+          onClick={() => router.push('/')}
+          className="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-[var(--radius-md)] transition-colors"
+        >
+          Go to Sign In
+        </button>
+      </div>
+    );
+  }
+
+  // ------------------------------------------------------------
+  // WRONG ROLE
+  // ------------------------------------------------------------
+
+  if (status === 'wrong-role') {
+    const correctPath =
+      userRole === 'hr'
+        ? '/dashboard'
+        : userRole === 'candidate'
+          ? '/candidate-dashboard'
+          : '/';
+
+    return (
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center p-6 text-center">
+        <ShieldAlert className="w-10 h-10 text-danger mb-4" />
+
+        <h1 className="text-lg font-bold text-ink mb-1">
+          Not authorized
+        </h1>
+
+        <p className="text-sm text-ink-soft mb-6 max-w-sm">
+          This page is only available to{' '}
+          {requireRole === 'hr'
+            ? 'HR/recruiter'
+            : 'candidate'}{' '}
+          accounts.
+        </p>
+
+        <button
+          onClick={() => router.push(correctPath)}
+          className="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-[var(--radius-md)] transition-colors"
+        >
+          Go to Your Workspace
+        </button>
+      </div>
+    );
+  }
+
+  // ------------------------------------------------------------
+  // AUTHORIZED
+  // ------------------------------------------------------------
+
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {authorized && !showOnboarding && (
-          <motion.div
-            key={pathname}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="h-full"
-          >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Onboarding Modal */}
-      {showOnboarding && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/70 backdrop-blur-sm">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md bg-surface border border-border rounded-[var(--radius-lg)] shadow-2xl overflow-hidden p-6"
-          >
-            <h2 className="text-xl font-bold text-ink mb-1">Welcome to HireMind AI</h2>
-            <p className="text-sm text-ink-soft mb-6">Let's finish setting up your account before you dive in.</p>
-            
-            <form onSubmit={handleOnboardingSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-ink-soft uppercase mb-1.5">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-page-bg border border-border rounded-[var(--radius-md)] text-sm text-ink focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
-                  placeholder="e.g. Jane Doe"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-ink-soft uppercase mb-1.5">I am a...</label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setRole('candidate')}
-                    className={`py-2 px-3 border rounded-[var(--radius-md)] text-sm font-semibold transition-colors ${role === 'candidate' ? 'bg-primary/10 border-primary text-primary' : 'bg-surface-sunken border-border text-ink-soft hover:border-primary/50'}`}
-                  >
-                    Candidate
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRole('recruiter')}
-                    className={`py-2 px-3 border rounded-[var(--radius-md)] text-sm font-semibold transition-colors ${role === 'recruiter' ? 'bg-primary/10 border-primary text-primary' : 'bg-surface-sunken border-border text-ink-soft hover:border-primary/50'}`}
-                  >
-                    Recruiter
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-3 mt-4 bg-primary hover:bg-dark-blue text-white text-xs font-extrabold rounded-[var(--radius-md)] shadow-lg transition-colors flex items-center justify-center gap-2"
-              >
-                {submitting ? 'Saving...' : 'Complete Setup'}
-              </button>
-            </form>
-          </motion.div>
-        </div>
-      )}
-    </>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.3 }}
+        className="h-full"
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
   );
 }

@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { interviewsService } from '@/services/interviews.service';
-import { InterviewSession } from '@/types';
-import { Video, Calendar, Clock, CheckCircle, Play, FileText, Bot } from 'lucide-react';
+import { candidatesService } from '@/services/candidates.service';
+import { InterviewSessionView } from '@/types';
+import { Video, CheckCircle, Play, FileText, Bot } from 'lucide-react';
 
 export default function CandidateInterviewsHub() {
-  const [interviews, setInterviews] = useState<InterviewSession[]>([]);
+  const [interviews, setInterviews] = useState<InterviewSessionView[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadInterviews();
@@ -19,19 +20,19 @@ export default function CandidateInterviewsHub() {
 
   async function loadInterviews() {
     setLoading(true);
+    setError(null);
     try {
-      // For this candidate demo, we'll fetch all mock interviews and assume they belong to the current user
-      const data = await interviewsService.getInterviews();
+      const data = await candidatesService.getMyInterviewSessions();
       setInterviews(data);
     } catch (err) {
-      console.error(err);
+      setError((err as Error).message || 'Failed to load your interviews');
     } finally {
       setLoading(false);
     }
   }
 
-  const activeInterviews = interviews.filter(i => i.status !== 'COMPLETED' && i.status !== 'CANCELLED');
-  const pastInterviews = interviews.filter(i => i.status === 'COMPLETED' || i.status === 'CANCELLED');
+  const activeInterviews = interviews.filter(i => i.status !== 'completed');
+  const pastInterviews = interviews.filter(i => i.status === 'completed');
 
   return (
     <DashboardLayout role="candidate">
@@ -43,6 +44,13 @@ export default function CandidateInterviewsHub() {
             <p className="text-sm text-ink-soft mt-1">Manage your pending and completed AI interview sessions.</p>
           </div>
         </div>
+
+        {error && (
+          <Card className="bg-danger-tint border-danger text-danger flex items-center justify-between p-4">
+            <span className="text-sm font-medium">{error}</span>
+            <Button variant="secondary" onClick={loadInterviews} className="bg-surface">Retry</Button>
+          </Card>
+        )}
 
         {loading ? (
           <div className="py-20 text-center text-ink-faint">Loading your interviews...</div>
@@ -68,29 +76,25 @@ export default function CandidateInterviewsHub() {
                         <div>
                           <div className="flex items-center justify-between gap-2 mb-1">
                             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-wide">
-                              {interview.status.replace('_', ' ')}
+                              In Progress
                             </span>
                             <span className="flex items-center gap-1 text-xs text-ink-faint">
-                              <Bot className="w-3.5 h-3.5" /> AI {interview.mode === 'voice' ? 'Voice' : 'Chat'}
+                              <Bot className="w-3.5 h-3.5" /> AI Chat
                             </span>
                           </div>
                           <h3 className="text-xl font-bold text-ink leading-tight mt-2">{interview.jobTitle}</h3>
-                          <p className="text-xs text-ink-soft mt-1 flex items-center gap-1">
-                            <FileText className="w-3.5 h-3.5" /> Req ID: {interview.jobId}
-                          </p>
                         </div>
-                        
+
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft bg-surface-sunken p-3 rounded-[var(--radius-sm)] border border-border/50">
-                          <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-ink-faint" /> {interview.scheduledAt || 'Not Scheduled'}</span>
-                          <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-ink-faint" /> {interview.durationMinutes} mins</span>
+                          <span className="flex items-center gap-1.5"><FileText className="w-4 h-4 text-ink-faint" /> {interview.questionCount} / {interview.maxQuestions} questions</span>
                         </div>
                       </div>
-                      
+
                       <div className="pt-4 border-t border-border/50 mt-4">
-                        <Link href={`/candidate/interview/${interview.id}`} className="block">
+                        <Link href={`/candidate/interview/${interview.applicationId}`} className="block">
                           <Button className="w-full flex justify-center items-center gap-2">
                             <Play className="w-4 h-4 fill-white" />
-                            {interview.status === 'IN_PROGRESS' ? 'Resume Interview' : 'Start Interview'}
+                            Resume Interview
                           </Button>
                         </Link>
                       </div>
@@ -117,15 +121,13 @@ export default function CandidateInterviewsHub() {
                       <div>
                         <h3 className="text-base font-semibold text-ink">{interview.jobTitle}</h3>
                         <div className="flex items-center gap-3 text-xs text-ink-faint mt-1">
-                          <span>{interview.scheduledAt}</span>
-                          <span className="w-1 h-1 bg-border rounded-full" />
-                          <span>AI {interview.mode === 'voice' ? 'Voice' : 'Chat'} Interview</span>
+                          <span>AI Chat Interview</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="text-right">
                           <div className="text-xs font-bold text-success uppercase">Completed</div>
-                          <div className="text-xs text-ink-soft">Reviewing</div>
+                          <div className="text-xs text-ink-soft">Under review</div>
                         </div>
                       </div>
                     </Card>

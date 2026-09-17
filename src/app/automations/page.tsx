@@ -5,30 +5,46 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 import { WorkflowVisualizer } from '@/components/WorkflowVisualizer';
 import { automationService } from '@/services/automation.service';
 import { AutomationWorkflow, EmailCommunication } from '@/types';
-import { Zap, Mail, Play, Loader2 } from 'lucide-react';
+import { Mail, Play, Loader2, Users2 } from 'lucide-react';
 
 export default function AutomationsPage() {
   const [workflows, setWorkflows] = useState<AutomationWorkflow[]>([]);
   const [emails, setEmails] = useState<EmailCommunication[]>([]);
   const [runningId, setRunningId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadAutomations() {
+    loadAutomations();
+  }, []);
+
+  async function loadAutomations() {
+    setLoading(true);
+    setError(null);
+    try {
       const [wData, eData] = await Promise.all([
         automationService.getAutomations(),
         automationService.getEmailCommunications()
       ]);
       setWorkflows(wData);
       setEmails(eData);
+    } catch (err) {
+      setError((err as Error).message || 'Failed to load automations');
+    } finally {
+      setLoading(false);
     }
-    loadAutomations();
-  }, []);
+  }
 
   const handleTrigger = async (id: string) => {
     setRunningId(id);
-    const updated = await automationService.triggerWorkflow(id);
-    setWorkflows((prev) => prev.map((w) => (w.id === id ? updated : w)));
-    setTimeout(() => setRunningId(null), 1200);
+    try {
+      const updated = await automationService.triggerWorkflow(id);
+      setWorkflows((prev) => prev.map((w) => (w.id === id ? updated : w)));
+    } catch (err) {
+      setError((err as Error).message || 'Failed to trigger workflow');
+    } finally {
+      setRunningId(null);
+    }
   };
 
   return (
@@ -39,14 +55,17 @@ export default function AutomationsPage() {
           <div>
             <h1 className="text-lg font-bold text-text-primary">Automation Execution Pipeline</h1>
             <p className="text-xs text-text-secondary mt-0.5">
-              Visualizing low-code platform backend workflows, webhook triggers, and automated recruiter emails.
+              Reflects the status of backend automation workflows run by SNS Workbench — this view is empty until those workflows report their own runs.
             </p>
           </div>
-          <div className="flex items-center gap-2 bg-page-bg px-3 py-1.5 rounded-[var(--radius-sm)] border border-border text-xs font-bold text-emerald-400">
-            <Zap className="w-4 h-4 fill-emerald-400" />
-            <span>Low-Code Webhooks Ready</span>
-          </div>
         </div>
+
+        {error && (
+          <div className="bg-danger-tint border border-danger text-danger p-4 rounded-[var(--radius-md)] flex items-center justify-between text-sm">
+            <span>{error}</span>
+            <button onClick={loadAutomations} className="font-bold underline">Retry</button>
+          </div>
+        )}
 
         {/* Interactive Node Graph Visualizer Component */}
         <WorkflowVisualizer />
@@ -54,6 +73,13 @@ export default function AutomationsPage() {
         {/* Automation Cards Grid */}
         <div className="space-y-4">
           <h2 className="text-base font-bold text-text-primary">Active Backend Automation Agents</h2>
+          {loading ? (
+            <div className="py-8 text-center text-text-secondary text-sm">Loading automation workflows...</div>
+          ) : workflows.length === 0 ? (
+            <div className="py-10 text-center text-text-secondary text-sm border border-dashed border-border rounded-[var(--radius-lg)]">
+              No automation runs recorded yet — this fills in as backend workflows execute.
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {workflows.map((wf) => (
               <div
@@ -110,6 +136,7 @@ export default function AutomationsPage() {
               </div>
             ))}
           </div>
+          )}
         </div>
 
         {/* Email Communication Automation UI */}
@@ -118,14 +145,21 @@ export default function AutomationsPage() {
             <div>
               <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary" />
-                <span>Automated Candidate Communication Telemetry</span>
+                <span>Automated Candidate Communication</span>
               </h2>
               <p className="text-xs text-text-secondary">
-                Transactional candidate email status triggered by low-code backend nodes.
+                Transactional candidate email status triggered by backend workflow nodes.
               </p>
             </div>
           </div>
 
+          {loading ? (
+            <div className="py-6 text-center text-text-secondary text-sm">Loading email log...</div>
+          ) : emails.length === 0 ? (
+            <div className="py-8 text-center text-text-secondary text-sm border border-dashed border-border rounded-[var(--radius-md)]">
+              No candidate emails sent yet.
+            </div>
+          ) : (
           <div className="space-y-3">
             {emails.map((email) => (
               <div
@@ -151,6 +185,18 @@ export default function AutomationsPage() {
                 </div>
               </div>
             ))}
+          </div>
+          )}
+        </div>
+
+        {/* Candidate Sourcing (not yet built) */}
+        <div className="bg-surface border border-border p-6 rounded-[var(--radius-lg)] shadow-lg space-y-3">
+          <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
+            <Users2 className="w-4 h-4 text-primary" />
+            <span>Candidate Sourcing</span>
+          </h2>
+          <div className="p-6 text-center text-text-secondary text-sm border border-dashed border-border rounded-[var(--radius-md)]">
+            Proactive candidate sourcing isn&apos;t connected yet — no sourcing webhook or trigger exists today. Once available, this panel will let you launch sourcing runs per job and track outreach status.
           </div>
         </div>
       </div>

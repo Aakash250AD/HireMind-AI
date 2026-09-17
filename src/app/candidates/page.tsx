@@ -4,29 +4,50 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { candidatesService } from '@/services/candidates.service';
-import { Candidate } from '@/types';
-import { Search, Filter, ChevronRight, Award } from 'lucide-react';
+import { jobsService } from '@/services/jobs.service';
+import { Candidate, Job } from '@/types';
+import { Search, Filter, ChevronRight, Award, Scale } from 'lucide-react';
 
 export default function CandidatesPage() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStage, setSelectedStage] = useState<string>('ALL');
+  const [selectedJobId, setSelectedJobId] = useState<string>('ALL');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
-    async function loadCandidates() {
+    loadCandidates();
+    jobsService.getJobs().then(setJobs).catch(() => setJobs([]));
+  }, []);
+
+  async function loadCandidates() {
+    setLoading(true);
+    setError(null);
+    try {
       const data = await candidatesService.getCandidates();
       setCandidates(data || []);
+    } catch (err) {
+      setError((err as Error).message || 'Failed to load candidates');
+    } finally {
       setLoading(false);
     }
-    loadCandidates();
-  }, []);
+  }
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : prev.length < 3 ? [...prev, id] : prev
+    );
+  };
 
   const filteredCandidates = candidates.filter((c) => {
     const matchesSearch = c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           (c.skills || []).some(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStage = selectedStage === 'ALL' || c.stage === selectedStage;
-    return matchesSearch && matchesStage;
+    const matchesJob = selectedJobId === 'ALL' || c.appliedJobId === selectedJobId;
+    return matchesSearch && matchesStage && matchesJob;
   });
 
   return (
@@ -40,13 +61,24 @@ export default function CandidatesPage() {
               Parsed resumes, calculated match scores, and evidence-verified candidates.
             </p>
           </div>
-          <Link
-            href="/shortlist"
-            className="px-4 py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-md)] border border-border shadow flex items-center justify-center gap-2"
-          >
-            <Award className="w-4 h-4" />
-            <span>View AI Shortlist</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            {selectedIds.length >= 2 && (
+              <Link
+                href={`/candidates/compare?ids=${selectedIds.join(',')}`}
+                className="px-4 py-2.5 bg-hm-deep hover:bg-hm-matte text-white text-xs font-bold rounded-[var(--radius-md)] border border-border shadow flex items-center justify-center gap-2"
+              >
+                <Scale className="w-4 h-4" />
+                <span>Compare ({selectedIds.length})</span>
+              </Link>
+            )}
+            <Link
+              href="/shortlist"
+              className="px-4 py-2.5 bg-primary hover:bg-dark-blue text-white text-xs font-bold rounded-[var(--radius-md)] border border-border shadow flex items-center justify-center gap-2"
+            >
+              <Award className="w-4 h-4" />
+              <span>View AI Shortlist</span>
+            </Link>
+          </div>
         </div>
 
         {/* Filters Bar */}
@@ -65,6 +97,16 @@ export default function CandidatesPage() {
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Filter className="w-4 h-4 text-text-secondary" />
             <select
+              value={selectedJobId}
+              onChange={(e) => setSelectedJobId(e.target.value)}
+              className="w-full sm:w-auto px-3 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink focus:outline-none"
+            >
+              <option value="ALL">All Jobs</option>
+              {jobs.map((j) => (
+                <option key={j.id} value={j.id}>{j.title}</option>
+              ))}
+            </select>
+            <select
               value={selectedStage}
               onChange={(e) => setSelectedStage(e.target.value)}
               className="w-full sm:w-auto px-3 py-2 bg-page-bg border border-border rounded-[var(--radius-sm)] text-xs text-ink focus:outline-none"
@@ -73,7 +115,6 @@ export default function CandidatesPage() {
               <option value="Applied">Applied</option>
               <option value="Screening">Screening</option>
               <option value="Interview">Interview</option>
-              <option value="Verification">Verification</option>
               <option value="Shortlisted">Shortlisted</option>
               <option value="Human Review">Human Review</option>
               <option value="Hired">Hired</option>
@@ -81,12 +122,20 @@ export default function CandidatesPage() {
           </div>
         </div>
 
+        {error && (
+          <div className="bg-danger-tint border border-danger text-danger p-4 rounded-[var(--radius-md)] flex items-center justify-between text-sm">
+            <span>{error}</span>
+            <button onClick={loadCandidates} className="font-bold underline">Retry</button>
+          </div>
+        )}
+
         {/* Candidate Table */}
         <div className="bg-surface border border-border rounded-[var(--radius-lg)] overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-page-bg border-b border-border text-text-secondary uppercase font-bold text-[10px] tracking-wider">
+                  <th className="p-4 w-10"></th>
                   <th className="p-4">Candidate</th>
                   <th className="p-4">Applied Position</th>
                   <th className="p-4">Match Score</th>
@@ -100,15 +149,24 @@ export default function CandidatesPage() {
               <tbody className="divide-y divide-[#383838]">
                 {loading ? (
                   <tr>
-                    <td colSpan={8} className="p-8 text-center text-text-secondary">Loading candidate telemetry...</td>
+                    <td colSpan={9} className="p-8 text-center text-text-secondary">Loading candidate telemetry...</td>
                   </tr>
                 ) : filteredCandidates.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="p-8 text-center text-text-secondary">No candidates match search criteria.</td>
+                    <td colSpan={9} className="p-8 text-center text-text-secondary">No candidates match search criteria.</td>
                   </tr>
                 ) : (
                   filteredCandidates.map((cand) => (
                     <tr key={cand.id} className="hover:bg-page-bg transition-colors">
+                      <td className="p-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(cand.id)}
+                          onChange={() => toggleSelected(cand.id)}
+                          disabled={!selectedIds.includes(cand.id) && selectedIds.length >= 3}
+                          className="w-4 h-4"
+                        />
+                      </td>
                       <td className="p-4">
                         <div className="font-bold text-text-primary text-sm">{cand.name}</div>
                         <div className="text-[11px] text-text-secondary">{cand.location} • {cand.experienceYears} yrs exp</div>

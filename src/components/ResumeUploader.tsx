@@ -19,6 +19,11 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({ jobId, onScreeni
   const [error, setError] = useState<string | null>(null);
 
   const handleUpload = async (uploadedFile: File) => {
+    if (!jobId) {
+      setError('No job selected — please apply from a specific job listing.');
+      return;
+    }
+
     setFile(uploadedFile);
     setStatus('uploading');
     setProgress(30);
@@ -42,7 +47,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({ jobId, onScreeni
             uploadedFile.name,
             fileBase64,
             mimeType,
-            jobId || 'default-job-id'
+            jobId as string
           );
 
           setProgress(100);

@@ -2,13 +2,14 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 type Theme = 'dark' | 'light';
 
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
-  clearCacheAndLogout: () => void;
+  clearCacheAndLogout: () => Promise<void>;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -34,7 +35,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.classList.toggle('dark', nextTheme === 'dark');
   };
 
-  const clearCacheAndLogout = () => {
+  const clearCacheAndLogout = async () => {
+    await supabase.auth.signOut();
     localStorage.clear();
     sessionStorage.clear();
     router.push('/');

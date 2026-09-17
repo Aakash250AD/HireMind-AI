@@ -2,31 +2,75 @@ import { Job } from '@/types';
 import { callWebhook } from './api';
 import { supabase } from '@/lib/supabase';
 
+interface JobRow {
+  id: string;
+  hr_user_id: string;
+  title: string;
+  department: string | null;
+  location: string | null;
+  employment_type: Job['employmentType'];
+  experience_level: string | null;
+  education: string | null;
+  salary_range: string | null;
+  description: string | null;
+  required_skills: string[] | null;
+  preferred_skills: string[] | null;
+  responsibilities: string[] | null;
+  status: Job['status'];
+  created_at: string;
+  extracted_keywords?: string[];
+}
+
+function mapJobRow(row: JobRow, candidateCount: number): Job {
+  return {
+    id: row.id,
+    hrUserId: row.hr_user_id,
+    title: row.title,
+    department: row.department ?? '',
+    location: row.location ?? '',
+    employmentType: row.employment_type,
+    experienceLevel: row.experience_level ?? '',
+    education: row.education ?? '',
+    salaryRange: row.salary_range ?? '',
+    description: row.description ?? '',
+    requiredSkills: row.required_skills ?? [],
+    preferredSkills: row.preferred_skills ?? [],
+    responsibilities: row.responsibilities ?? [],
+    status: row.status,
+    candidateCount,
+    createdAt: row.created_at,
+    extractedKeywords: row.extracted_keywords
+  };
+}
+
 export const jobsService = {
   async getJobs(): Promise<Job[]> {
     const { data, error } = await supabase
       .from('jobs')
       .select('*')
       .order('created_at', { ascending: false });
-      
-    if (error) {
-      // Silencing the Supabase API error for local mock flow
-      // console.error('Error fetching jobs:', error);
-      return [];
+
+    if (error) throw error;
+    if (!data || data.length === 0) return [];
+
+    const { data: counts, error: countsError } = await supabase
+      .from('applications')
+      .select('job_id');
+
+    if (countsError) throw countsError;
+
+    const countByJob = new Map<string, number>();
+    for (const row of counts ?? []) {
+      countByJob.set(row.job_id, (countByJob.get(row.job_id) ?? 0) + 1);
     }
-    
-    // Map snake_case to camelCase
-    return data.map(job => ({
-      ...job,
-      createdAt: job.created_at,
-      candidateCount: job.candidate_count || 0
-    })) as Job[];
+
+    return data.map((job) => mapJobRow(job, countByJob.get(job.id) ?? 0));
   },
 
   async getJobById(id: string): Promise<Job | null> {
     return await callWebhook<Job | null>({
       action: 'GET_JOB',
-      role: 'admin',
+      role: 'hr',
       data: { jobId: id }
     });
   },
@@ -62,21 +106,22 @@ export const jobsService = {
   return result.data?.extraction ?? result.data;
 },
 
-  async createJob(newJob: Omit<Job, 'id' | 'createdAt' | 'candidateCount'>): Promise<Job> {
+  async createJob(newJob: Omit<Job, 'id' | 'hrUserId' | 'createdAt' | 'candidateCount'>): Promise<Job> {
     const { data: { session } } = await supabase.auth.getSession();
-    
+    if (!session) throw new Error('You must be signed in to create a job.');
+
     const dbJob = {
+      hr_user_id: session.user.id,
       title: newJob.title,
       department: newJob.department,
-      status: newJob.status || 'ACTIVE',
+      status: newJob.status || 'open',
       description: newJob.description,
       location: newJob.location,
-      salaryRange: newJob.salaryRange,
-      requiredSkills: newJob.requiredSkills,
-      employmentType: newJob.employmentType,
-      experienceYears: newJob.experienceYears,
-      education: newJob.education,
-      created_by: session?.user?.id
+      salary_range: newJob.salaryRange,
+      required_skills: newJob.requiredSkills,
+      employment_type: newJob.employmentType,
+      experience_level: newJob.experienceLevel,
+      education: newJob.education
     };
 
     const { data, error } = await supabase
@@ -87,31 +132,27 @@ export const jobsService = {
 
     if (error) throw error;
 
-    // Trigger Webhook
+    // Trigger Webhook (fire-and-forget notification to backend; job already persisted in Supabase)
     const webhookUrl = process.env.NEXT_PUBLIC_POST_JOB_WEBHOOK;
     if (webhookUrl) {
       try {
         await fetch(webhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'CREATE_JOB', data: newJob, userId: session?.user?.id })
+          body: JSON.stringify({ action: 'CREATE_JOB', data: newJob, userId: session.user.id })
         });
       } catch (err) {
         console.error('Webhook failed, but job was created in Supabase:', err);
       }
     }
 
-    return {
-      ...data,
-      createdAt: data.created_at,
-      candidateCount: data.candidate_count || 0
-    } as Job;
+    return mapJobRow(data, 0);
   },
 
   async updateJob(id: string, updates: Partial<Job>): Promise<Job> {
     return await callWebhook<Job>({
       action: 'UPDATE_JOB',
-      role: 'admin',
+      role: 'hr',
       data: { id, updates }
     });
   },
@@ -119,7 +160,7 @@ export const jobsService = {
   async deleteJob(id: string): Promise<void> {
     await callWebhook<void>({
       action: 'DELETE_JOB',
-      role: 'admin',
+      role: 'hr',
       data: { id }
     });
   }
